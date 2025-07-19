@@ -22,7 +22,10 @@ class View(ttk.Window):
 
         # adiciona um menu de arquivo
         self.__file_menu = ttk.Menu(self.__menu_bar, tearoff=0)
-        self.__file_menu.add_command(label="Nova Janela", command=self.controller.on_open_new_window)
-        self.__file_menu.add_separator()
         self.__file_menu.add_command(label="Sair", command=self.quit)
         self.__menu_bar.add_cascade(label="Arquivo", menu=self.__file_menu)
+
+        # adiciona um menu de estoque
+        self.__stock_menu = ttk.Menu(self.__menu_bar, tearoff=0)
+        self.__stock_menu.add_command(label="Inventário", command=self.controller.open_stock_window)
+        self.__menu_bar.add_cascade(label="Estoque", menu=self.__stock_menu)
