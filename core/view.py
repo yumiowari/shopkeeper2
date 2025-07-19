@@ -8,21 +8,21 @@ class View(ttk.Window):
         self.title("Shopkeeper")
         self.geometry("800x600")
 
-        # Create a frame for the main content
-        self.main_frame = ttk.Frame(self)
-        self.main_frame.pack(fill=BOTH, expand=True)
+        # cria um frame para o conteúdo principal
+        self.__main_frame = ttk.Frame(self)
+        self.__main_frame.pack(fill=BOTH, expand=True)
 
-        # Add a label to the main frame
-        self.label = ttk.Label(self.main_frame, text="Welcome to Shopkeeper!", font=("Helvetica", 16))
-        self.label.pack(pady=20)
+        # adiciona um rótulo ao frame principal
+        self.__main_label = ttk.Label(self.__main_frame, text="Seja bem-vindo ao Shopkeeper!", font=("Arial", 16))
+        self.__main_label.pack(pady=20)
 
-        # Add a button to trigger an action
-        self.action_button = ttk.Button(self.main_frame, text="Click Me", command=self.controller.handle_action)
-        self.action_button.pack(pady=10)
+        # cria um barra de menu
+        self.__menu_bar = ttk.Menu(self)
+        self.config(menu=self.__menu_bar)
 
-        self.button_open = ttk.Button(
-            self.main_frame,
-            text="Abrir nova janela",
-            command=self.controller.on_open_new_window
-        )
-        self.button_open.pack(pady=5)
+        # adiciona um menu de arquivo
+        self.__file_menu = ttk.Menu(self.__menu_bar, tearoff=0)
+        self.__file_menu.add_command(label="Nova Janela", command=self.controller.on_open_new_window)
+        self.__file_menu.add_separator()
+        self.__file_menu.add_command(label="Sair", command=self.quit)
+        self.__menu_bar.add_cascade(label="Arquivo", menu=self.__file_menu)
