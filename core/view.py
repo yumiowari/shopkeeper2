@@ -3,7 +3,7 @@ from ttkbootstrap.constants import *
 
 class View(ttk.Window):
     def __init__(self, controller):
-        super().__init__(themename="darkly")
+        super().__init__(themename="litera")
         self.controller = controller
         self.title("Shopkeeper")
         self.geometry("800x600")
@@ -19,3 +19,10 @@ class View(ttk.Window):
         # Add a button to trigger an action
         self.action_button = ttk.Button(self.main_frame, text="Click Me", command=self.controller.handle_action)
         self.action_button.pack(pady=10)
+
+        self.button_open = ttk.Button(
+            self.main_frame,
+            text="Abrir nova janela",
+            command=self.controller.on_open_new_window
+        )
+        self.button_open.pack(pady=5)
