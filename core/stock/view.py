@@ -17,6 +17,29 @@ class View(ttk.Toplevel):
 
         # CREATE
         self.__create_frame = ttk.Frame(self.__notebook)
+        self.__create_label = ttk.Label(self.__create_frame, text="Cadastrar um novo item no estoque...", font=("Arial", 12))
+        self.__create_item_name_entry = ttk.Entry(self.__create_frame, width=20)
+        self.__create_item_name_label = ttk.Label(self.__create_frame, text="Nome do item:", font=("Arial", 10, "bold"))
+        self.__create_item_cost_entry = ttk.Entry(self.__create_frame, width=10)
+        self.__create_item_cost_label = ttk.Label(self.__create_frame, text="Custo do item:", font=("Arial", 10, "bold"))
+        self.__create_item_price_entry = ttk.Entry(self.__create_frame, width=10)
+        self.__create_item_price_label = ttk.Label(self.__create_frame, text="Preço de venda:", font=("Arial", 10, "bold"))
+        self.__create_item_qty_entry = ttk.Entry(self.__create_frame, width=10)
+        self.__create_item_qty_label = ttk.Label(self.__create_frame, text="Quantidade inicial:", font=("Arial", 10))
+
+        self.__create_confirm_btn = ttk.Button(self.__create_frame, text="Cadastrar", command=self.__controller.create_item)
+
+        self.__create_label.pack(pady=10)
+        self.__create_item_name_label.pack(pady=5)
+        self.__create_item_name_entry.pack(pady=5)
+        self.__create_item_cost_label.pack(pady=5)
+        self.__create_item_cost_entry.pack(pady=5)
+        self.__create_item_price_label.pack(pady=5)
+        self.__create_item_price_entry.pack(pady=5)
+        self.__create_item_qty_label.pack(pady=5)
+        self.__create_item_qty_entry.pack(pady=5)
+
+        self.__create_confirm_btn.pack(pady=10)
 
         # READ (CONFER)
         self.__confer_frame = ttk.Frame(self.__notebook)

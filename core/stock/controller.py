@@ -7,3 +7,6 @@ class Controller:
         self.__view = View(self, parent_ctrl=parent)
         self.__view.transient(master)
         self.__view.grab_set()
+
+    def create_item(self):
+        pass
