@@ -18,10 +18,10 @@ class Controller:
         self.__view.destroy()
 
     def open_stock_window(self):
-        if self.__stock_ctrl is None or not self.__stock_ctrl.view.winfo_exists():
+        if self.__stock_ctrl is None or not self.__stock_ctrl._view.winfo_exists():
             self.__stock_ctrl = StockCtrl(master=self.__view, parent=self)
         else: # se já existe, traz para frente
-            self.__stock_ctrl.view.lift()
+            self.__stock_ctrl._view.lift()
 
     def open_stock_entry_window(self):
         pass
