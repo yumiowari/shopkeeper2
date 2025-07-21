@@ -3,7 +3,7 @@ from core.stock.view import View
 
 class Controller:
     def __init__(self, master=None, parent=None):
-        self.model = Model()
-        self.view = View(self, parent_ctrl=parent)
-        self.view.transient(master)
-        self.view.grab_set()
+        self.__model = Model()
+        self.__view = View(self, parent_ctrl=parent)
+        self.__view.transient(master)
+        self.__view.grab_set()
