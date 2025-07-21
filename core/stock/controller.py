@@ -9,7 +9,7 @@ class Controller:
         self._view.grab_set()
 
     def create_item(self):
-        pass
+        return True
 
     def confer_item(self):
         pass
