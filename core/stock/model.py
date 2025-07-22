@@ -35,7 +35,10 @@ class Model:
         self.__item['name'] = item_name
         self.__item['cost'] = float(item_cost)
         self.__item['price'] = float(item_price)
-        self.__item['qty'] = int(item_qty)
+        if not item_qty:
+            self.__item['qty'] = 0
+        else:
+            self.__item['qty'] = int(item_qty)
 
         self.fetch_stock()
 
@@ -77,6 +80,14 @@ class Model:
     # 1 - sem alterações
     # 2 - item não encontrado
     def update_item(self, item_name, item_cost, item_price, item_qty):
+        # correção de campos vazios
+        if not item_cost:
+            item_cost = 0.0
+        if not item_price:
+            item_price = 0.0
+        if not item_qty:
+            item_qty = ''
+
         self.fetch_stock()
 
         for item in self.__items:
