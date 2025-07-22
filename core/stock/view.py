@@ -8,6 +8,20 @@ def validate_number(x) -> bool:
     if x == "":
         return True
     return x.isdigit() and int(x) <= 999
+
+def validate_entry_number(x) -> bool:
+    """Valida se o input é número inteiro entre -99 e 99, diferente de zero"""
+    if x == "":
+        return True
+    try:
+        n = int(x)
+
+        if n >= -99 and n <= 99 and n != 0:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
     
 def validate_alpha(x) -> bool:
     """Valida se o input é alfabético e até 30 caracteres"""
@@ -305,3 +319,79 @@ class View(ttk.Toplevel):
             msgbox.show_error("A remoção do produto falhou.", "Erro")
 
         self._delete_item_name_combo.set("")
+
+class EntryView(ttk.Toplevel):
+    def __init__(self, controller, parent_ctrl):
+        super().__init__()
+        self.__controller = controller
+        self.__parent_ctrl = parent_ctrl
+
+        self.title("Entrada")
+        self.geometry("400x300")
+        self.resizable(False, False)
+
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+        # observers
+        alpha_validator = self.register(validate_alpha)
+        number_validator = self.register(validate_entry_number)
+
+        self._entry_frame = ttk.Frame(self)
+
+        self._entry_label = ttk.Label(self._entry_frame, text="Registrar entrada/saída de produtos...", font=("Arial", 12))
+
+        self._entry_item_name_combo = ttk.Combobox(self._entry_frame, width=20, validate="focus", validatecommand=(alpha_validator, '%P'))
+        self._entry_item_name_combo.config(values=self.__controller.fetch_item_names())
+        self._entry_item_name_combo_label = ttk.Label(self._entry_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
+        self._entry_item_qty_spin = ttk.Spinbox(self._entry_frame, from_=-99, to=99, width=10, validate="focus", validatecommand=(number_validator, '%P'))
+        self._entry_item_qty_label = ttk.Label(self._entry_frame, text="Nova quantidade:", font=("Arial", 10))
+
+        self._entry_confirm_btn = ttk.Button(self._entry_frame, text="Registrar", command=self.entry_item)
+
+        self._entry_label.pack(pady=10)
+        self._entry_item_name_combo_label.pack(pady=5)
+        self._entry_item_name_combo.pack(pady=5)
+        self._entry_item_qty_label.pack(pady=5)
+        self._entry_item_qty_spin.pack(pady=5)
+
+        self._entry_confirm_btn.pack(pady=10)
+
+        self._entry_frame.pack(fill=BOTH, expand=True, padx=10, pady=10)
+
+    def on_close(self):
+        self.__parent_ctrl.stock_entry_ctrl = None
+        self.destroy()
+
+    def entry_item(self):
+        item_name = self._entry_item_name_combo.get()
+        item_qty = self._entry_item_qty_spin.get()
+        
+        flag = True
+
+        # valida os campos de entrada
+        if not item_name:
+            msgbox.show_error("Um produto precisa ser selecionado.", "Erro")
+            
+            flag = False
+
+        if flag and not validate_alpha(item_name):
+            msgbox.show_error("O nome do item deve conter apenas letras e ter no máximo 30 caracteres.", "Erro")
+            
+            flag = False
+        if flag and item_qty and not validate_entry_number(item_qty):
+            msgbox.show_error("A quantidade deve ser um número inteiro entre -99 e 99, diferente de zero.", "Erro")
+
+            flag = False
+
+        if flag:        
+            res = self.__controller.entry_item()
+
+            if res == 0:
+                msgbox.show_info(f"A quantidade do produto \"{item_name}\" foi alterada no banco de dados.", "Sucesso")
+            elif res == 1:
+                msgbox.show_error(f"O produto \"{item_name}\" não foi encontrado.")
+        if not flag:
+            msgbox.show_error("O registro da entrada do produto falhou.", "Erro")
+
+        self._entry_item_name_combo.set("")
+        self._entry_item_qty_spin.set("")

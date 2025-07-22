@@ -115,3 +115,58 @@ class Model:
 
         return 1
     #
+
+class EntryModel:
+    def __init__(self):
+        self.__item = {
+            'name': '',
+            'cost': 0.0,
+            'price': 0.0,
+            'qty': 0
+        }
+
+        self.__items = []
+
+    def fetch_stock(self):
+        if os.path.isfile('data/stock.pkl'):
+            with open('data/stock.pkl', 'rb') as file:
+                try:
+                    self.__items = pkl.load(file)
+                except EOFError:
+                    self.__items = []
+        else:
+            self.__items = []
+
+    def update_stock(self):
+        with open('data/stock.pkl', 'wb') as file:
+            pkl.dump(self.__items, file)
+
+    def fetch_item_names(self):
+        self.fetch_stock()
+
+        if not self.__items:
+            return []
+        else:
+            return [item['name'] for item in self.__items]
+        
+    # registra a entrada/saída do produto no estoque
+    #
+    # retorna...
+    # 0 - sucesso
+    # 1 - item não encontrado
+    def entry_item(self, item_name, entry_qty):
+        self.fetch_stock()
+
+        for item in self.__items:
+            if item['name'] == item_name:
+                curr_qty = item['qty']
+
+                curr_qty += int(entry_qty)
+
+                item['qty'] = curr_qty
+
+                self.update_stock()
+
+                return 0
+
+        return 1
