@@ -29,3 +29,18 @@ class Controller:
             self.__stock_entry_ctrl = StockEntryCtrl(master=self.__view, parent=self)
         else: # se já existe, traz para frente
             self.__stock_entry_ctrl._view.lift()
+
+    def make_stock_report(self):
+        pass
+
+    def open_sales_window(self):
+        pass
+
+    def make_sales_report(self):
+        pass
+
+    def open_about_window(self):
+        pass
+
+    def open_credits_window(self):
+        pass

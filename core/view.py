@@ -37,7 +37,33 @@ class View(ttk.Window):
         self.bind_all("<Control-i>", lambda e: self.__controller.open_stock_window())
         self.__stock_menu.add_command(label="Entrada", accelerator="Ctrl+E", command=self.__controller.open_stock_entry_window)
         self.bind_all("<Control-e>", lambda e: self.__controller.open_stock_entry_window())
+        self.__stock_menu.add_separator()
+        self.__stock_menu.add_command(label="Relatório", accelerator="Ctrl+R+I", command=self.__controller.make_stock_report)
+        self.bind_all("<Control-Shift-i>", lambda e: self.__controller.make_stock_report())
         self.__menu_bar.add_cascade(label="Estoque", menu=self.__stock_menu)
+
+        # adiciona um menu de venda
+        self.__sales_menu = ttk.Menu(self.__menu_bar, tearoff=0)
+        self.__sales_menu.add_command(label="Vender", accelerator="Ctrl+V", command=self.__controller.open_sales_window)
+        self.bind_all("<Control-v>", lambda e: self.__controller.open_sales_window())
+        self.__sales_menu.add_separator()
+        self.__sales_menu.add_command(label="Relatório", accelerator="Ctrl+R+V", command=self.__controller.make_sales_report)
+        self.bind_all("<Control-Shift-v >", lambda e: self.__controller.make_sales_report())
+        self.__menu_bar.add_cascade(label="Caixa", menu=self.__sales_menu)
+
+        # adiciona um menu de ajuda
+        self.__help_menu = ttk.Menu(self.__menu_bar, tearoff=0)
+        self.__help_menu.add_command(label="Sobre", command=self.__controller.open_about_window)
+        self.__menu_bar.add_cascade(label="Ajuda", menu=self.__help_menu)
+
+        # adiciona um menu de créditos
+        self.__credits_menu = ttk.Menu(self.__menu_bar, tearoff=0)
+        self.__credits_menu.add_command(label="Créditos", command=self.__controller.open_credits_window)
+        self.__menu_bar.add_cascade(label="Créditos", menu=self.__credits_menu)
+
+        # adiciona um rodapé
+        self.__footer = ttk.Label(self, text="$hopkeeper 2025 © Rafael Renó Corrêa - Todos os direitos reservados.", font=("Arial", 10), anchor="center")
+        self.__footer.pack(side=BOTTOM, fill=X, pady=5)
 
     # rotina de encerramento gracioso
     def shutdown(self):
