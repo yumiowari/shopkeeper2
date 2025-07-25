@@ -87,7 +87,7 @@ class View(ttk.Toplevel):
         self._create_item_qty_label.pack(pady=5)
         self._create_item_qty_spin.pack(pady=5)
 
-        self._create_confirm_btn.pack(pady=10)
+        self._create_confirm_btn.pack(side=BOTTOM, pady=10)
 
         tooltip(self._create_item_name_entry, "Qual o nome do item?")
         tooltip(self._create_item_cost_entry, "Qual o custo de produção do item?")
@@ -110,7 +110,7 @@ class View(ttk.Toplevel):
         self._confer_item_name_combo_label.pack(pady=5)
         self._confer_item_name_combo.pack(pady=5)
 
-        self._confer_confirm_btn.pack(pady=10)
+        self._confer_confirm_btn.pack(side=BOTTOM, pady=10)
 
         tooltip(self._confer_item_name_combo, "Qual o nome do item?")
         tooltip(self._confer_confirm_btn, "Confirma a consulta do produto no inventário.")
@@ -142,7 +142,7 @@ class View(ttk.Toplevel):
         self._update_item_qty_label.pack(pady=5)
         self._update_item_qty_spin.pack(pady=5)
 
-        self._update_confirm_btn.pack(pady=10)
+        self._update_confirm_btn.pack(side=BOTTOM, pady=10)
 
         tooltip(self._update_item_name_combo, "Qual o nome do item?")
         tooltip(self._update_item_cost_entry, "Qual o novo custo de produção do item?")
@@ -165,7 +165,7 @@ class View(ttk.Toplevel):
         self._delete_item_name_combo_label.pack(pady=5)
         self._delete_item_name_combo.pack(pady=5)
 
-        self._delete_confirm_btn.pack(pady=10)
+        self._delete_confirm_btn.pack(side=BOTTOM, pady=10)
 
         tooltip(self._delete_item_name_combo, "Qual o nome do item?")
         tooltip(self._delete_confirm_btn, "Confirma a remoção do produto do inventário.")
@@ -373,7 +373,7 @@ class EntryView(ttk.Toplevel):
         self._entry_item_qty_label.pack(pady=5)
         self._entry_item_qty_spin.pack(pady=5)
 
-        self._entry_confirm_btn.pack(pady=10)
+        self._entry_confirm_btn.pack(side=BOTTOM, pady=10)
 
         self._entry_frame.pack(fill=BOTH, expand=True, padx=10, pady=10)
 

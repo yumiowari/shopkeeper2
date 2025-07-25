@@ -18,12 +18,15 @@ class View(ttk.Toplevel):
         super().__init__()
         self.__controller = controller
         self.__parent_ctrl = parent_ctrl
+        self.__on_close = False
 
         self.title("Comanda")
         self.geometry("600x450")
         self.resizable(False, False)
 
         self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+        self.bind_all("<Escape>", lambda e: self.on_escape())
 
         # cria um frame para o conteúdo principal
         self._main_frame = ttk.Frame(self)
@@ -63,13 +66,13 @@ class View(ttk.Toplevel):
 
         # cria botões para registrar a venda
         self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text="Confirmar", command=self.__controller.commit_sale, bootstyle="success", width=10) # type: ignore
-        self.bind_all("<Control-f>", lambda e: self.__controller.commit_sale())
+        self.bind("<Control-f>", lambda e: self.__controller.commit_sale())
         self._cancel_sale_btn = ttk.Button(self.__left_bottom_frame, text="Cancelar", command=self.__controller.cancel_sale, bootstyle="danger", width=10) # type: ignore
-        self.bind_all("<Control-c>", lambda e: self.__controller.cancel_sale())
+        self.bind("<Control-c>", lambda e: self.__controller.cancel_sale())
         self._add_product_btn = ttk.Button(self.__right_bottom_frame, text="Adicionar produto", command=self.__controller.add_product, bootstyle="primary", width=20) # type: ignore
-        self.bind_all("<Control-a>", lambda e: self.__controller.add_product())
+        self.bind("<Control-a>", lambda e: self.__controller.add_product())
         self._remove_product_btn = ttk.Button(self.__right_bottom_frame, text="Remover produto", command=self.__controller.remove_product, bootstyle="warning", width=20) # type: ignore
-        self.bind_all("<Control-r>", lambda e: self.__controller.remove_product())
+        self.bind("<Control-r>", lambda e: self.__controller.remove_product())
 
         self._commit_sale_btn.pack(side=TOP, padx=5, pady=5)
         self._cancel_sale_btn.pack(side=TOP, padx=5, pady=5)
@@ -82,8 +85,18 @@ class View(ttk.Toplevel):
         tooltip(self._remove_product_btn, "(Ctrl+R) Remover um produto da comanda.")
 
     def on_close(self):
-        self.__parent_ctrl.sales_ctrl = None
-        self.destroy()
+        if not self.__on_close:
+            self.__on_close = True
+            
+            if msgbox.yesno("Deseja cancelar a comanda?", "Cancelar comanda") == "Sim":
+                self.__parent_ctrl.order_ctrl = None
+
+                self.__controller.on_close()
+            else:
+                self.__on_close = False
+
+    def on_escape(self):
+        self.on_close()
 
 class ProductView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
@@ -124,9 +137,9 @@ class ProductView(ttk.Toplevel):
         self._item_qty_spin_label = ttk.Label(self._top_frame, text="Quantidade:", font=("Arial", 10, "bold"))
 
         self._confirm_btn = ttk.Button(self.__bottom_frame, text="Adicionar", command=self.__controller.confirm_product, bootstyle="success", width=10) # type: ignore
-        self.bind_all("<Control-a>", lambda e: self.__controller.confirm_product())
+        self.bind("<Control-a>", lambda e: self.__controller.confirm_product())
         self._cancel_btn = ttk.Button(self.__bottom_frame, text="Cancelar", command=self.__controller.cancel_product, bootstyle="danger", width=10) # type: ignore
-        self.bind_all("<Control-c>", lambda e: self.__controller.cancel_product())
+        self.bind("<Control-c>", lambda e: self.__controller.cancel_product())
 
         self._item_name_combo_label.pack(pady=5)
         self._item_name_combo.pack(pady=5)
@@ -142,5 +155,5 @@ class ProductView(ttk.Toplevel):
         tooltip(self._cancel_btn, "(Ctrl+C) Cancelar a adição do produto à comanda.")
 
     def on_close(self):
-        self.__parent_ctrl.order_ctrl = None
+        self.__parent_ctrl.product_ctrl = None
         self.destroy()

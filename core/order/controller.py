@@ -12,6 +12,14 @@ class Controller:
 
         self.__product_ctrl = None
 
+    def on_close(self):
+        if self.__product_ctrl:
+            self.__product_ctrl.on_close()
+
+        self.__model.on_close()
+
+        self._view.destroy()
+
     def fetch_selected_items(self):
         return self.__model.fetch_selected_items()
     
@@ -36,6 +44,11 @@ class ProductController:
         self._view = ProductView(self, parent_ctrl=parent)
         self._view.transient(master)
         self._view.grab_set()
+
+    def on_close(self):
+        self.__model.on_close()
+
+        self._view.destroy()
 
     def fetch_item_names(self):
         return self.__model.fetch_item_names()

@@ -34,21 +34,21 @@ class View(ttk.Window):
         # adiciona um menu de estoque
         self.__stock_menu = ttk.Menu(self.__menu_bar, tearoff=0)
         self.__stock_menu.add_command(label="Inventário", accelerator="Ctrl+I", command=self.__controller.open_stock_window)
-        self.bind_all("<Control-i>", lambda e: self.__controller.open_stock_window())
+        self.bind("<Control-i>", lambda e: self.__controller.open_stock_window())
         self.__stock_menu.add_command(label="Entrada", accelerator="Ctrl+E", command=self.__controller.open_stock_entry_window)
-        self.bind_all("<Control-e>", lambda e: self.__controller.open_stock_entry_window())
+        self.bind("<Control-e>", lambda e: self.__controller.open_stock_entry_window())
         self.__stock_menu.add_separator()
         self.__stock_menu.add_command(label="Relatório", accelerator="Ctrl+Shift+I", command=self.__controller.make_stock_report)
-        self.bind_all("<Control-Shift-i>", lambda e: self.__controller.make_stock_report())
+        self.bind("<Control-Shift-i>", lambda e: self.__controller.make_stock_report())
         self.__menu_bar.add_cascade(label="Estoque", menu=self.__stock_menu)
 
         # adiciona um menu de venda
         self.__sales_menu = ttk.Menu(self.__menu_bar, tearoff=0)
         self.__sales_menu.add_command(label="Vender", accelerator="Ctrl+V", command=self.__controller.open_order_window)
-        self.bind_all("<Control-v>", lambda e: self.__controller.open_order_window())
+        self.bind("<Control-v>", lambda e: self.__controller.open_order_window())
         self.__sales_menu.add_separator()
         self.__sales_menu.add_command(label="Relatório", accelerator="Ctrl+Shift+V", command=self.__controller.make_sales_report)
-        self.bind_all("<Control-Shift-v>", lambda e: self.__controller.make_sales_report())
+        self.bind("<Control-Shift-v>", lambda e: self.__controller.make_sales_report())
         self.__menu_bar.add_cascade(label="Caixa", menu=self.__sales_menu)
 
         # adiciona um menu de ajuda
