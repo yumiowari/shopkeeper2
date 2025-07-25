@@ -75,7 +75,7 @@ class View(ttk.Toplevel):
         self._create_item_qty_spin = ttk.Spinbox(self._create_frame, from_=0, to=999, width=10, validate="focus", validatecommand=(number_validator, '%P'))
         self._create_item_qty_label = ttk.Label(self._create_frame, text="Quantidade inicial:", font=("Arial", 10))
 
-        self._create_confirm_btn = ttk.Button(self._create_frame, text="Cadastrar", command=self.create_item)
+        self._create_confirm_btn = ttk.Button(self._create_frame, text="Cadastrar", command=self.create_item, bootstyle="success")
 
         self._create_label.pack(pady=10)
         self._create_item_name_label.pack(pady=5)
@@ -104,7 +104,7 @@ class View(ttk.Toplevel):
         self._confer_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._confer_item_name_combo_label = ttk.Label(self._confer_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
         
-        self._confer_confirm_btn = ttk.Button(self._confer_frame, text="Consultar", command=self.confer_item)
+        self._confer_confirm_btn = ttk.Button(self._confer_frame, text="Consultar", command=self.confer_item, bootstyle="info")
 
         self._confer_item_label.pack(pady=10)
         self._confer_item_name_combo_label.pack(pady=5)
@@ -130,7 +130,7 @@ class View(ttk.Toplevel):
         self._update_item_qty_spin = ttk.Spinbox(self._update_frame, from_=0, to=999, width=10, validate="focus", validatecommand=(number_validator, '%P'))
         self._update_item_qty_label = ttk.Label(self._update_frame, text="Nova quantidade:", font=("Arial", 10))
 
-        self._update_confirm_btn = ttk.Button(self._update_frame, text="Atualizar", command=self.update_item)
+        self._update_confirm_btn = ttk.Button(self._update_frame, text="Atualizar", command=self.update_item, bootstyle="warning")
 
         self._update_label.pack(pady=10)
         self._update_item_name_combo_label.pack(pady=5)
@@ -159,7 +159,7 @@ class View(ttk.Toplevel):
         self._delete_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._delete_item_name_combo_label = ttk.Label(self._delete_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
 
-        self._delete_confirm_btn = ttk.Button(self._delete_frame, text="Remover", command=self.delete_item)
+        self._delete_confirm_btn = ttk.Button(self._delete_frame, text="Remover", command=self.delete_item, bootstyle="danger")
 
         self._delete_item_label.pack(pady=10)
         self._delete_item_name_combo_label.pack(pady=5)
