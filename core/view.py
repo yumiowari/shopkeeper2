@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
+from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 
 class View(ttk.Window):
@@ -44,8 +44,8 @@ class View(ttk.Window):
 
         # adiciona um menu de venda
         self.__sales_menu = ttk.Menu(self.__menu_bar, tearoff=0)
-        self.__sales_menu.add_command(label="Vender", accelerator="Ctrl+V", command=self.__controller.open_sales_window)
-        self.bind_all("<Control-v>", lambda e: self.__controller.open_sales_window())
+        self.__sales_menu.add_command(label="Vender", accelerator="Ctrl+V", command=self.__controller.open_order_window)
+        self.bind_all("<Control-v>", lambda e: self.__controller.open_order_window())
         self.__sales_menu.add_separator()
         self.__sales_menu.add_command(label="Relatório", accelerator="Ctrl+Shift+V", command=self.__controller.make_sales_report)
         self.bind_all("<Control-Shift-v>", lambda e: self.__controller.make_sales_report())

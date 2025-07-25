@@ -8,5 +8,9 @@ class Model:
     def fetch_selected_items(self):
         pass
 
+class ProductModel:
+    def __init__(self):
+        pass
+
     def fetch_item_names(self):
         pass

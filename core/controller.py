@@ -2,7 +2,8 @@ from core.model import Model
 from core.view import View
 from core.stock.controller import Controller as StockCtrl
 from core.stock.controller import EntryController as StockEntryCtrl
-from core.sales.controller import Controller as SalesCtrl
+from core.order.controller import Controller as OrderCtrl
+from core.order.controller import ProductController as OrderProductCtrl
 
 class Controller:
     def __init__(self):
@@ -12,7 +13,7 @@ class Controller:
         # instâncias das janelas
         self.__stock_ctrl = None
         self.__stock_entry_ctrl = None
-        self.__sales_ctrl = None
+        self.__order_ctrl = None
 
     def bootstrap(self):
         self.__view.mainloop()
@@ -35,11 +36,11 @@ class Controller:
     def make_stock_report(self):
         pass
 
-    def open_sales_window(self):
-        if self.__sales_ctrl is None or not self.__sales_ctrl._view.winfo_exists():
-            self.__sales_ctrl = SalesCtrl(master=self.__view, parent=self)
+    def open_order_window(self):
+        if self.__order_ctrl is None or not self.__order_ctrl._view.winfo_exists():
+            self.__order_ctrl = OrderCtrl(master=self.__view, parent=self)
         else: # se já existe, traz para frente
-            self.__sales_ctrl._view.lift()
+            self.__order_ctrl._view.lift()
 
     def make_sales_report(self):
         pass

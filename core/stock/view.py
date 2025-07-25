@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
+from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tooltip
 import re
@@ -72,10 +72,10 @@ class View(ttk.Toplevel):
         self._create_item_cost_label = ttk.Label(self._create_frame, text="Custo do item:", font=("Arial", 10, "bold"))
         self._create_item_price_entry = ttk.Entry(self._create_frame, width=10, validate="focus", validatecommand=(money_validator, '%P'))
         self._create_item_price_label = ttk.Label(self._create_frame, text="Preço de venda:", font=("Arial", 10, "bold"))
-        self._create_item_qty_spin = ttk.Spinbox(self._create_frame, from_=0, to=999, width=10, validate="focus", validatecommand=(number_validator, '%P'))
+        self._create_item_qty_spin = ttk.Spinbox(self._create_frame, from_=0, to=999, width=5, validate="focus", validatecommand=(number_validator, '%P'))
         self._create_item_qty_label = ttk.Label(self._create_frame, text="Quantidade inicial:", font=("Arial", 10))
 
-        self._create_confirm_btn = ttk.Button(self._create_frame, text="Cadastrar", command=self.create_item, bootstyle="success")
+        self._create_confirm_btn = ttk.Button(self._create_frame, text="Cadastrar", command=self.create_item, bootstyle="success", width=10) # type: ignore
 
         self._create_label.pack(pady=10)
         self._create_item_name_label.pack(pady=5)
@@ -104,7 +104,7 @@ class View(ttk.Toplevel):
         self._confer_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._confer_item_name_combo_label = ttk.Label(self._confer_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
         
-        self._confer_confirm_btn = ttk.Button(self._confer_frame, text="Consultar", command=self.confer_item, bootstyle="info")
+        self._confer_confirm_btn = ttk.Button(self._confer_frame, text="Consultar", command=self.confer_item, bootstyle="info", width=10) # type: ignore
 
         self._confer_item_label.pack(pady=10)
         self._confer_item_name_combo_label.pack(pady=5)
@@ -127,10 +127,10 @@ class View(ttk.Toplevel):
         self._update_item_cost_label = ttk.Label(self._update_frame, text="Novo custo do item:", font=("Arial", 10))
         self._update_item_price_entry = ttk.Entry(self._update_frame, width=10, validate="focus", validatecommand=(money_validator, '%P'))
         self._update_item_price_label = ttk.Label(self._update_frame, text="Novo preço de venda:", font=("Arial", 10))
-        self._update_item_qty_spin = ttk.Spinbox(self._update_frame, from_=0, to=999, width=10, validate="focus", validatecommand=(number_validator, '%P'))
+        self._update_item_qty_spin = ttk.Spinbox(self._update_frame, from_=0, to=999, width=5, validate="focus", validatecommand=(number_validator, '%P'))
         self._update_item_qty_label = ttk.Label(self._update_frame, text="Nova quantidade:", font=("Arial", 10))
 
-        self._update_confirm_btn = ttk.Button(self._update_frame, text="Atualizar", command=self.update_item, bootstyle="warning")
+        self._update_confirm_btn = ttk.Button(self._update_frame, text="Atualizar", command=self.update_item, bootstyle="warning", width=10) # type: ignore
 
         self._update_label.pack(pady=10)
         self._update_item_name_combo_label.pack(pady=5)
@@ -159,7 +159,7 @@ class View(ttk.Toplevel):
         self._delete_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._delete_item_name_combo_label = ttk.Label(self._delete_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
 
-        self._delete_confirm_btn = ttk.Button(self._delete_frame, text="Remover", command=self.delete_item, bootstyle="danger")
+        self._delete_confirm_btn = ttk.Button(self._delete_frame, text="Remover", command=self.delete_item, bootstyle="danger", width=10) # type: ignore
 
         self._delete_item_label.pack(pady=10)
         self._delete_item_name_combo_label.pack(pady=5)
@@ -362,10 +362,10 @@ class EntryView(ttk.Toplevel):
         self._entry_item_name_combo = ttk.Combobox(self._entry_frame, width=20, validate="focus", validatecommand=(alpha_validator, '%P'))
         self._entry_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._entry_item_name_combo_label = ttk.Label(self._entry_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
-        self._entry_item_qty_spin = ttk.Spinbox(self._entry_frame, from_=-99, to=99, width=10, validate="focus", validatecommand=(number_validator, '%P'))
+        self._entry_item_qty_spin = ttk.Spinbox(self._entry_frame, from_=-99, to=99, width=5, validate="focus", validatecommand=(number_validator, '%P'))
         self._entry_item_qty_label = ttk.Label(self._entry_frame, text="Nova quantidade:", font=("Arial", 10))
 
-        self._entry_confirm_btn = ttk.Button(self._entry_frame, text="Registrar", command=self.entry_item)
+        self._entry_confirm_btn = ttk.Button(self._entry_frame, text="Registrar", command=self.entry_item, bootstyle="primary", width=10) # type: ignore
 
         self._entry_label.pack(pady=10)
         self._entry_item_name_combo_label.pack(pady=5)
