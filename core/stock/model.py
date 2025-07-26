@@ -1,5 +1,4 @@
-import pickle as pkl
-import os
+from core.components.SGBD import *
 
 class Model:
     def __init__(self):
@@ -11,20 +10,6 @@ class Model:
         }
 
         self.__items = []
-
-    def fetch_stock(self):
-        if os.path.isfile('data/stock.pkl'):
-            with open('data/stock.pkl', 'rb') as file:
-                try:
-                    self.__items = pkl.load(file)
-                except EOFError:
-                    self.__items = []
-        else:
-            self.__items = []
-
-    def update_stock(self):
-        with open('data/stock.pkl', 'wb') as file:
-            pkl.dump(self.__items, file)
 
     # cadastra o produto no estoque
     #
@@ -40,7 +25,7 @@ class Model:
         else:
             self.__item['qty'] = int(item_qty)
 
-        self.fetch_stock()
+        self.__items = fetch_stock()
 
         # verifica se o item já existe com mesmo nome
         if any(item['name'] == item_name for item in self.__items):
@@ -48,13 +33,13 @@ class Model:
 
         self.__items.append(self.__item.copy())
 
-        self.update_stock()
+        update_stock(self.__items)
 
         return 0 # sucesso
     #
 
     def fetch_item_names(self):
-        self.fetch_stock()
+        self.__items = fetch_stock()
 
         if not self.__items:
             return []
@@ -63,7 +48,7 @@ class Model:
 
     # consulta o produto no estoque
     def confer_item(self, item_name):
-        self.fetch_stock()
+        self.__items = fetch_stock()
 
         if not self.__items:
             return None
@@ -88,7 +73,7 @@ class Model:
         if not item_qty:
             item_qty = ''
 
-        self.fetch_stock()
+        self.__items = fetch_stock()
 
         for item in self.__items:
             if item['name'] == item_name:
@@ -102,7 +87,7 @@ class Model:
                     if item_qty != '':
                         item['qty'] = int(item_qty)
 
-                self.update_stock()
+                update_stock(self.__items)
 
                 return 0
             
@@ -115,12 +100,12 @@ class Model:
     # 0 - sucesso
     # 1 - item não encontrado
     def delete_item(self, item_name):
-        self.fetch_stock()
+        self.__items = fetch_stock()
 
         for item in self.__items:
             if item['name'] == item_name:
                 self.__items.remove(item)
-                self.update_stock()
+                update_stock(self.__items)
 
                 return 0
 
@@ -138,22 +123,8 @@ class EntryModel:
 
         self.__items = []
 
-    def fetch_stock(self):
-        if os.path.isfile('data/stock.pkl'):
-            with open('data/stock.pkl', 'rb') as file:
-                try:
-                    self.__items = pkl.load(file)
-                except EOFError:
-                    self.__items = []
-        else:
-            self.__items = []
-
-    def update_stock(self):
-        with open('data/stock.pkl', 'wb') as file:
-            pkl.dump(self.__items, file)
-
     def fetch_item_names(self):
-        self.fetch_stock()
+        self.__items = fetch_stock()
 
         if not self.__items:
             return []
@@ -166,7 +137,7 @@ class EntryModel:
     # 0 - sucesso
     # 1 - item não encontrado
     def entry_item(self, item_name, entry_qty):
-        self.fetch_stock()
+        self.__items = fetch_stock()
 
         for item in self.__items:
             if item['name'] == item_name:
@@ -176,7 +147,7 @@ class EntryModel:
 
                 item['qty'] = curr_qty
 
-                self.update_stock()
+                update_stock(self.__items)
 
                 return 0
 

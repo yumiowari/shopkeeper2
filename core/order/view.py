@@ -67,8 +67,8 @@ class View(ttk.Toplevel):
         # cria botões para registrar a venda
         self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text="Confirmar", command=self.__controller.commit_sale, bootstyle="success", width=10) # type: ignore
         self.bind("<Control-f>", lambda e: self.__controller.commit_sale())
-        self._cancel_sale_btn = ttk.Button(self.__left_bottom_frame, text="Cancelar", command=self.__controller.cancel_sale, bootstyle="danger", width=10) # type: ignore
-        self.bind("<Control-c>", lambda e: self.__controller.cancel_sale())
+        self._cancel_sale_btn = ttk.Button(self.__left_bottom_frame, text="Cancelar", command=self.cancel_sale, bootstyle="danger", width=10) # type: ignore
+        self.bind("<Control-c>", lambda e: self.cancel_sale())
         self._add_product_btn = ttk.Button(self.__right_bottom_frame, text="Adicionar produto", command=self.__controller.add_product, bootstyle="primary", width=20) # type: ignore
         self.bind("<Control-a>", lambda e: self.__controller.add_product())
         self._remove_product_btn = ttk.Button(self.__right_bottom_frame, text="Remover produto", command=self.__controller.remove_product, bootstyle="warning", width=20) # type: ignore
@@ -96,6 +96,9 @@ class View(ttk.Toplevel):
                 self.__on_close = False
 
     def on_escape(self):
+        self.on_close()
+
+    def cancel_sale(self):
         self.on_close()
 
 class ProductView(ttk.Toplevel):
@@ -136,10 +139,10 @@ class ProductView(ttk.Toplevel):
         self._item_qty_spin = ttk.Spinbox(self._top_frame, from_=1, to=999, width=5, validate="focus", validatecommand=(number_validator, '%P'))
         self._item_qty_spin_label = ttk.Label(self._top_frame, text="Quantidade:", font=("Arial", 10, "bold"))
 
-        self._confirm_btn = ttk.Button(self.__bottom_frame, text="Adicionar", command=self.__controller.confirm_product, bootstyle="success", width=10) # type: ignore
-        self.bind("<Control-a>", lambda e: self.__controller.confirm_product())
-        self._cancel_btn = ttk.Button(self.__bottom_frame, text="Cancelar", command=self.__controller.cancel_product, bootstyle="danger", width=10) # type: ignore
-        self.bind("<Control-c>", lambda e: self.__controller.cancel_product())
+        self._confirm_btn = ttk.Button(self.__bottom_frame, text="Adicionar", command=self.confirm_product, bootstyle="success", width=10) # type: ignore
+        self.bind("<Control-a>", lambda e: self.confirm_product())
+        self._cancel_btn = ttk.Button(self.__bottom_frame, text="Cancelar", command=self.cancel_product, bootstyle="danger", width=10) # type: ignore
+        self.bind("<Control-c>", lambda e: self.cancel_product())
 
         self._item_name_combo_label.pack(pady=5)
         self._item_name_combo.pack(pady=5)
@@ -157,3 +160,43 @@ class ProductView(ttk.Toplevel):
     def on_close(self):
         self.__parent_ctrl.product_ctrl = None
         self.destroy()
+
+    def confirm_product(self):
+        item_name = self._item_name_combo.get()
+        item_qty = self._item_qty_spin.get()
+
+        flag = True
+
+        # valida os campos de entrada
+        if not item_name or not item_qty:
+            msgbox.show_error("Todos os campos obrigatórios devem ser preenchidos.", "Erro")
+        
+        if flag and not validate_alpha(item_name):
+            msgbox.show_error("O nome do item deve conter apenas letras e ter no máximo 30 caracteres.", "Erro")
+
+            flag = False
+        
+        if flag and not validate_number(item_qty):
+            msgbox.show_error("A quantidade deve ser um número inteiro entre 0 e 999.", "Erro")
+
+            flag = False
+
+        if flag:
+            res = self.__controller.confirm_product()
+
+            if res == 0:
+                msgbox.show_info("Item adicionado na comanda.", "Sucesso")
+
+                # atualiza a combobox de itens selecionados na janela mãe (revisar /!\)
+                self.__parent_ctrl._view._selected_items_combo.config(values=self.__parent_ctrl.fetch_selected_items())
+
+                self.on_close()
+            elif res == 1:
+                msgbox.show_error("O item não existe no banco de dados.")
+
+                flag = False
+        if not flag:
+            msgbox.show_error("A seleção do produto falhou.", "Erro")
+
+    def cancel_product(self):
+        self.on_close()

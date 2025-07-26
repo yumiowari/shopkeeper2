@@ -26,9 +26,6 @@ class Controller:
     def commit_sale(self):
         pass
 
-    def cancel_sale(self):
-        pass
-
     def add_product(self):
         if self.__product_ctrl is None or not self.__product_ctrl._view.winfo_exists():
             self.__product_ctrl = ProductController(master=self._view, parent=self)
@@ -54,7 +51,7 @@ class ProductController:
         return self.__model.fetch_item_names()
     
     def confirm_product(self):
-        pass
+        item_name = self._view._item_name_combo.get()
+        item_qty = self._view._item_qty_spin.get()
 
-    def cancel_product(self):
-        pass
+        return self.__model.confirm_product(item_name, item_qty)
