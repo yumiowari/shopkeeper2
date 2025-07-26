@@ -66,8 +66,8 @@ class View(ttk.Toplevel):
         tooltip(self._selected_items_combo, "Lista dos itens selecionados na comanda.")
 
         # cria botões para registrar a venda
-        self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text="Confirmar", command=self.__controller.commit_sale, bootstyle="success", width=10) # type: ignore
-        self.bind("<Control-f>", lambda e: self.__controller.commit_sale())
+        self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text="Confirmar", command=self.commit_sale, bootstyle="success", width=10) # type: ignore
+        self.bind("<Control-f>", lambda e: self.commit_sale())
         self._cancel_sale_btn = ttk.Button(self.__left_bottom_frame, text="Cancelar", command=self.cancel_sale, bootstyle="danger", width=10) # type: ignore
         self.bind("<Control-c>", lambda e: self.cancel_sale())
         self._add_product_btn = ttk.Button(self.__right_bottom_frame, text="Adicionar produto", command=self.__controller.add_product, bootstyle="primary", width=20) # type: ignore
@@ -102,8 +102,27 @@ class View(ttk.Toplevel):
     def cancel_sale(self):
         self.on_close()
 
+    def commit_sale(self):
+        res = self.__controller.commit_sale()
+
+        if res > 0.0:
+            msgbox.show_info(f"Comanda deferida no valor de R${res}", "Sucesso")
+
+            self.__parent_ctrl.order_ctrl = None
+
+            self.__controller.on_close()
+        elif res < 0.0:
+            msgbox.show_error("Não há estoque disponível para finalizar a comanda.", "Erro")
+
+            msgbox.show_warning("A comanda permanece indeferida.", "Aviso")
+        elif res == 0.0:
+            msgbox.show_warning("A comanda está vazia.", "Aviso")
+
     def remove_product(self):
-        item_name = self._selected_items_combo.get().split(")", 1)[1].strip()
+        item_name = ''
+
+        if self._selected_items_combo.get():
+            item_name = self._selected_items_combo.get().split(")", 1)[1].strip()
 
         if not item_name:
             msgbox.show_error("Um produto precisa ser selecionado.", "Erro")

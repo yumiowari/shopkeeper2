@@ -36,3 +36,15 @@ def delete_curr_sale():
     if os.path.isfile('data/curr_sale.pkl'):
         os.remove('data/curr_sale.pkl')
 ###
+
+### COMMITED SALE
+def store_comm_sale(comm_sale):
+    path = 'data/' + comm_sale['timestamp']
+
+    os.makedirs(path, exist_ok=True)
+
+    path += '/sale.pkl'
+
+    with open(path, 'wb') as file:
+        pkl.dump(comm_sale, file)
+###

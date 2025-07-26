@@ -24,7 +24,7 @@ class Controller:
         return self.__model.fetch_selected_items()
     
     def commit_sale(self):
-        pass
+        return self.__model.commit_sale()
 
     def add_product(self):
         if self.__product_ctrl is None or not self.__product_ctrl._view.winfo_exists():
