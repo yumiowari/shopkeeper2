@@ -19,6 +19,7 @@ class View(ttk.Toplevel):
         self.__controller = controller
         self.__parent_ctrl = parent_ctrl
         self.__on_close = False
+        self.__on_item_removal = False
 
         self.title("Comanda")
         self.geometry("600x450")
@@ -71,8 +72,8 @@ class View(ttk.Toplevel):
         self.bind("<Control-c>", lambda e: self.cancel_sale())
         self._add_product_btn = ttk.Button(self.__right_bottom_frame, text="Adicionar produto", command=self.__controller.add_product, bootstyle="primary", width=20) # type: ignore
         self.bind("<Control-a>", lambda e: self.__controller.add_product())
-        self._remove_product_btn = ttk.Button(self.__right_bottom_frame, text="Remover produto", command=self.__controller.remove_product, bootstyle="warning", width=20) # type: ignore
-        self.bind("<Control-r>", lambda e: self.__controller.remove_product())
+        self._remove_product_btn = ttk.Button(self.__right_bottom_frame, text="Remover produto", command=self.remove_product, bootstyle="warning", width=20) # type: ignore
+        self.bind("<Control-r>", lambda e: self.remove_product())
 
         self._commit_sale_btn.pack(side=TOP, padx=5, pady=5)
         self._cancel_sale_btn.pack(side=TOP, padx=5, pady=5)
@@ -100,6 +101,30 @@ class View(ttk.Toplevel):
 
     def cancel_sale(self):
         self.on_close()
+
+    def remove_product(self):
+        item_name = self._selected_items_combo.get().split(")", 1)[1].strip()
+
+        if not item_name:
+            msgbox.show_error("Um produto precisa ser selecionado.", "Erro")
+        else:
+            if not self.__on_item_removal:
+                self.__on_item_removal = True
+
+                if msgbox.yesno("Deseja remover o item da comanda?", "Remoção de item") == "Sim":
+                    res = self.__controller.remove_product()
+
+                    if res == 0:
+                        msgbox.show_info("O produto foi removido da comanda.", "Sucesso")
+
+                        self._selected_items_combo.config(values=self.__controller.fetch_selected_items())
+                        self._selected_items_combo.set("")
+                    else:
+                        msgbox.show_error("O produto não existe na comanda. A remoção do produto falhou.", "Erro")
+                
+                    self.__on_item_removal = False
+                else:
+                    self.__on_item_removal = False
 
 class ProductView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
@@ -171,6 +196,8 @@ class ProductView(ttk.Toplevel):
         if not item_name or not item_qty:
             msgbox.show_error("Todos os campos obrigatórios devem ser preenchidos.", "Erro")
         
+            flag = False
+
         if flag and not validate_alpha(item_name):
             msgbox.show_error("O nome do item deve conter apenas letras e ter no máximo 30 caracteres.", "Erro")
 

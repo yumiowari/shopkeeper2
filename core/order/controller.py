@@ -33,7 +33,9 @@ class Controller:
             self.__product_ctrl._view.lift()
 
     def remove_product(self):
-        pass
+        item_name = self._view._selected_items_combo.get().split(")", 1)[1].strip()
+
+        return self.__model.remove_product(item_name)
 
 class ProductController:
     def __init__(self, master=None, parent=None):

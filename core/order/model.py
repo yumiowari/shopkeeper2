@@ -26,10 +26,29 @@ class Model:
 
         products = []
 
-        for product in self.__curr_sale:
-            products.append(product['name'] + ' : ' + product['qty'])
+        for sale in self.__curr_sale:
+            product = "(" + sale['qty'] + ") " + sale['name']
+            products.append(product)
 
         return products
+    
+    # remove o produto selecionado
+    #
+    # retorna...
+    # 0 - sucesso
+    # 1 - item não encontrado
+    def remove_product(self, item_name):
+        self.__curr_sale = fetch_curr_sale()
+
+        for product in self.__curr_sale:
+            if product['name'] == item_name:
+                self.__curr_sale.remove(product)
+
+                update_curr_sale(self.__curr_sale)
+
+                return 0
+            
+        return 1
 
 class ProductModel:
     def __init__(self):
@@ -75,7 +94,20 @@ class ProductModel:
 
                 self.__curr_sale = fetch_curr_sale()
 
-                self.__curr_sale.append(self.__selected_item)
+                flag = False
+
+                for sale in self.__curr_sale:
+                    if sale['name'] == item_name:
+                        self.__curr_sale.remove(sale)
+
+                        sale['qty'] += item_qty
+
+                        self.__curr_sale.append(sale)
+
+                        flag = True
+
+                if not flag:
+                    self.__curr_sale.append(self.__selected_item)
 
                 update_curr_sale(self.__curr_sale)
                 
