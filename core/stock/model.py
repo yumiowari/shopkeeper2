@@ -9,7 +9,7 @@ class Model:
             'qty': 0
         }
 
-        self.__items = []
+        self.__stock = []
 
     # cadastra o produto no estoque
     #
@@ -25,35 +25,35 @@ class Model:
         else:
             self.__item['qty'] = int(item_qty)
 
-        self.__items = fetch_stock()
+        self.__stock = fetch_stock()
 
         # verifica se o item já existe com mesmo nome
-        if any(item['name'] == item_name for item in self.__items):
+        if any(item['name'] == item_name for item in self.__stock):
             return 1 # item repetido
 
-        self.__items.append(self.__item.copy())
+        self.__stock.append(self.__item.copy())
 
-        update_stock(self.__items)
+        update_stock(self.__stock)
 
         return 0 # sucesso
     #
 
     def fetch_item_names(self):
-        self.__items = fetch_stock()
+        self.__stock = fetch_stock()
 
-        if not self.__items:
+        if not self.__stock:
             return []
         else:
-            return [item['name'] for item in self.__items]
+            return [item['name'] for item in self.__stock]
 
     # consulta o produto no estoque
     def confer_item(self, item_name):
-        self.__items = fetch_stock()
+        self.__stock = fetch_stock()
 
-        if not self.__items:
+        if not self.__stock:
             return None
         else:
-            for item in self.__items:
+            for item in self.__stock:
                 if item['name'] == item_name:
                     return item
     #
@@ -73,9 +73,9 @@ class Model:
         if not item_qty:
             item_qty = ''
 
-        self.__items = fetch_stock()
+        self.__stock = fetch_stock()
 
-        for item in self.__items:
+        for item in self.__stock:
             if item['name'] == item_name:
                 if float(item_cost) == item['cost'] and float(item_price) == item['price'] and int(item_qty) == item['qty']:
                     return 1 # sem alterações
@@ -87,7 +87,7 @@ class Model:
                     if item_qty != '':
                         item['qty'] = int(item_qty)
 
-                update_stock(self.__items)
+                update_stock(self.__stock)
 
                 return 0
             
@@ -100,12 +100,12 @@ class Model:
     # 0 - sucesso
     # 1 - item não encontrado
     def delete_item(self, item_name):
-        self.__items = fetch_stock()
+        self.__stock = fetch_stock()
 
-        for item in self.__items:
+        for item in self.__stock:
             if item['name'] == item_name:
-                self.__items.remove(item)
-                update_stock(self.__items)
+                self.__stock.remove(item)
+                update_stock(self.__stock)
 
                 return 0
 
@@ -121,15 +121,15 @@ class EntryModel:
             'qty': 0
         }
 
-        self.__items = []
+        self.__stock = []
 
     def fetch_item_names(self):
-        self.__items = fetch_stock()
+        self.__stock = fetch_stock()
 
-        if not self.__items:
+        if not self.__stock:
             return []
         else:
-            return [item['name'] for item in self.__items]
+            return [item['name'] for item in self.__stock]
         
     # registra a entrada/saída do produto no estoque
     #
@@ -137,17 +137,15 @@ class EntryModel:
     # 0 - sucesso
     # 1 - item não encontrado
     def entry_item(self, item_name, entry_qty):
-        self.__items = fetch_stock()
+        self.__stock = fetch_stock()
 
-        for item in self.__items:
+        for item in self.__stock:
             if item['name'] == item_name:
                 curr_qty = item['qty']
-
                 curr_qty += int(entry_qty)
-
                 item['qty'] = curr_qty
 
-                update_stock(self.__items)
+                update_stock(self.__stock)
 
                 return 0
 

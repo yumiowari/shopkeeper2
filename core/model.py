@@ -1,3 +1,6 @@
 class Model:
     def __init__(self):
-        pass
+        self.__account = {
+            'username': '',
+            'password': ''
+        }
