@@ -3,6 +3,7 @@ import csv
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from datetime import datetime
 
 class Model:
     def __init__(self):
@@ -40,13 +41,15 @@ class Model:
 
             table.append(row)
 
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
         # persiste o arquivo CSV
-        with open('data/stock.csv', 'w', newline='', encoding='utf-8') as file:
+        with open('data/stock ' + timestamp + '.csv', 'w', newline='', encoding='utf-8') as file:
             writer = csv.writer(file)
             writer.writerows(table)
 
         # cria o documento PDF
-        pdf = SimpleDocTemplate('data/stock.pdf', pagesize=A4, title='Relatório do Estoque')
+        pdf = SimpleDocTemplate('data/stock ' + timestamp + '.pdf', pagesize=A4, title='Relatório do Estoque: ' + timestamp)
         elements = []
 
         # converte a lista para um flowable Table do ReportLab
