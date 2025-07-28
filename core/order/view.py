@@ -59,6 +59,7 @@ class View(ttk.Toplevel):
         self._selected_items_combo = ttk.Combobox(self._top_frame, state="readonly")
         self._selected_items_combo.config(values=self.__controller.fetch_selected_items())
         self._selected_items_combo_label = ttk.Label(self._top_frame, text="São os itens na comanda:")
+        self._selected_items_combo.focus_set() # trás foco ao widget
 
         self._selected_items_combo_label.pack(padx=5, pady=5)
         self._selected_items_combo.pack(padx=5, pady=5)
@@ -180,6 +181,7 @@ class ProductView(ttk.Toplevel):
         self._item_name_combo = ttk.Combobox(self._top_frame, width=20, validate="focus", validatecommand=(alpha_validator, '%P'))
         self._item_name_combo.config(values=self.__controller.fetch_item_names())
         self._item_name_combo_label = ttk.Label(self._top_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
+        self._item_name_combo.focus_set() # trás foco ao widget
         self._item_qty_spin = ttk.Spinbox(self._top_frame, from_=1, to=999, width=5, validate="focus", validatecommand=(number_validator, '%P'))
         self._item_qty_spin_label = ttk.Label(self._top_frame, text="Quantidade:", font=("Arial", 10, "bold"))
 

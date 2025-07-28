@@ -68,6 +68,7 @@ class View(ttk.Toplevel):
         
         self._create_item_name_entry = ttk.Entry(self._create_frame, width=20, validate="focus", validatecommand=(alpha_validator, '%P'))
         self._create_item_name_label = ttk.Label(self._create_frame, text="Nome do item:", font=("Arial", 10, "bold"))
+        self._create_item_name_entry.focus_set() # trás foco ao widget
         self._create_item_cost_entry = ttk.Entry(self._create_frame, width=10, validate="focus", validatecommand=(money_validator, '%P'))
         self._create_item_cost_label = ttk.Label(self._create_frame, text="Custo do item:", font=("Arial", 10, "bold"))
         self._create_item_price_entry = ttk.Entry(self._create_frame, width=10, validate="focus", validatecommand=(money_validator, '%P'))
@@ -103,7 +104,8 @@ class View(ttk.Toplevel):
         self._confer_item_name_combo = ttk.Combobox(self._confer_frame, width=20, validate="focus", validatecommand=(alpha_validator, '%P'))
         self._confer_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._confer_item_name_combo_label = ttk.Label(self._confer_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
-        
+        self._confer_item_name_combo.focus_set() # trás foco ao widget
+
         self._confer_confirm_btn = ttk.Button(self._confer_frame, text="Consultar", command=self.confer_item, bootstyle="info", width=10) # type: ignore
 
         self._confer_item_label.pack(pady=10)
@@ -123,6 +125,7 @@ class View(ttk.Toplevel):
         self._update_item_name_combo = ttk.Combobox(self._update_frame, width=20, validate="focus", validatecommand=(alpha_validator, '%P'))
         self._update_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._update_item_name_combo_label = ttk.Label(self._update_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
+        self._update_item_name_combo.focus_set() # trás foco ao widget
         self._update_item_cost_entry = ttk.Entry(self._update_frame, width=10, validate="focus", validatecommand=(money_validator, '%P'))
         self._update_item_cost_label = ttk.Label(self._update_frame, text="Novo custo do item:", font=("Arial", 10))
         self._update_item_price_entry = ttk.Entry(self._update_frame, width=10, validate="focus", validatecommand=(money_validator, '%P'))
@@ -158,6 +161,7 @@ class View(ttk.Toplevel):
         self._delete_item_name_combo = ttk.Combobox(self._delete_frame, width=20, validate="focus", validatecommand=(alpha_validator, '%P'))
         self._delete_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._delete_item_name_combo_label = ttk.Label(self._delete_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
+        self._delete_item_name_combo.focus_set() # trás foco ao widget
 
         self._delete_confirm_btn = ttk.Button(self._delete_frame, text="Remover", command=self.delete_item, bootstyle="danger", width=10) # type: ignore
 
@@ -176,6 +180,9 @@ class View(ttk.Toplevel):
         self._notebook.add(self._delete_frame, text="Remover")
 
         self._notebook.pack(fill=BOTH, expand=True, padx=10, pady=10)
+
+        # trás foco ao widget de entrada na aba "create" ao abrir a janela
+        self.after(200, lambda: self._create_item_name_entry.focus_set())
 
     def on_close(self):
         self.__parent_ctrl.stock_ctrl = None
@@ -362,6 +369,7 @@ class EntryView(ttk.Toplevel):
         self._entry_item_name_combo = ttk.Combobox(self._entry_frame, width=20, validate="focus", validatecommand=(alpha_validator, '%P'))
         self._entry_item_name_combo.config(values=self.__controller.fetch_item_names())
         self._entry_item_name_combo_label = ttk.Label(self._entry_frame, text="Selecione o item:", font=("Arial", 10, "bold"))
+        self._entry_item_name_combo.focus_set() # trás foco ao widget
         self._entry_item_qty_spin = ttk.Spinbox(self._entry_frame, from_=-99, to=99, width=5, validate="focus", validatecommand=(number_validator, '%P'))
         self._entry_item_qty_label = ttk.Label(self._entry_frame, text="Nova quantidade:", font=("Arial", 10))
 
