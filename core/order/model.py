@@ -37,7 +37,7 @@ class Model:
         products = []
 
         for sale in self.__curr_order:
-            product = "(" + str(sale['qty']) + ") " + sale['name']
+            product = '(' + str(sale['qty']) + ') ' + sale['name']
             products.append(product)
 
         return products
@@ -82,7 +82,7 @@ class Model:
 
                     break # garante que o produto não será processado mais de uma vez
 
-        self.__comm_order['timestamp'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.__comm_order['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         store_comm_order(self.__comm_order)
 

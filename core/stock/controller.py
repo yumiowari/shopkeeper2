@@ -15,8 +15,8 @@ class Controller:
 
     def create_item(self):
         item_name = self._view._create_item_name_entry.get()
-        item_cost = self._view._create_item_cost_entry.get().replace(",", ".")
-        item_price = self._view._create_item_price_entry.get().replace(",", ".")
+        item_cost = self._view._create_item_cost_entry.get().replace(',', '.')
+        item_price = self._view._create_item_price_entry.get().replace(',', '.')
         item_qty = self._view._create_item_qty_spin.get()
 
         return self.__model.create_item(item_name, item_cost, item_price, item_qty)
@@ -28,8 +28,8 @@ class Controller:
 
     def update_item(self):
         item_name = self._view._update_item_name_combo.get()
-        item_cost = self._view._update_item_cost_entry.get().replace(",", ".")
-        item_price = self._view._update_item_price_entry.get().replace(",", ".")
+        item_cost = self._view._update_item_cost_entry.get().replace(',', '.')
+        item_price = self._view._update_item_price_entry.get().replace(',', '.')
         item_qty = self._view._update_item_qty_spin.get()
 
         return self.__model.update_item(item_name, item_cost, item_price, item_qty)

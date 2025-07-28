@@ -34,7 +34,7 @@ class Controller:
             self.__stock_entry_ctrl._view.lift()
 
     def make_stock_report(self):
-        pass
+        return self.__model.make_stock_report()
 
     def open_order_window(self):
         if self.__order_ctrl is None or not self.__order_ctrl._view.winfo_exists():
