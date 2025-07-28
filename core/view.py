@@ -1,6 +1,8 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
+from ttkbootstrap.dialogs import DatePickerDialog
+from datetime import date
 
 class View(ttk.Window):
     def __init__(self, controller):
@@ -50,8 +52,8 @@ class View(ttk.Window):
         self.__sales_menu.add_command(label='Vender', accelerator='Ctrl+V', command=self.__controller.open_order_window)
         self.bind('<Control-v>', lambda e: self.__controller.open_order_window())
         self.__sales_menu.add_separator()
-        self.__sales_menu.add_command(label='Relatório', accelerator='Ctrl+Shift+V', command=self.__controller.make_sales_report)
-        self.bind('<Control-Shift-V>', lambda e: self.__controller.make_sales_report())
+        self.__sales_menu.add_command(label='Relatório', accelerator='Ctrl+Shift+V', command=self.make_order_report)
+        self.bind('<Control-Shift-V>', lambda e: self.make_order_report())
         self.__menu_bar.add_cascade(label='Caixa', menu=self.__sales_menu)
 
         # adiciona um menu de ajuda
@@ -84,6 +86,28 @@ class View(ttk.Window):
             else:
                 self.__on_stock_report = False
 
+    def make_order_report(self):
+        self._dialog = DatePickerDialog(
+            title='Seleção de data',
+            firstweekday=6, # domingo
+            startdate=date.today(),
+            bootstyle='info'
+        )
+
+        if msgbox.yesno(f'Deseja imprimir o relatório para o dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?', 'Imprimir relatório?') == 'Sim':
+            report = self.__controller.make_order_report()
+
+            if report['revenue'] == 0.0 and report['profit'] == 0.0:
+                msgbox.show_error('Nenhuma venda foi realizada na data selecionada.', 'Erro')
+            else:
+                output = f'É o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}:\n'
+                output += 'Receita: R$ ' + str(report['revenue']) + '\n'
+                output += 'Lucro: R$ ' + str(report['profit']) + '\n'
+
+                msgbox.show_info(output, 'sucesso')
+        else:
+            msgbox.show_warning('Impressão do relatório cancelada.', 'Aviso')
+            
     # rotina de encerramento gracioso
     def shutdown(self):
         if not self.__on_shutdown:

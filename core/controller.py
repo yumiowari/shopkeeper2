@@ -3,7 +3,6 @@ from core.view import View
 from core.stock.controller import Controller as StockCtrl
 from core.stock.controller import EntryController as StockEntryCtrl
 from core.order.controller import Controller as OrderCtrl
-from core.order.controller import ProductController as OrderProductCtrl
 
 class Controller:
     def __init__(self):
@@ -42,8 +41,10 @@ class Controller:
         else: # se já existe, traz para frente
             self.__order_ctrl._view.lift()
 
-    def make_sales_report(self):
-        pass
+    def make_order_report(self):
+        selected_date = self.__view._dialog.date_selected
+
+        return self.__model.make_order_report(selected_date)
 
     def open_about_window(self):
         pass

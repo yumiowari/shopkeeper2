@@ -62,7 +62,7 @@ class Model:
                 if sale['name'] == item['name']:
                     self.__sale['name'] = sale['name']
                     self.__sale['qty'] = int(sale['qty'])
-                    self.__sale['value'] = float(item['price']) * int(sale['qty'])
+                    self.__sale['value'] = float(float(item['price']) * int(sale['qty']))
 
                     self.__comm_order['value'] += self.__sale['value']
 
