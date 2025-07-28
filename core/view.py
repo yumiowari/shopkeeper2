@@ -104,7 +104,7 @@ class View(ttk.Window):
                 output += 'Receita: R$ ' + str(report['revenue']) + '\n'
                 output += 'Lucro: R$ ' + str(report['profit']) + '\n'
 
-                msgbox.show_info(output, 'sucesso')
+                msgbox.show_info(output, 'Sucesso')
         else:
             msgbox.show_warning('Impressão do relatório cancelada.', 'Aviso')
             
