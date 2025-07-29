@@ -2,6 +2,7 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.dialogs import DatePickerDialog
+from ttkbootstrap.tooltip import ToolTip as tooltip
 from datetime import date
 
 class View(ttk.Window):
@@ -20,8 +21,15 @@ class View(ttk.Window):
         self.__main_frame = ttk.Frame(self)
         self.__main_frame.pack(fill=BOTH, expand=True)
 
-        # adiciona um rótulo ao frame principal
-        self.__main_label = ttk.Label(self.__main_frame, text='Seja bem-vindo ao $hopkeeper!', font=('Arial', 16))
+        # cria um frame superior
+        self.__top_frame = ttk.Frame(self.__main_frame)
+        self.__top_frame.pack(fill=X, side=TOP, padx=10, pady=10)
+
+        # cria um frame inferior (botões)
+        self.__bottom_frame = ttk.Frame(self.__main_frame)
+        self.__bottom_frame.pack(fill=NONE, side=BOTTOM, padx=10, pady=10)
+
+        self.__main_label = ttk.Label(self.__top_frame, text='Seja bem-vindo ao $hopkeeper!', font=('Arial', 16))
         self.__main_label.pack(pady=20)
 
         # cria um barra de menu
@@ -65,6 +73,16 @@ class View(ttk.Window):
         self.__credits_menu = ttk.Menu(self.__menu_bar, tearoff=0)
         self.__credits_menu.add_command(label='Créditos', command=self.__controller.open_credits_window)
         self.__menu_bar.add_cascade(label='Créditos', menu=self.__credits_menu)
+
+        # adiciona botões para acesso rápido
+        self.__order_btn = ttk.Button(self.__bottom_frame, text='Vender', command=self.__controller.open_order_window, bootstyle='success', width=10) # type: ignore
+        self.__entry_btn = ttk.Button(self.__bottom_frame, text='Entrada', command=self.__controller.open_stock_entry_window, bootstyle='info', width=10) # type: ignore
+
+        self.__order_btn.pack(side=LEFT, padx=10, pady=10)
+        self.__entry_btn.pack(side=RIGHT, padx=10, pady=10)
+
+        tooltip(self.__order_btn, '(Ctrl+V) Cadastrar uma comanda.')
+        tooltip(self.__entry_btn, '(Ctrl+E) Cadastrar uma entrada/saída de produto.')
 
         # adiciona um rodapé
         self.__footer = ttk.Label(self, text='$hopkeeper 2025 © Rafael Renó Corrêa - Todos os direitos reservados.', font=('Arial', 10), anchor='center')

@@ -195,7 +195,7 @@ class ProductView(ttk.Toplevel):
         self._item_qty_spin_label.pack(pady=5)
         self._item_qty_spin.pack(pady=5)
         
-        self._confirm_btn.pack(side=LEFT, pady=10)
+        self._confirm_btn.pack(side=LEFT, pady=5)
         self._cancel_btn.pack(side=RIGHT, pady=5)
 
         tooltip(self._item_name_combo, 'Selecione o item a ser adicionado à comanda.')
