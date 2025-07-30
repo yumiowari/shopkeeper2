@@ -131,7 +131,7 @@ class View(ttk.Window):
         '''
             Rodapé
         '''
-        self.__footer = ttk.Label(self, text='$hopkeeper 2025 © Rafael Renó Corrêa - Todos os direitos reservados.', font=('Arial', 10), anchor='center')
+        self.__footer = ttk.Label(self, text='Copyright © 2025 Rafael Renó Corrêa | owariyumi@gmail.com', font=('Arial', 10), anchor='center')
         self.__footer.pack(side=BOTTOM, fill=X, pady=5)
 
     '''
