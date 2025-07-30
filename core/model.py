@@ -1,11 +1,35 @@
 from core.components.SGBD import *
+'''
+    SGBD implementa funções para manipulação do banco de dados
+'''
+
 import csv
+'''
+    csv provê funções para manipulação de arquivos CSV (valores separados por vírgula).
+'''
+
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+'''
+    ReportLab é uma biblioteca Python open-source usada para gerar documentos PDF.
+'''
+
 from datetime import datetime
+'''
+    O módulo datetime oferece classes para manipulação de data e hora.
+'''
+
 import os
+'''
+    os provê uma forma portátil de usar operações dependentes do sistema operacional.
+'''
+
 import pickle as pkl
+'''
+    O módulo pickle em Python permite serializar e desserializar objetos Python,
+    transformando-os em uma sequência de bytes que pode ser armazenada em um arquivo.
+'''
 
 class Model:
     def __init__(self):
@@ -24,21 +48,23 @@ class Model:
             'value': 0.0
         }
 
-        # current order
+        # "current order"
         self.__curr_order = [] # list of sales
 
-        # commited order
+        # "commited order"
         self.__comm_order = {
             'timestamp': '',
             'sales': [],
             'value': 0.0
         }
 
-    # imprime o relatório do estoque em arquivo PDF
-    #
-    # retorna...
-    # 0 - sucesso
-    # 1 - estoque vazio
+    '''
+        Imprime o relatório do estoque no arquivo PDF
+
+        Retorna...
+            0 - Sucesso;
+            1 - Estoque vazio.
+    '''
     def make_stock_report(self):
         table = [
             ['Produto', 'Custo', 'Preço', 'Quantidade']
@@ -70,7 +96,7 @@ class Model:
         pdf = SimpleDocTemplate('data/stock ' + timestamp + '.pdf', pagesize=A4, title='Relatório do Estoque: ' + timestamp)
         elements = []
 
-        # converte a lista para um flowable Table do ReportLab
+        # converte a lista para um Flowable Table do ReportLab
         flowable_table = Table(table)
 
         # adiciona estilo
@@ -90,13 +116,13 @@ class Model:
 
         return 0
     
-    # imprime o relatório de fechamento de caixa
-    #
-    # retorna...
-    # {'revenue' > 0.0,
-    #  'profit' > 0.0} - sucesso
-    # {'revenue' == 0.0,
-    #  'profit == 0.0} - nenhuma venda foi realizada na data selecionada
+    '''
+        Imprime o relatório de Fechamento de Caixa
+
+        Retorna...
+            Valores positivos - Sucesso;
+            Valores nulos - Nenhuma comanda foi cadastrada na data selecionada.
+    '''
     def make_order_report(self, selected_date):
         report = {
             'revenue': 0.0,

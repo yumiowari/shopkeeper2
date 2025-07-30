@@ -1,7 +1,7 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
-from ttkbootstrap.tooltip import ToolTip as tooltip
+from ttkbootstrap.tooltip import ToolTip as tp
 import re
 
 def validate_number(x) -> bool:
@@ -90,11 +90,11 @@ class View(ttk.Toplevel):
 
         self._create_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tooltip(self._create_item_name_entry, 'Qual o nome do item?')
-        tooltip(self._create_item_cost_entry, 'Qual o custo de produção do item?')
-        tooltip(self._create_item_price_entry, 'Qual o preço de venda do item?')
-        tooltip(self._create_item_qty_spin, 'Qual a quantidade inicial do item?')
-        tooltip(self._create_confirm_btn, 'Confirma o cadastro do produto no inventário.')
+        tp(self._create_item_name_entry, 'Qual o nome do item?')
+        tp(self._create_item_cost_entry, 'Qual o custo de produção do item?')
+        tp(self._create_item_price_entry, 'Qual o preço de venda do item?')
+        tp(self._create_item_qty_spin, 'Qual a quantidade inicial do item?')
+        tp(self._create_confirm_btn, 'Confirma o cadastro do produto no inventário.')
 
         # READ (CONFER)
         self._confer_frame = ttk.Frame(self._notebook)
@@ -114,8 +114,8 @@ class View(ttk.Toplevel):
 
         self._confer_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tooltip(self._confer_item_name_combo, 'Qual o nome do item?')
-        tooltip(self._confer_confirm_btn, 'Confirma a consulta do produto no inventário.')
+        tp(self._confer_item_name_combo, 'Qual o nome do item?')
+        tp(self._confer_confirm_btn, 'Confirma a consulta do produto no inventário.')
 
         # UPDATE
         self._update_frame = ttk.Frame(self._notebook)
@@ -147,11 +147,11 @@ class View(ttk.Toplevel):
 
         self._update_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tooltip(self._update_item_name_combo, 'Qual o nome do item?')
-        tooltip(self._update_item_cost_entry, 'Qual o novo custo de produção do item?')
-        tooltip(self._update_item_price_entry, 'Qual o novo preço de venda do item?')
-        tooltip(self._update_item_qty_spin, 'Qual a nova quantidade do item?')
-        tooltip(self._update_confirm_btn, 'Confirma a atualização do produto no inventário.')
+        tp(self._update_item_name_combo, 'Qual o nome do item?')
+        tp(self._update_item_cost_entry, 'Qual o novo custo de produção do item?')
+        tp(self._update_item_price_entry, 'Qual o novo preço de venda do item?')
+        tp(self._update_item_qty_spin, 'Qual a nova quantidade do item?')
+        tp(self._update_confirm_btn, 'Confirma a atualização do produto no inventário.')
 
         # DELETE
         self._delete_frame = ttk.Frame(self._notebook)
@@ -171,8 +171,8 @@ class View(ttk.Toplevel):
 
         self._delete_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tooltip(self._delete_item_name_combo, 'Qual o nome do item?')
-        tooltip(self._delete_confirm_btn, 'Confirma a remoção do produto do inventário.')
+        tp(self._delete_item_name_combo, 'Qual o nome do item?')
+        tp(self._delete_confirm_btn, 'Confirma a remoção do produto do inventário.')
 
         self._notebook.add(self._create_frame, text='Cadastrar')
         self._notebook.add(self._confer_frame, text='Consultar')
@@ -385,9 +385,9 @@ class EntryView(ttk.Toplevel):
 
         self._entry_frame.pack(fill=BOTH, expand=True, padx=10, pady=10)
 
-        tooltip(self._entry_item_name_combo, 'Qual o nome do item?')
-        tooltip(self._entry_item_qty_spin, 'Qual a quantidade a ser incrementada?')
-        tooltip(self._entry_confirm_btn, 'Confirma o registro da entrada/saída do produto no inventário.')
+        tp(self._entry_item_name_combo, 'Qual o nome do item?')
+        tp(self._entry_item_qty_spin, 'Qual a quantidade a ser incrementada?')
+        tp(self._entry_confirm_btn, 'Confirma o registro da entrada/saída do produto no inventário.')
 
     def on_close(self):
         self.__parent_ctrl.stock_entry_ctrl = None

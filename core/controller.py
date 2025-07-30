@@ -29,7 +29,7 @@ class Controller:
     def open_stock_entry_window(self):
         if self.__stock_entry_ctrl is None or not self.__stock_entry_ctrl._view.winfo_exists():
             self.__stock_entry_ctrl = StockEntryCtrl(master=self.__view, parent=self)
-        else: # se já existe, traz para frente
+        else:
             self.__stock_entry_ctrl._view.lift()
 
     def make_stock_report(self):
@@ -38,7 +38,7 @@ class Controller:
     def open_order_window(self):
         if self.__order_ctrl is None or not self.__order_ctrl._view.winfo_exists():
             self.__order_ctrl = OrderCtrl(master=self.__view, parent=self)
-        else: # se já existe, traz para frente
+        else:
             self.__order_ctrl._view.lift()
 
     def make_order_report(self):

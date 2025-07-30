@@ -1,7 +1,7 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
-from ttkbootstrap.tooltip import ToolTip as tooltip
+from ttkbootstrap.tooltip import ToolTip as tp
 
 def validate_alpha(x) -> bool:
     '''Valida se o input é alfabético e até 30 caracteres'''
@@ -64,7 +64,7 @@ class View(ttk.Toplevel):
         self._selected_items_combo_label.pack(padx=5, pady=5)
         self._selected_items_combo.pack(padx=5, pady=5)
 
-        tooltip(self._selected_items_combo, 'Lista dos itens selecionados na comanda.')
+        tp(self._selected_items_combo, 'Lista dos itens selecionados na comanda.')
 
         # cria botões para registrar a venda
         self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text='Confirmar', command=self.commit_sale, bootstyle='success', width=10) # type: ignore
@@ -81,10 +81,10 @@ class View(ttk.Toplevel):
         self._add_product_btn.pack(side=BOTTOM, padx=5, pady=5)
         self._remove_product_btn.pack(side=BOTTOM, padx=5, pady=5)
 
-        tooltip(self._commit_sale_btn, '(Ctrl+F) Registrar a comanda no banco de dados.')
-        tooltip(self._cancel_sale_btn, '(Ctrl+C) Cancelar a comanda.')
-        tooltip(self._add_product_btn, '(Ctrl+A) Adicionar um produto à comanda.')
-        tooltip(self._remove_product_btn, '(Ctrl+R) Remover um produto da comanda.')
+        tp(self._commit_sale_btn, '(Ctrl+F) Registrar a comanda no banco de dados.')
+        tp(self._cancel_sale_btn, '(Ctrl+C) Cancelar a comanda.')
+        tp(self._add_product_btn, '(Ctrl+A) Adicionar um produto à comanda.')
+        tp(self._remove_product_btn, '(Ctrl+R) Remover um produto da comanda.')
 
     def on_close(self):
         if not self.__on_close:
@@ -198,10 +198,10 @@ class ProductView(ttk.Toplevel):
         self._confirm_btn.pack(side=LEFT, pady=5)
         self._cancel_btn.pack(side=RIGHT, pady=5)
 
-        tooltip(self._item_name_combo, 'Selecione o item a ser adicionado à comanda.')
-        tooltip(self._item_qty_spin, 'Informe a quantidade do item a ser adicionado à comanda.')
-        tooltip(self._confirm_btn, '(Ctrl+A) Adicionar o item selecionado à comanda.')
-        tooltip(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.')
+        tp(self._item_name_combo, 'Selecione o item a ser adicionado à comanda.')
+        tp(self._item_qty_spin, 'Informe a quantidade do item a ser adicionado à comanda.')
+        tp(self._confirm_btn, '(Ctrl+A) Adicionar o item selecionado à comanda.')
+        tp(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.')
 
     def on_close(self):
         self.__parent_ctrl.product_ctrl = None

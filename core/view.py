@@ -1,109 +1,163 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import * # type: ignore
+# "type: ignore" impede avisos de erros desnecessários
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.dialogs import DatePickerDialog
-from ttkbootstrap.tooltip import ToolTip as tooltip
+from ttkbootstrap.tooltip import ToolTip as tp
+'''
+    O módulo ttkbootstrap oferece uma extensão para o tkinter que permite
+    temas modernos de estilo simples sob demanda inspirados no Bootstrap.
+'''
+
 from datetime import date
+'''
+    O módulo datetime oferece classes para manipulação de data e hora.
+'''
 
 class View(ttk.Window):
+    '''
+        Classe para renderizar o conteúdo da janela principal (ttk.Window).
+
+        Todas as demais janelas (ttk.Toplevel) são filhas da janela principal.
+
+        Encerrar a janela principal implica em encerrar a aplicação.
+    '''
     def __init__(self, controller):
         super().__init__(themename='litera')
         self.__controller = controller
         self.title('$hopkeeper')
         self.geometry('800x600')
         self.resizable(False, False)
+
+        # flags...
         self.__on_shutdown = False
         self.__on_stock_report = False
+        # ...utilizadas para impedir a abertura de mais de uma janela toplevel do mesmo tipo
 
         self.protocol('WM_DELETE_WINDOW', self.shutdown)
 
-        # cria um frame para o conteúdo principal
+        '''
+            Frames
+
+            "Frame" é um widget que atua como um contêiner para outros widgets,
+            permitindo organizar a interface gráfica de forma estruturada.
+        '''
         self.__main_frame = ttk.Frame(self)
-        self.__main_frame.pack(fill=BOTH, expand=True)
-
-        # cria um frame superior
         self.__top_frame = ttk.Frame(self.__main_frame)
-        self.__top_frame.pack(fill=X, side=TOP, padx=10, pady=10)
-
-        # cria um frame inferior (botões)
         self.__bottom_frame = ttk.Frame(self.__main_frame)
-        self.__bottom_frame.pack(fill=NONE, side=BOTTOM, padx=10, pady=10)
 
+        self.__main_frame.pack(fill=BOTH, expand=True)
+        self.__top_frame.pack(fill=X, side=TOP, padx=10, pady=10)
+        self.__bottom_frame.pack(fill=NONE, side=BOTTOM, padx=10, pady=10)
+        # fill...
+        # X - Preenche a largura
+        # Y - Preenche a altura
+        # BOTH - Preenche ambos
+        # NONE - Não preenche nada
+
+        '''
+            Labels
+
+            "Label" é usado para exibir texto ou imagens estáticas na interface gráfica.
+        '''
         self.__main_label = ttk.Label(self.__top_frame, text='Seja bem-vindo ao $hopkeeper!', font=('Arial', 16))
         self.__main_label.pack(pady=20)
 
-        # cria um barra de menu
+        '''
+            Barra de Menu: Estrutura os módulos e funções da aplicação.
+        '''
         self.__menu_bar = ttk.Menu(self)
         self.config(menu=self.__menu_bar)
 
-        # adiciona um menu de arquivo
+        # Menu de Arquivo: Preferências e funções gerais da aplicação.
         self.__file_menu = ttk.Menu(self.__menu_bar, tearoff=0)
         self.__file_menu.add_command(label='Preferências')
         self.__file_menu.add_separator()
         self.__file_menu.add_command(label='Sair', accelerator='Ctrl+Q', command=self.shutdown)
         self.bind_all('<Control-q>', lambda e: self.shutdown())
+        self.bind_all('<Control-Q>', lambda e: self.shutdown())
+        # bind_all() observa a hotkey em todas as janelas da aplicação.
         self.__menu_bar.add_cascade(label='Arquivo', menu=self.__file_menu)
 
-        # adiciona um menu de estoque
+        # Menu de Estoque
         self.__stock_menu = ttk.Menu(self.__menu_bar, tearoff=0)
         self.__stock_menu.add_command(label='Inventário', accelerator='Ctrl+I', command=self.__controller.open_stock_window)
         self.bind('<Control-i>', lambda e: self.__controller.open_stock_window())
+        self.bind('<Control-I>', lambda e: self.__controller.open_stock_window())
+        # bind() observa a hotkey apenas na janela de foco.
         self.__stock_menu.add_command(label='Entrada', accelerator='Ctrl+E', command=self.__controller.open_stock_entry_window)
         self.bind('<Control-e>', lambda e: self.__controller.open_stock_entry_window())
+        self.bind('<Control-E>', lambda e: self.__controller.open_stock_entry_window())
         self.__stock_menu.add_separator()
         self.__stock_menu.add_command(label='Relatório', accelerator='Ctrl+Shift+I', command=self.make_stock_report)
         self.bind('<Control-Shift-I>', lambda e: self.make_stock_report())
+        self.bind('<Control-Shift-i>', lambda e: self.make_stock_report())
+        # /!\ deve considerar tanto a letra em minúsculo quanto em maíusculo para tratar quando CapsLock estiver pressionada
         self.__menu_bar.add_cascade(label='Estoque', menu=self.__stock_menu)
 
-        # adiciona um menu de venda
+        # Menu de Caixa
         self.__sales_menu = ttk.Menu(self.__menu_bar, tearoff=0)
         self.__sales_menu.add_command(label='Vender', accelerator='Ctrl+V', command=self.__controller.open_order_window)
         self.bind('<Control-v>', lambda e: self.__controller.open_order_window())
+        self.bind('<Control-V>', lambda e: self.__controller.open_order_window())
         self.__sales_menu.add_separator()
         self.__sales_menu.add_command(label='Relatório', accelerator='Ctrl+Shift+V', command=self.make_order_report)
         self.bind('<Control-Shift-V>', lambda e: self.make_order_report())
+        self.bind('<Control-Shift-v>', lambda e: self.make_order_report())
         self.__menu_bar.add_cascade(label='Caixa', menu=self.__sales_menu)
 
-        # adiciona um menu de ajuda
+        # Menu de Ajuda 
         self.__help_menu = ttk.Menu(self.__menu_bar, tearoff=0)
         self.__help_menu.add_command(label='Sobre', command=self.__controller.open_about_window)
         self.__menu_bar.add_cascade(label='Ajuda', menu=self.__help_menu)
 
-        # adiciona um menu de créditos
+        # Menu de Créditos
         self.__credits_menu = ttk.Menu(self.__menu_bar, tearoff=0)
         self.__credits_menu.add_command(label='Créditos', command=self.__controller.open_credits_window)
         self.__menu_bar.add_cascade(label='Créditos', menu=self.__credits_menu)
 
-        # adiciona botões para acesso rápido
+        '''
+            Botões de acesso rápido
+        '''
         self.__order_btn = ttk.Button(self.__bottom_frame, text='Vender', command=self.__controller.open_order_window, bootstyle='success', width=10) # type: ignore
         self.__entry_btn = ttk.Button(self.__bottom_frame, text='Entrada', command=self.__controller.open_stock_entry_window, bootstyle='info', width=10) # type: ignore
 
         self.__order_btn.pack(side=LEFT, padx=10, pady=10)
         self.__entry_btn.pack(side=RIGHT, padx=10, pady=10)
 
-        tooltip(self.__order_btn, '(Ctrl+V) Cadastrar uma comanda.')
-        tooltip(self.__entry_btn, '(Ctrl+E) Cadastrar uma entrada/saída de produto.')
+        tp(self.__order_btn, '(Ctrl+V) Cadastrar uma comanda.')
+        tp(self.__entry_btn, '(Ctrl+E) Cadastrar uma entrada/saída de produto.')
 
-        # adiciona um rodapé
+        '''
+            Rodapé
+        '''
         self.__footer = ttk.Label(self, text='$hopkeeper 2025 © Rafael Renó Corrêa - Todos os direitos reservados.', font=('Arial', 10), anchor='center')
         self.__footer.pack(side=BOTTOM, fill=X, pady=5)
 
+    '''
+        Função para imprimir o relatório de estoque em PDF.
+    '''
     def make_stock_report(self):
         if not self.__on_stock_report:
             self.__on_stock_report = True
 
-            if msgbox.yesno('Deseja imprimir o relatório do estoque?', 'Relatório do estoque') == 'Sim':
+            if msgbox.yesno('Deseja imprimir o relatório do estoque?', 'Confirmação') == 'Sim':
                 res = self.__controller.make_stock_report()
             
                 if res == 0:
-                    msgbox.show_info('Relatório do estoque impresso em data/stock.pdf.', 'Sucesso')
+                    msgbox.show_info('Relatório do estoque impresso no diretório raiz da aplicação.', 'Sucesso')
                 elif res == 1:
-                    msgbox.show_error('O inventário está vazio.', 'Erro')
+                    msgbox.show_error('O inventário está vazio: Não existem itens disponíveis para impressão.', 'Erro')
             
                 self.__on_stock_report = False
             else:
                 self.__on_stock_report = False
 
+    '''
+        Fechamento de Caixa
+
+        Função para imprimir o relatório de comandas.
+    '''
     def make_order_report(self):
         self._dialog = DatePickerDialog(
             title='Seleção de data',
@@ -112,26 +166,28 @@ class View(ttk.Window):
             bootstyle='info'
         )
 
-        if msgbox.yesno(f'Deseja imprimir o relatório para o dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?', 'Imprimir relatório?') == 'Sim':
+        if msgbox.yesno(f'Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?', 'Confirmação') == 'Sim':
             report = self.__controller.make_order_report()
 
             if report['revenue'] == 0.0 and report['profit'] == 0.0:
-                msgbox.show_error('Nenhuma venda foi realizada na data selecionada.', 'Erro')
+                msgbox.show_error('Nenhuma comanda foi cadastrada na data selecionada.', 'Erro')
             else:
-                output = f'É o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}:\n'
+                output = f'É o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}:\n\n'
                 output += 'Receita: R$ ' + str(report['revenue']) + '\n'
                 output += 'Lucro: R$ ' + str(report['profit']) + '\n'
 
                 msgbox.show_info(output, 'Sucesso')
         else:
-            msgbox.show_warning('Impressão do relatório cancelada.', 'Aviso')
+            msgbox.show_warning('A impressão do relatório foi cancelada: Nenhum arquivo foi criado.', 'Aviso')
             
-    # rotina de encerramento gracioso
+    '''
+        Rotina de Encerramento Gracioso
+    '''
     def shutdown(self):
         if not self.__on_shutdown:
             self.__on_shutdown = True
             
-            if msgbox.yesno('Deseja encerrar a aplicação?', 'Sair do $hopkeeper') == 'Sim':
+            if msgbox.yesno('Deseja encerrar a aplicação?', 'Confirmação') == 'Sim':
                 self.__controller.shutdown()
             else:
                 self.__on_shutdown = False
