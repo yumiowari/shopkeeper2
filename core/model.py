@@ -1,6 +1,6 @@
 from core.components.SGBD import *
 '''
-    SGBD implementa funções para manipulação do banco de dados
+    SGBD implementa funções para manipulação do banco de dados.
 '''
 
 import csv
@@ -93,7 +93,7 @@ class Model:
             writer.writerows(table)
 
         # cria o documento PDF
-        pdf = SimpleDocTemplate('data/stock ' + timestamp + '.pdf', pagesize=A4, title='Relatório do Estoque: ' + timestamp)
+        pdf = SimpleDocTemplate('stock ' + timestamp + '.pdf', pagesize=A4, title='Relatório do Estoque: ' + timestamp)
         elements = []
 
         # converte a lista para um Flowable Table do ReportLab

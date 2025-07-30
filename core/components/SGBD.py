@@ -1,7 +1,17 @@
 import pickle as pkl
-import os
+'''
+    O módulo pickle em Python permite serializar e desserializar objetos Python,
+    transformando-os em uma sequência de bytes que pode ser armazenada em um arquivo.
+'''
 
-### STOCK
+import os
+'''
+    os provê uma forma portátil de usar operações dependentes do sistema operacional.
+'''
+
+'''
+    Inventário
+'''
 def fetch_stock():
     if os.path.isfile('data/stock.pkl'):
         with open('data/stock.pkl', 'rb') as file:
@@ -15,9 +25,10 @@ def fetch_stock():
 def update_stock(stock):
     with open('data/stock.pkl', 'wb') as file:
         pkl.dump(stock, file)
-###
 
-### CURRENT ORDER
+'''
+    Comandas
+'''
 def fetch_curr_order():
     if os.path.isfile('data/order.pkl'):
         with open('data/order.pkl', 'rb') as file:
@@ -35,9 +46,7 @@ def update_curr_order(order):
 def delete_curr_order():
     if os.path.isfile('data/order.pkl'):
         os.remove('data/order.pkl')
-###
 
-### COMMITED ORDER
 def store_comm_order(order):
     path = 'data/' + order['timestamp']
 
@@ -47,4 +56,3 @@ def store_comm_order(order):
 
     with open(path, 'wb') as file:
         pkl.dump(order, file)
-###

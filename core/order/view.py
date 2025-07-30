@@ -2,17 +2,30 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tp
+'''
+    O módulo ttkbootstrap oferece uma extensão para o tkinter que permite
+    temas modernos de estilo simples sob demanda inspirados no Bootstrap.
+'''
 
 def validate_alpha(x) -> bool:
-    '''Valida se o input é alfabético e até 30 caracteres'''
+    '''
+        Valida se o input é alfabético de até 30 caracteres.
+    '''
     return (x == '' or not x.isdigit()) and len(x) <= 30
 
 def validate_number(x) -> bool:
-    '''Valida se o input é número inteiro entre 1 e 999'''
+    '''
+        Valida se o input é número inteiro entre 1 e 999.
+    '''
     if x == '':
         return True
     return x.isdigit() and int(x) <= 999 and int(x) >= 1
 
+'''
+    Janela da Comanda
+
+    Disponibiliza a UI para gerenciar a comanda.
+'''
 class View(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
@@ -29,7 +42,9 @@ class View(ttk.Toplevel):
 
         self.bind_all('<Escape>', lambda e: self.on_escape())
 
-        # cria um frame para o conteúdo principal
+        '''
+            Frame Principal
+        '''
         self._main_frame = ttk.Frame(self)
         self._main_frame.pack(fill=BOTH, expand=True)
         # X - Preenche a largura
@@ -37,15 +52,14 @@ class View(ttk.Toplevel):
         # BOTH - Preenche ambos
         # NONE - Não preenche nada
 
-        # adiciona um rótulo ao frame principal
         self.__main_label = ttk.Label(self._main_frame, text='Cadastrar comanda...', font=('Arial', 12))
         self.__main_label.pack(pady=20)
 
-        # cria um frame superior
+        # Frame Superior
         self._top_frame = ttk.Frame(self._main_frame)
         self._top_frame.pack(fill=NONE, side=TOP, padx=10, pady=10)
 
-        # cria um frame inferior (para os botões)
+        # Frame Inferior (para os botões)
         self.__bottom_frame = ttk.Frame(self._main_frame)
         self.__bottom_frame.pack(fill=NONE, side=BOTTOM, padx=10, pady=10)
 
@@ -55,7 +69,7 @@ class View(ttk.Toplevel):
         self.__right_bottom_frame = ttk.Frame(self.__bottom_frame)
         self.__right_bottom_frame.pack(fill=NONE, side=RIGHT, padx=5, pady=5)
 
-        # cria um combobox para listar os itens selecionados
+        # Combobox para listar os itens selecionados
         self._selected_items_combo = ttk.Combobox(self._top_frame, state='readonly')
         self._selected_items_combo.config(values=self.__controller.fetch_selected_items())
         self._selected_items_combo_label = ttk.Label(self._top_frame, text='São os itens na comanda:')
@@ -66,15 +80,21 @@ class View(ttk.Toplevel):
 
         tp(self._selected_items_combo, 'Lista dos itens selecionados na comanda.')
 
-        # cria botões para registrar a venda
+        '''
+            Botões
+        '''
         self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text='Confirmar', command=self.commit_sale, bootstyle='success', width=10) # type: ignore
         self.bind('<Control-f>', lambda e: self.commit_sale())
+        self.bind('<Control-F>', lambda e: self.commit_sale())
         self._cancel_sale_btn = ttk.Button(self.__left_bottom_frame, text='Cancelar', command=self.cancel_sale, bootstyle='danger', width=10) # type: ignore
         self.bind('<Control-c>', lambda e: self.cancel_sale())
+        self.bind('<Control-C>', lambda e: self.cancel_sale())
         self._add_product_btn = ttk.Button(self.__right_bottom_frame, text='Adicionar produto', command=self.__controller.add_product, bootstyle='primary', width=20) # type: ignore
         self.bind('<Control-a>', lambda e: self.__controller.add_product())
+        self.bind('<Control-A>', lambda e: self.__controller.add_product())
         self._remove_product_btn = ttk.Button(self.__right_bottom_frame, text='Remover produto', command=self.remove_product, bootstyle='warning', width=20) # type: ignore
         self.bind('<Control-r>', lambda e: self.remove_product())
+        self.bind('<Control-R>', lambda e: self.remove_product())
 
         self._commit_sale_btn.pack(side=TOP, padx=5, pady=5)
         self._cancel_sale_btn.pack(side=TOP, padx=5, pady=5)
@@ -146,6 +166,11 @@ class View(ttk.Toplevel):
                 else:
                     self.__on_item_removal = False
 
+'''
+    Janela do Produto
+
+    Disponibiliza a UI para adicionar itens à comanda.
+'''
 class ProductView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
@@ -158,26 +183,34 @@ class ProductView(ttk.Toplevel):
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
-        # observers
+        '''
+            Observers
+
+            Funções associadas a algum campo de entrada para validar o conteúdo digitado.
+        '''
         alpha_validator = self.register(validate_alpha)
         number_validator = self.register(validate_number)
 
-        # cria um frame para o conteúdo principal
+        '''
+            Frame Principal
+        '''
         self._main_frame = ttk.Frame(self)
         self._main_frame.pack(fill=BOTH, expand=True)
 
-        # cria um frame superior
+        # Frame Superior
         self._top_frame = ttk.Frame(self._main_frame)
         self._top_frame.pack(fill=X, side=TOP, padx=10, pady=10)
 
-        # cria um frame inferior (para os botões)
+        # Frame Inferior (para os botões)
         self.__bottom_frame = ttk.Frame(self._main_frame)
         self.__bottom_frame.pack(fill=X, side=BOTTOM, padx=10, pady=10)
 
-        # adiciona um rótulo ao frame principal
         self.__main_label = ttk.Label(self._top_frame, text='Adicionar produto à comanda...', font=('Arial', 12))
         self.__main_label.pack(pady=20)
 
+        '''
+            Campos de Entrada
+        '''
         self._item_name_combo = ttk.Combobox(self._top_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
         self._item_name_combo.config(values=self.__controller.fetch_item_names())
         self._item_name_combo_label = ttk.Label(self._top_frame, text='Selecione o item:', font=('Arial', 10, 'bold'))
@@ -185,10 +218,15 @@ class ProductView(ttk.Toplevel):
         self._item_qty_spin = ttk.Spinbox(self._top_frame, from_=1, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
         self._item_qty_spin_label = ttk.Label(self._top_frame, text='Quantidade:', font=('Arial', 10, 'bold'))
 
+        '''
+            Botões
+        '''
         self._confirm_btn = ttk.Button(self.__bottom_frame, text='Adicionar', command=self.confirm_product, bootstyle='success', width=10) # type: ignore
         self.bind('<Control-a>', lambda e: self.confirm_product())
+        self.bind('<Control-A>', lambda e: self.confirm_product())
         self._cancel_btn = ttk.Button(self.__bottom_frame, text='Cancelar', command=self.cancel_product, bootstyle='danger', width=10) # type: ignore
         self.bind('<Control-c>', lambda e: self.cancel_product())
+        self.bind('<Control-C>', lambda e: self.cancel_product())
 
         self._item_name_combo_label.pack(pady=5)
         self._item_name_combo.pack(pady=5)
@@ -235,7 +273,7 @@ class ProductView(ttk.Toplevel):
             if res == 0:
                 msgbox.show_info('Item adicionado na comanda.', 'Sucesso')
 
-                # atualiza a combobox de itens selecionados na janela mãe (revisar /!\)
+                # atualiza a combobox de itens selecionados na janela mãe
                 self.__parent_ctrl._view._selected_items_combo.config(values=self.__parent_ctrl.fetch_selected_items())
 
                 self.on_close()

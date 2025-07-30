@@ -2,16 +2,29 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tp
+'''
+    O módulo ttkbootstrap oferece uma extensão para o tkinter que permite
+    temas modernos de estilo simples sob demanda inspirados no Bootstrap.
+'''
+
 import re
+'''
+    re é um módulo que oferece funcionalidades para trabalhar com expressões regulares
+'''
 
 def validate_number(x) -> bool:
-    '''Valida se o input é número inteiro até 999'''
+    '''
+        Valida se o input é número inteiro até 999.
+    '''
     if x == '':
         return True
     return x.isdigit() and int(x) <= 999
 
 def validate_entry_number(x) -> bool:
-    '''Valida se o input é número inteiro entre -99 e 99, diferente de zero'''
+    '''
+        Valida se o input é número inteiro entre -99 e 99, 
+        diferente de zero.
+    '''
     if x == '':
         return True
     try:
@@ -25,11 +38,15 @@ def validate_entry_number(x) -> bool:
         return False
     
 def validate_alpha(x) -> bool:
-    '''Valida se o input é alfabético e até 30 caracteres'''
+    '''
+        Valida se o input é alfabético e até 30 caracteres.
+    '''
     return (x == '' or not x.isdigit()) and len(x) <= 30
     
 def validate_money(x) -> bool:
-    '''Valida se o input é um valor monetário até 99,99'''
+    '''
+        Valida se o input é um valor monetário até 99,99.
+    '''
     if x == '':
         return True
     if not re.fullmatch(r'\d{1,2}([.,]\d{0,2})?', x):
@@ -41,6 +58,11 @@ def validate_money(x) -> bool:
     except ValueError:
         return False
 
+'''
+    Janela de Inventário
+
+    Disponibiliza os CRUDs de Inventário.
+'''
 class View(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
@@ -53,15 +75,29 @@ class View(ttk.Toplevel):
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
-        # observers
+        self.bind('<Escape>', lambda e: self.on_escape())
+
+        '''
+            Observers
+
+            Funções associadas a algum campo de entrada para validar o conteúdo digitado.
+        '''
         alpha_validator = self.register(validate_alpha)
         number_validator = self.register(validate_number)
         money_validator = self.register(validate_money)
 
-        ### CRUDs
+        '''
+            Notebook
+
+            O widget "Notebook" permite selecionar páginas distintas através de abas.
+
+            Implementa os quatro CRUDs de Inventário em quatro páginas separadas.
+        '''
         self._notebook = ttk.Notebook(self)
 
-        # CREATE
+        '''
+            CREATE
+        '''
         self._create_frame = ttk.Frame(self._notebook)
 
         self._create_label = ttk.Label(self._create_frame, text='Cadastrar novo item no inventário...', font=('Arial', 12))
@@ -96,7 +132,9 @@ class View(ttk.Toplevel):
         tp(self._create_item_qty_spin, 'Qual a quantidade inicial do item?')
         tp(self._create_confirm_btn, 'Confirma o cadastro do produto no inventário.')
 
-        # READ (CONFER)
+        '''
+            READ (CONFER)
+        '''
         self._confer_frame = ttk.Frame(self._notebook)
 
         self._confer_item_label = ttk.Label(self._confer_frame, text='Consultar item no inventário...', font=('Arial', 12))
@@ -117,7 +155,9 @@ class View(ttk.Toplevel):
         tp(self._confer_item_name_combo, 'Qual o nome do item?')
         tp(self._confer_confirm_btn, 'Confirma a consulta do produto no inventário.')
 
-        # UPDATE
+        '''
+            UPDATE
+        '''
         self._update_frame = ttk.Frame(self._notebook)
 
         self._update_label = ttk.Label(self._update_frame, text='Atualizar item no inventário...', font=('Arial', 12))
@@ -153,7 +193,9 @@ class View(ttk.Toplevel):
         tp(self._update_item_qty_spin, 'Qual a nova quantidade do item?')
         tp(self._update_confirm_btn, 'Confirma a atualização do produto no inventário.')
 
-        # DELETE
+        '''
+            DELETE
+        '''
         self._delete_frame = ttk.Frame(self._notebook)
 
         self._delete_item_label = ttk.Label(self._delete_frame, text='Remover item do inventário...', font=('Arial', 12))
@@ -188,6 +230,14 @@ class View(ttk.Toplevel):
         self.__parent_ctrl.stock_ctrl = None
         self.destroy()
 
+    def on_escape(self):
+        self.on_close()
+
+    def update_comboboxes(self):
+        self._confer_item_name_combo.config(values=self.__controller.fetch_item_names())
+        self._update_item_name_combo.config(values=self.__controller.fetch_item_names())
+        self._delete_item_name_combo.config(values=self.__controller.fetch_item_names())
+
     def create_item(self):
         item_name = self._create_item_name_entry.get()
         item_cost = self._create_item_cost_entry.get()
@@ -198,20 +248,20 @@ class View(ttk.Toplevel):
 
         # valida os campos de entrada
         if not item_name or not item_cost or not item_price:
-            msgbox.show_error('Todos os campos obrigatórios devem ser preenchidos.', 'Erro')
+            msgbox.show_error('Todos os campos obrigatórios (em negrito) devem ser preenchidos.', 'Erro')
             
             flag = False
 
         if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
+            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
             
             flag = False
         if flag and not validate_money(item_cost):
-            msgbox.show_error('O custo do item deve ser um valor monetário válido menor que 99,99.', 'Erro')
+            msgbox.show_error('O custo do item deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
 
             flag = False
         if flag and not validate_money(item_price):
-            msgbox.show_error('O preço de venda deve ser um valor monetário válido menor que 99,99.', 'Erro')
+            msgbox.show_error('O preço de venda deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
 
             flag = False
         if flag and not validate_number(item_qty):
@@ -223,9 +273,9 @@ class View(ttk.Toplevel):
             res = self.__controller.create_item()
 
             if res == 0:
-                msgbox.show_info(f'O produto \'{item_name}\' foi cadastrado no banco de dados.', 'Sucesso')
+                msgbox.show_info(f'O produto \"{item_name}\" foi cadastrado no banco de dados.', 'Sucesso')
             elif res == 1:
-                msgbox.show_error(f'O produto \'{item_name}\' já existe no banco de dados.')
+                msgbox.show_error(f'O produto \"{item_name}\" já existe no banco de dados.')
         
                 flag = False
         if not flag:
@@ -235,6 +285,8 @@ class View(ttk.Toplevel):
         self._create_item_cost_entry.delete(0, 'end')
         self._create_item_price_entry.delete(0, 'end')
         self._create_item_qty_spin.set('')
+
+        self.update_comboboxes()
 
     def confer_item(self):
         item_name = self._confer_item_name_combo.get()
@@ -248,7 +300,7 @@ class View(ttk.Toplevel):
             flag = False
 
         if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
+            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
 
             flag = False
 
@@ -264,7 +316,7 @@ class View(ttk.Toplevel):
 
                 msgbox.show_info(output, 'Sucesso')
             else:
-                msgbox.show_error(f'O produto \'{item_name}\' não foi encontrado.')
+                msgbox.show_error(f'O produto \"{item_name}\" não foi encontrado no banco de dados.')
         if not flag:
             msgbox.show_error('A consulta do produto falhou.', 'Erro')
         
@@ -285,15 +337,15 @@ class View(ttk.Toplevel):
             flag = False
 
         if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
+            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
             
             flag = False
         if flag and item_cost and not validate_money(item_cost):
-            msgbox.show_error('O custo do item deve ser um valor monetário válido menor que 99,99.', 'Erro')
+            msgbox.show_error('O custo do item deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
 
             flag = False
         if flag and item_price and not validate_money(item_price):
-            msgbox.show_error('O preço de venda deve ser um valor monetário válido menor que 99,99.', 'Erro')
+            msgbox.show_error('O preço de venda deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
 
             flag = False
         if flag and item_qty and not validate_number(item_qty):
@@ -305,11 +357,11 @@ class View(ttk.Toplevel):
             res = self.__controller.update_item()
 
             if res == 0:
-                msgbox.show_info(f'O produto \'{item_name}\' foi atualizado no banco de dados.', 'Sucesso')
+                msgbox.show_info(f'O produto \"{item_name}\" foi atualizado no banco de dados.', 'Sucesso')
             elif res == 1:
                 msgbox.show_warning('Nenhum atributo do produto foi alterado.', 'Aviso')
             elif res == 2:
-                msgbox.show_error(f'O produto \'{item_name}\' não foi encontrado.')
+                msgbox.show_error(f'O produto \"{item_name}\" não foi encontrado no banco de dados.')
         if not flag:
             msgbox.show_error('O cadastro do produto falhou.', 'Erro')
 
@@ -317,6 +369,8 @@ class View(ttk.Toplevel):
         self._update_item_cost_entry.delete(0, 'end')
         self._update_item_price_entry.delete(0, 'end')
         self._update_item_qty_spin.set('')
+
+        self.update_comboboxes()
 
     def delete_item(self):
         item_name = self._delete_item_name_combo.get()
@@ -330,7 +384,7 @@ class View(ttk.Toplevel):
             flag = False
 
         if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
+            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
 
             flag = False
 
@@ -338,7 +392,7 @@ class View(ttk.Toplevel):
             res = self.__controller.delete_item()
 
             if res == 0:
-                msgbox.show_info(f'O produto \'{item_name}\' foi removido do banco de dados.', 'Sucesso')
+                msgbox.show_info(f'O produto \"{item_name}\" foi removido do banco de dados.', 'Sucesso')
             elif res == 1:
                 msgbox.show_error
         if not flag:
@@ -346,6 +400,13 @@ class View(ttk.Toplevel):
 
         self._delete_item_name_combo.set('')
 
+        self.update_comboboxes()
+
+'''
+    Janela de Entrada/Saída do Inventário
+
+    Disponibiliza um acesso rápido para a funcionalidade de "update" de quantidade do produto.
+'''
 class EntryView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
@@ -358,7 +419,13 @@ class EntryView(ttk.Toplevel):
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
-        # observers
+        self.bind('<Escape>', lambda e: self.on_escape())
+
+        '''
+            Observers
+
+            Funções associadas a algum campo de entrada para validar o conteúdo digitado.
+        '''
         alpha_validator = self.register(validate_alpha)
         number_validator = self.register(validate_entry_number)
 
@@ -393,6 +460,9 @@ class EntryView(ttk.Toplevel):
         self.__parent_ctrl.stock_entry_ctrl = None
         self.destroy()
 
+    def on_escape(self):
+        self.on_close()
+
     def entry_item(self):
         item_name = self._entry_item_name_combo.get()
         item_qty = self._entry_item_qty_spin.get()
@@ -406,7 +476,7 @@ class EntryView(ttk.Toplevel):
             flag = False
 
         if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
+            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
             
             flag = False
         if flag and item_qty and not validate_entry_number(item_qty):
@@ -418,11 +488,11 @@ class EntryView(ttk.Toplevel):
             res = self.__controller.entry_item()
 
             if res == 0:
-                msgbox.show_info(f'A quantidade do produto \'{item_name}\' foi alterada no banco de dados.', 'Sucesso')
+                msgbox.show_info(f'A quantidade do produto \"{item_name}\" foi alterada no banco de dados.', 'Sucesso')
             elif res == 1:
-                msgbox.show_error(f'O produto \'{item_name}\' não foi encontrado.')
+                msgbox.show_error(f'O produto \"{item_name}\" não foi encontrado no banco de dados.')
         if not flag:
-            msgbox.show_error('O registro da entrada do produto falhou.', 'Erro')
+            msgbox.show_error('O registro da entrada/saída do produto falhou.', 'Erro')
 
         self._entry_item_name_combo.set('')
         self._entry_item_qty_spin.set('')

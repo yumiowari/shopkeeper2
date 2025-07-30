@@ -1,5 +1,12 @@
 from core.components.SGBD import *
+'''
+    SGBD implementa funções para manipulação do banco de dados.
+'''
+
 from datetime import datetime
+'''
+    O módulo datetime oferece classes para manipulação de data e hora.
+'''
 
 class Model:
     def __init__(self):
@@ -42,12 +49,14 @@ class Model:
 
         return products
     
-    # finaliza a comanda e armazena no banco de dados
-    #
-    # retorna...
-    # >0 - sucesso
-    #  0 - comanda vazia
-    # <0 - estoque indisponível
+    '''
+        Defere a comanda no banco de dados
+
+        Retorna...
+            >0 - Sucesso;
+             0 - Comanda vazia;
+            <0 - Estoque indisponível.
+    '''
     def commit_sale(self):
         self.__curr_order = fetch_curr_order()
         self.__stock = fetch_stock()
@@ -94,11 +103,13 @@ class Model:
         else:
             return -1
                 
-    # remove o produto selecionado
-    #
-    # retorna...
-    # 0 - sucesso
-    # 1 - item não encontrado
+    '''
+        Remove o produto selecionado
+
+        Retorna...
+            0 - Sucesso;
+            1 - Item não encontrado.
+    '''
     def remove_product(self, item_name):
         self.__curr_order = fetch_curr_order()
 
@@ -142,11 +153,13 @@ class ProductModel:
         else:
             return [item['name'] for item in self.__stock]
         
-    # confirma o produto selecionado
-    #
-    # retorna...
-    # 0 - sucesso
-    # 1 - item não encontrado
+    '''
+        Confirma o produto selecionado
+
+        Retorna...
+            0 - Sucesso;
+            1 - Item não encontrado.
+    '''
     def confirm_product(self, item_name, item_qty):
         self.__stock = fetch_stock()
 
