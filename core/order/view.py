@@ -111,7 +111,7 @@ class View(ttk.Toplevel):
             self.__on_close = True
             
             if msgbox.yesno('Deseja cancelar a comanda?', 'Cancelar comanda') == 'Sim':
-                self.__parent_ctrl.order_ctrl = None
+                self.__parent_ctrl._order_ctrl = None
 
                 self.__controller.on_close()
             else:
@@ -129,7 +129,7 @@ class View(ttk.Toplevel):
         if res > 0.0:
             msgbox.show_info(f'Comanda deferida no valor de R${res}', 'Sucesso')
 
-            self.__parent_ctrl.order_ctrl = None
+            self.__parent_ctrl._order_ctrl = None
 
             self.__controller.on_close()
         elif res < 0.0:
@@ -242,7 +242,7 @@ class ProductView(ttk.Toplevel):
         tp(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.')
 
     def on_close(self):
-        self.__parent_ctrl.product_ctrl = None
+        self.__parent_ctrl._product_ctrl = None
         self.destroy()
 
     def confirm_product(self):

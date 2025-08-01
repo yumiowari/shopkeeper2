@@ -227,7 +227,7 @@ class View(ttk.Toplevel):
         self.after(200, lambda: self._create_item_name_entry.focus_set())
 
     def on_close(self):
-        self.__parent_ctrl.stock_ctrl = None
+        self.__parent_ctrl._stock_ctrl = None
         self.destroy()
 
     def on_escape(self):
@@ -457,7 +457,7 @@ class EntryView(ttk.Toplevel):
         tp(self._entry_confirm_btn, 'Confirma o registro da entrada/saída do produto no inventário.')
 
     def on_close(self):
-        self.__parent_ctrl.stock_entry_ctrl = None
+        self.__parent_ctrl._stock_entry_ctrl = None
         self.destroy()
 
     def on_escape(self):

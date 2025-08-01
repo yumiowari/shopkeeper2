@@ -10,11 +10,11 @@ class Controller:
         self._view.transient(master)
         self._view.grab_set()
 
-        self.__product_ctrl = None
+        self._product_ctrl = None
 
     def on_close(self):
-        if self.__product_ctrl:
-            self.__product_ctrl.on_close()
+        if self._product_ctrl:
+            self._product_ctrl.on_close()
 
         self.__model.on_close()
 
@@ -27,10 +27,10 @@ class Controller:
         return self.__model.commit_sale()
 
     def add_product(self):
-        if self.__product_ctrl is None or not self.__product_ctrl._view.winfo_exists():
-            self.__product_ctrl = ProductController(master=self._view, parent=self)
+        if self._product_ctrl is None or not self._product_ctrl._view.winfo_exists():
+            self._product_ctrl = ProductController(master=self._view, parent=self)
         else: # se já existe, traz para frente
-            self.__product_ctrl._view.lift()
+            self._product_ctrl._view.lift()
 
     def remove_product(self):
         item_name = self._view._selected_items_combo.get().split(')', 1)[1].strip()

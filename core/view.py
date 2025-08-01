@@ -23,7 +23,7 @@ class View(ttk.Window):
         Encerrar a janela principal implica em encerrar a aplicação.
     '''
     def __init__(self, controller):
-        super().__init__(themename='litera')
+        super().__init__(themename='darkly')
         self.__controller = controller
         self.title('$hopkeeper')
         self.geometry('800x600')
@@ -71,7 +71,7 @@ class View(ttk.Window):
 
         # Menu de Arquivo: Preferências e funções gerais da aplicação.
         self.__file_menu = ttk.Menu(self.__menu_bar, tearoff=0)
-        self.__file_menu.add_command(label='Preferências')
+        self.__file_menu.add_command(label='Preferências', command=self.__controller.open_settings_window)
         self.__file_menu.add_separator()
         self.__file_menu.add_command(label='Sair', accelerator='Ctrl+Q', command=self.shutdown)
         self.bind_all('<Control-q>', lambda e: self.shutdown())
