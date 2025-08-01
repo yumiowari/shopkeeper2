@@ -70,7 +70,7 @@ class View(ttk.Toplevel):
         self.__right_bottom_frame.pack(fill=NONE, side=RIGHT, padx=5, pady=5)
 
         # Combobox para listar os itens selecionados
-        self._selected_items_combo = ttk.Combobox(self._top_frame, state='readonly')
+        self._selected_items_combo = ttk.Combobox(self._top_frame, width=20, state='readonly')
         self._selected_items_combo.config(values=self.__controller.fetch_selected_items())
         self._selected_items_combo_label = ttk.Label(self._top_frame, text='São os itens na comanda:')
         self._selected_items_combo.focus_set() # trás foco ao widget
