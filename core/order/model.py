@@ -86,7 +86,7 @@ class Model:
 
                         break
 
-                    self.__stock.append(item)
+                    self.__stock.insert(0, item)
                     #
 
                     break # garante que o produto não será processado mais de uma vez

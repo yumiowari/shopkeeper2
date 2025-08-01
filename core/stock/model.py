@@ -113,6 +113,7 @@ class Model:
         for item in self.__stock:
             if item['name'] == item_name:
                 self.__stock.remove(item)
+
                 update_stock(self.__stock)
 
                 return 0
