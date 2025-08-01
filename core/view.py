@@ -4,6 +4,7 @@ from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.dialogs import DatePickerDialog
 from ttkbootstrap.tooltip import ToolTip as tp
+from ttkbootstrap import Style
 '''
     O módulo ttkbootstrap oferece uma extensão para o tkinter que permite
     temas modernos de estilo simples sob demanda inspirados no Bootstrap.
@@ -23,11 +24,14 @@ class View(ttk.Window):
         Encerrar a janela principal implica em encerrar a aplicação.
     '''
     def __init__(self, controller):
-        super().__init__(themename='darkly')
+        super().__init__()
         self.__controller = controller
         self.title('$hopkeeper')
         self.geometry('800x600')
         self.resizable(False, False)
+
+        # atualiza o tema da janela
+        Style().theme_use(self.__controller.fetch_curr_theme())
 
         # flags...
         self.__on_shutdown = False

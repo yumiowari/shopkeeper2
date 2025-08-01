@@ -22,6 +22,9 @@ class Controller:
     def shutdown(self):
         self.__view.destroy()
 
+    def fetch_curr_theme(self):
+        return self.__model.fetch_curr_theme()
+
     def open_settings_window(self):
         if self._settings_ctrl is None or not self._settings_ctrl._view.winfo_exists():
             self._settings_ctrl = SettingsCtrl(master=self.__view, parent=self)

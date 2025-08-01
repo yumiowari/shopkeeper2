@@ -14,4 +14,9 @@ class Controller:
 
         Style().theme_use(theme_name)
 
-        
+        self.update_curr_theme()
+
+    def update_curr_theme(self):
+        theme_name = self._view._theme_name_combo.get()
+
+        self.__model.update_curr_theme(theme_name)

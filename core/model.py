@@ -157,3 +157,13 @@ class Model:
                                         break
 
         return report
+    
+    '''
+        Função para carregar o tema persistido na memória
+    '''
+    def fetch_curr_theme(self):
+        try:
+            with open('data/curr_theme.txt', 'r') as f:
+                return f.read().strip()
+        except FileNotFoundError:
+            return 'litera' # retorna o tema padrão (litera)
