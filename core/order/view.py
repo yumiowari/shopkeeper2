@@ -26,12 +26,6 @@ def validate_number(x) -> bool:
         return True
     return x.isdigit() and int(x) <= 999 and int(x) >= 1
 
-def validate_date(x) -> bool:
-    '''
-        Valida se o input é uma data no formato dd/mm/YY.
-    '''
-    return True
-
 '''
     Janela para cadastro de Comanda
 
@@ -322,9 +316,6 @@ class ConferOrderView(ttk.Toplevel):
 
         self.bind('<Escape>', lambda e: self.on_escape())
 
-        # date format observer
-        date_validator = self.register(validate_date)
-
         '''
             Frame Principal
         '''
@@ -345,7 +336,7 @@ class ConferOrderView(ttk.Toplevel):
         )
         self._date_entry.configure(state='readonly')
         self._date_entry_label = ttk.Label(self._main_frame, text='Selecione a data:', font=('Arial', 10, 'bold'))
-        self._timestamp_combo = ttk.Combobox(self._main_frame, width=20, state='readonly', validate='focus', validatecommand=(date_validator, '%P'))
+        self._timestamp_combo = ttk.Combobox(self._main_frame, width=20, state='readonly', validate='focus')
         self._timestamp_combo_label = ttk.Label(self._main_frame, text='Selecione o timestamp:', font=('Arial', 10, 'bold'))
 
         '''
@@ -374,15 +365,15 @@ class ConferOrderView(ttk.Toplevel):
         self.on_close()
 
     def confirm_selected_date(self):
-        orders = self.__controller.fetch_order_list()
+        order_list = self.__controller.fetch_order_list()
 
-        if orders == []:
+        if order_list == []:
             msgbox.show_warning('Nenhuma comanda foi vendida na data selecionada.', 'Aviso')
         else:
             timestamps = []
 
-            for sale in orders:
-                timestamps.append(sale['timestamp'])
+            for order in order_list:
+                timestamps.append(order['timestamp'])
 
             self._timestamp_combo.config(values=timestamps)
 
@@ -394,13 +385,12 @@ class ConferOrderView(ttk.Toplevel):
         else:
             order = self.__controller.fetch_order()
 
-            if not order:
+            if order == {}:
                 msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro')
             else:
-                output = 'É a comanda:\n\n'
-                output += f'{order['timestamp']}\n'
+                output = f'É a comanda: {order['timestamp']}\n\n'
                 for sale in order['sales']:
-                    output += f'{sale['name']} : {sale['qty']} - R$ {sale['value']}\n'
-                output += f'Total: R${order['value']}'
+                    output += f'{sale['name']} - {sale['qty']} - R$ {sale['value']}\n'
+                output += f'\nTotal: R${order['value']}'
 
                 msgbox.show_info(output, 'Sucesso')
