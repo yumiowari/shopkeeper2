@@ -31,7 +31,7 @@ def validate_number(x) -> bool:
 
     Disponibiliza a UI para gerenciar a comanda.
 '''
-class View(ttk.Toplevel):
+class CreateOrderView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
         self.__controller = controller
@@ -176,7 +176,7 @@ class View(ttk.Toplevel):
 
     Disponibiliza a UI para adicionar itens à comanda.
 '''
-class ProductView(ttk.Toplevel):
+class SelectProductView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
         self.__controller = controller
@@ -249,7 +249,7 @@ class ProductView(ttk.Toplevel):
         tp(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.')
 
     def on_close(self):
-        self.__parent_ctrl._product_ctrl = None
+        self.__parent_ctrl._select_product_ctrl = None
         self.destroy()
 
     def on_escape(self):

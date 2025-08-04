@@ -13,7 +13,7 @@ import os
     os provê uma forma portátil de usar operações dependentes do sistema operacional.
 '''
 
-class Model:
+class CreateOrderModel:
     def __init__(self):
         self.__stock = []
 
@@ -119,7 +119,7 @@ class Model:
             
         return 1
 
-class ProductModel:
+class SelectProductModel:
     def __init__(self):
         self.__stock = []
 

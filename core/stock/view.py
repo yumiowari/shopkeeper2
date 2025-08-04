@@ -63,7 +63,7 @@ def validate_money(x) -> bool:
 
     Disponibiliza os CRUDs de Inventário.
 '''
-class View(ttk.Toplevel):
+class CRUDView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
         self.__controller = controller

@@ -1,15 +1,15 @@
-from core.model import Model
-from core.view import View
+from core.model import Model as MainModel
+from core.view import View as MainView
 from core.settings.controller import Controller as SettingsCtrl
-from core.stock.controller import Controller as StockCtrl
+from core.stock.controller import CRUDController as StockCtrl
 from core.stock.controller import EntryController as StockEntryCtrl
-from core.order.controller import Controller as CreateOrderCtrl
+from core.order.controller import CreateOrderController as CreateOrderCtrl
 from core.order.controller import ConferOrderController as ConferOrderCtrl
 
 class Controller:
     def __init__(self):
-        self.__model = Model()
-        self.__view = View(self)
+        self.__model = MainModel()
+        self.__view = MainView(self)
 
         # instâncias das janelas
         self._settings_ctrl = None
