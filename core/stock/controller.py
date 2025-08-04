@@ -1,12 +1,12 @@
-from core.stock.model import Model
-from core.stock.view import View
+from core.stock.model import CRUDModel
+from core.stock.view import CRUDView
 from core.stock.model import EntryModel
 from core.stock.view import EntryView
 
-class Controller:
+class CRUDController:
     def __init__(self, master=None, parent=None):
-        self.__model = Model()
-        self._view = View(self, parent_ctrl=parent)
+        self.__model = CRUDModel()
+        self._view = CRUDView(self, parent_ctrl=parent)
         self._view.transient(master)
         self._view.grab_set()
 

@@ -7,6 +7,11 @@ from ttkbootstrap.tooltip import ToolTip as tp
     temas modernos de estilo simples sob demanda inspirados no Bootstrap.
 '''
 
+from datetime import date
+'''
+    O módulo datetime oferece classes para manipulação de data e hora.
+'''
+
 def validate_alpha(x) -> bool:
     '''
         Valida se o input é alfabético de até 30 caracteres.
@@ -22,11 +27,11 @@ def validate_number(x) -> bool:
     return x.isdigit() and int(x) <= 999 and int(x) >= 1
 
 '''
-    Janela da Comanda
+    Janela para cadastro de Comanda
 
     Disponibiliza a UI para gerenciar a comanda.
 '''
-class View(ttk.Toplevel):
+class CreateOrderView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
         self.__controller = controller
@@ -34,13 +39,13 @@ class View(ttk.Toplevel):
         self.__on_close = False
         self.__on_item_removal = False
 
-        self.title('Comanda')
+        self.title('Cadastro de Comanda')
         self.geometry('600x450')
         self.resizable(False, False)
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
-        self.bind_all('<Escape>', lambda e: self.on_escape())
+        self.bind('<Escape>', lambda e: self.on_escape())
 
         '''
             Frame Principal
@@ -111,7 +116,7 @@ class View(ttk.Toplevel):
             self.__on_close = True
             
             if msgbox.yesno('Deseja cancelar a comanda?', 'Cancelar comanda') == 'Sim':
-                self.__parent_ctrl._order_ctrl = None
+                self.__parent_ctrl._create_order_ctrl = None
 
                 self.__controller.on_close()
             else:
@@ -129,7 +134,7 @@ class View(ttk.Toplevel):
         if res > 0.0:
             msgbox.show_info(f'Comanda deferida no valor de R${res}', 'Sucesso')
 
-            self.__parent_ctrl._order_ctrl = None
+            self.__parent_ctrl._create_order_ctrl = None
 
             self.__controller.on_close()
         elif res < 0.0:
@@ -167,11 +172,11 @@ class View(ttk.Toplevel):
                     self.__on_item_removal = False
 
 '''
-    Janela do Produto
+    Janela para seleção de Produto
 
     Disponibiliza a UI para adicionar itens à comanda.
 '''
-class ProductView(ttk.Toplevel):
+class SelectProductView(ttk.Toplevel):
     def __init__(self, controller, parent_ctrl):
         super().__init__()
         self.__controller = controller
@@ -182,6 +187,8 @@ class ProductView(ttk.Toplevel):
         self.resizable(False, False)
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
+
+        self.bind('<Escape>', lambda e: self.on_escape())
 
         '''
             Observers
@@ -242,8 +249,11 @@ class ProductView(ttk.Toplevel):
         tp(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.')
 
     def on_close(self):
-        self.__parent_ctrl._product_ctrl = None
+        self.__parent_ctrl._select_product_ctrl = None
         self.destroy()
+
+    def on_escape(self):
+        self.on_close()
 
     def confirm_product(self):
         item_name = self._item_name_combo.get()
@@ -286,3 +296,101 @@ class ProductView(ttk.Toplevel):
 
     def cancel_product(self):
         self.on_close()
+
+'''
+    Janela para consulta de Comanda
+
+    Disponibiliza a UI para consultar as comandas deferidas.
+'''
+class ConferOrderView(ttk.Toplevel):
+    def __init__(self, controller, parent_ctrl):
+        super().__init__()
+        self.__controller = controller
+        self.__parent_ctrl = parent_ctrl
+
+        self.title('Consulta de Comanda')
+        self.geometry('600x450')
+        self.resizable(False, False)
+
+        self.protocol('WM_DELETE_WINDOW', self.on_close)
+
+        self.bind('<Escape>', lambda e: self.on_escape())
+
+        '''
+            Frame Principal
+        '''
+        self._main_frame = ttk.Frame(self)
+        self._main_frame.pack(fill=BOTH, expand=True)
+
+        self.__main_label = ttk.Label(self._main_frame, text='Consultar comanda deferida...', font=('Arial', 12))
+        self.__main_label.pack(pady=20)
+
+        '''
+            Campos de Entrada
+        '''
+        self._date_entry = ttk.DateEntry(
+            self._main_frame,
+            firstweekday=6, # domingo
+            startdate=date.today(),
+            bootstyle='info'
+        )
+        self._date_entry.configure(state='readonly')
+        self._date_entry_label = ttk.Label(self._main_frame, text='Selecione a data:', font=('Arial', 10, 'bold'))
+        self._timestamp_combo = ttk.Combobox(self._main_frame, width=20, state='readonly', validate='focus')
+        self._timestamp_combo_label = ttk.Label(self._main_frame, text='Selecione o timestamp:', font=('Arial', 10, 'bold'))
+
+        '''
+            Botões
+        '''
+        self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.confirm_selected_date, bootstyle='info', width=10) # type: ignore
+        self._confer_btn = ttk.Button(self._main_frame, text='Consultar', command=self.confer_selected_order, bootstyle='success', width=10) # type: ignore
+
+        self._date_entry_label.pack(pady=5)
+        self._date_entry.pack(pady=5)
+        self._confirm_btn.pack(pady=10)
+        self._timestamp_combo_label.pack(pady=5)
+        self._timestamp_combo.pack(pady=5)
+        self._confer_btn.pack(pady=10)
+
+        tp(self._date_entry, 'Em que dia a comanda foi deferida?')
+        tp(self._confirm_btn, 'Confirmar a data selecionada.')
+        tp(self._timestamp_combo, 'Em que horário a comanda foi deferida?')
+        tp(self._confer_btn, 'Consultar a comanda selecionada.')
+
+    def on_close(self):
+        self.__parent_ctrl._confer_order_ctrl = None
+        self.destroy()
+
+    def on_escape(self):
+        self.on_close()
+
+    def confirm_selected_date(self):
+        order_list = self.__controller.fetch_order_list()
+
+        if order_list == []:
+            msgbox.show_warning('Nenhuma comanda foi vendida na data selecionada.', 'Aviso')
+        else:
+            timestamps = []
+
+            for order in order_list:
+                timestamps.append(order['timestamp'])
+
+            self._timestamp_combo.config(values=timestamps)
+
+    def confer_selected_order(self):
+        selected_timestamp = self._timestamp_combo.get()
+
+        if not selected_timestamp:
+            msgbox.show_warning('Um timestamp válido precisa ser selecionado.', 'Aviso')
+        else:
+            order = self.__controller.fetch_order()
+
+            if order == {}:
+                msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro')
+            else:
+                output = f'É a comanda: {order['timestamp']}\n\n'
+                for sale in order['sales']:
+                    output += f'{sale['name']} - {sale['qty']} - R$ {sale['value']}\n'
+                output += f'\nTotal: R${order['value']}'
+
+                msgbox.show_info(output, 'Sucesso')

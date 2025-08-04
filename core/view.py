@@ -101,9 +101,10 @@ class View(ttk.Window):
 
         # Menu de Caixa
         self.__sales_menu = ttk.Menu(self.__menu_bar, tearoff=0)
-        self.__sales_menu.add_command(label='Vender', accelerator='Ctrl+V', command=self.__controller.open_order_window)
-        self.bind('<Control-v>', lambda e: self.__controller.open_order_window())
-        self.bind('<Control-V>', lambda e: self.__controller.open_order_window())
+        self.__sales_menu.add_command(label='Cadastro de Comanda', accelerator='Ctrl+V', command=self.__controller.open_create_order_window)
+        self.bind('<Control-v>', lambda e: self.__controller.open_create_order_window())
+        self.bind('<Control-V>', lambda e: self.__controller.open_create_order_window())
+        self.__sales_menu.add_command(label='Consulta de Comanda', command=self.__controller.open_confer_order_window)
         self.__sales_menu.add_separator()
         self.__sales_menu.add_command(label='Relatório', accelerator='Ctrl+Shift+V', command=self.make_order_report)
         self.bind('<Control-Shift-V>', lambda e: self.make_order_report())
@@ -123,7 +124,7 @@ class View(ttk.Window):
         '''
             Botões de acesso rápido
         '''
-        self.__order_btn = ttk.Button(self.__bottom_frame, text='Vender', command=self.__controller.open_order_window, bootstyle='success', width=10) # type: ignore
+        self.__order_btn = ttk.Button(self.__bottom_frame, text='Vender', command=self.__controller.open_create_order_window, bootstyle='success', width=10) # type: ignore
         self.__entry_btn = ttk.Button(self.__bottom_frame, text='Entrada', command=self.__controller.open_stock_entry_window, bootstyle='info', width=10) # type: ignore
 
         self.__order_btn.pack(side=LEFT, padx=10, pady=10)

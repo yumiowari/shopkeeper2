@@ -40,7 +40,7 @@ class View(ttk.Toplevel):
         self.__bottom_frame = ttk.Frame(self._main_frame)
         self.__bottom_frame.pack(fill=X, side=BOTTOM, padx=10, pady=10)
 
-        self.__main_label = ttk.Label(self._top_frame, text='Alterar preferências da aplicação...', font=('Arial', 12))
+        self.__main_label = ttk.Label(self._top_frame, text='Alterar tema da aplicação...', font=('Arial', 12))
         self.__main_label.pack(pady=20)
 
         '''

@@ -3,7 +3,7 @@ from core.components.SGBD import *
     SGBD implementa funções para manipulação do banco de dados.
 '''
 
-class Model:
+class CRUDModel:
     def __init__(self):
         self.__item = {
             'name': '',
@@ -42,6 +42,9 @@ class Model:
 
         return 0 # sucesso
 
+    '''
+        Retorna a lista de produtos no estoque
+    '''
     def fetch_item_names(self):
         self.__stock = fetch_stock()
 
@@ -122,13 +125,6 @@ class Model:
 
 class EntryModel:
     def __init__(self):
-        self.__item = {
-            'name': '',
-            'cost': 0.0,
-            'price': 0.0,
-            'qty': 0
-        }
-
         self.__stock = []
 
     def fetch_item_names(self):

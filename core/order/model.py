@@ -8,22 +8,14 @@ from datetime import datetime
     O módulo datetime oferece classes para manipulação de data e hora.
 '''
 
-class Model:
+import os
+'''
+    os provê uma forma portátil de usar operações dependentes do sistema operacional.
+'''
+
+class CreateOrderModel:
     def __init__(self):
-        self.__item = {
-            'name': '',
-            'cost': 0.0,
-            'price': 0.0,
-            'qty': 0
-        }
-
         self.__stock = []
-
-        self.__sale = {
-            'name': '',
-            'qty': 0,
-            'value': 0.0
-        }
 
         # current order
         self.__curr_order = [] # list of sales
@@ -36,8 +28,12 @@ class Model:
         }
 
     def on_close(self):
-        delete_curr_order()
+        delete_curr_order() # deleta a comanda atual (ainda não deferida) do disco rígido
 
+    '''
+        Retorna a lista de produtos selecionados...
+        No formato: (<Quantidade>) <Nome do produto>
+    '''
     def fetch_selected_items(self):
         self.__curr_order = fetch_curr_order()
 
@@ -69,18 +65,20 @@ class Model:
         for sale in self.__curr_order:
             for item in self.__stock:
                 if sale['name'] == item['name']:
-                    self.__sale['name'] = sale['name']
-                    self.__sale['qty'] = int(sale['qty'])
-                    self.__sale['value'] = float(float(item['price']) * int(sale['qty']))
+                    comm_sale = {
+                        'name': sale['name'],
+                        'qty' : int(sale['qty']),
+                        'value': float(float(item['price']) * int(sale['qty']))
+                    }
 
-                    self.__comm_order['value'] += self.__sale['value']
+                    self.__comm_order['value'] += comm_sale['value']
 
-                    self.__comm_order['sales'].append(self.__sale)
+                    self.__comm_order['sales'].append(comm_sale)
 
-                    # atualiza o estoque (localmente)
+                    # atualiza o estoque (na memória)
                     self.__stock.remove(item)
 
-                    item['qty'] -= int(sale['qty'])
+                    item['qty'] -= int(comm_sale['qty'])
                     if item['qty'] < 0:
                         flag = False
 
@@ -89,13 +87,11 @@ class Model:
                     self.__stock.insert(0, item)
                     #
 
-                    break # garante que o produto não será processado mais de uma vez
-
         self.__comm_order['timestamp'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         store_comm_order(self.__comm_order)
 
-        # atualiza o estoque (remotamente)
+        # atualiza o estoque (no disco rígido)
         if flag:
             update_stock(self.__stock)
 
@@ -111,7 +107,7 @@ class Model:
             1 - Item não encontrado.
     '''
     def remove_product(self, item_name):
-        self.__curr_order = fetch_curr_order()
+        self.__curr_order = fetch_curr_order() # redundante
 
         for product in self.__curr_order:
             if product['name'] == item_name:
@@ -123,20 +119,8 @@ class Model:
             
         return 1
 
-class ProductModel:
+class SelectProductModel:
     def __init__(self):
-        self.__item = {
-            'name': '',
-            'cost': 0.0,
-            'price': 0.0,
-            'qty': 0
-        }
-
-        self.__selected_item = {
-            'name': '',
-            'qty': 0
-        }
-
         self.__stock = []
 
         # current order
@@ -145,6 +129,9 @@ class ProductModel:
     def on_close(self):
         pass
 
+    '''
+        Retorna a lista de produtos no estoque
+    '''
     def fetch_item_names(self):
         self.__stock = fetch_stock()
 
@@ -165,8 +152,10 @@ class ProductModel:
 
         for item in self.__stock:
             if item['name'] == item_name:
-                self.__selected_item['name'] = item_name
-                self.__selected_item['qty'] = item_qty
+                selected_item = {
+                    'name': item_name,
+                    'qty': item_qty
+                }
 
                 self.__curr_order = fetch_curr_order()
 
@@ -174,6 +163,7 @@ class ProductModel:
 
                 for sale in self.__curr_order:
                     if sale['name'] == item_name:
+                        # se o produto já foi selecionado, apenas atualiza a quantidade
                         self.__curr_order.remove(sale)
 
                         curr_qty = int(sale['qty'])
@@ -185,10 +175,50 @@ class ProductModel:
                         flag = True
 
                 if not flag:
-                    self.__curr_order.append(self.__selected_item)
+                    self.__curr_order.append(selected_item)
 
                 update_curr_order(self.__curr_order)
                 
                 return 0
 
         return 1
+    
+class ConferOrderModel:
+    def __init__(self):
+        # commited orders
+        self.__comm_order_list = []
+
+    def on_close(self):
+        pass
+
+    '''
+        Recupera a lista de comandas deferidas
+    '''
+    def fetch_order_list(self, selected_date):
+        self.__comm_order_list = []
+
+        for folder_name in os.listdir('data'):
+            folder_path = os.path.join('data', folder_name)
+
+            if os.path.isdir(folder_path):
+                # verifica se o nome da pasta começa com a data selecionada
+                if folder_name.startswith(selected_date.strftime('%Y-%m-%d')):
+                    file_path = os.path.join(folder_path, 'order.pkl')
+
+                    if os.path.exists(file_path):
+                        with open(file_path, 'rb') as file:
+                            comm_order = pkl.load(file)
+
+                            self.__comm_order_list.append(comm_order)
+
+        return self.__comm_order_list
+    
+    '''
+        Retorna a comanda referente ao timestamp selecionado
+    '''
+    def fetch_order(self, selected_timestamp):
+        for comm_order in self.__comm_order_list:
+            if comm_order['timestamp'] == selected_timestamp:
+                return comm_order
+            
+        return {}
