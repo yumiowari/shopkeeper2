@@ -7,6 +7,11 @@ from ttkbootstrap.tooltip import ToolTip as tp
     temas modernos de estilo simples sob demanda inspirados no Bootstrap.
 '''
 
+from datetime import date
+'''
+    O módulo datetime oferece classes para manipulação de data e hora.
+'''
+
 def validate_alpha(x) -> bool:
     '''
         Valida se o input é alfabético de até 30 caracteres.
@@ -20,6 +25,12 @@ def validate_number(x) -> bool:
     if x == '':
         return True
     return x.isdigit() and int(x) <= 999 and int(x) >= 1
+
+def validate_date(x) -> bool:
+    '''
+        Valida se o input é uma data no formato dd/mm/YY.
+    '''
+    return True
 
 '''
     Janela para cadastro de Comanda
@@ -304,12 +315,56 @@ class ConferOrderView(ttk.Toplevel):
         self.__parent_ctrl = parent_ctrl
 
         self.title('Consulta de Comanda')
-        self.geometry('400x300')
+        self.geometry('600x450')
         self.resizable(False, False)
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
         self.bind('<Escape>', lambda e: self.on_escape())
+
+        # date format observer
+        date_validator = self.register(validate_date)
+
+        '''
+            Frame Principal
+        '''
+        self._main_frame = ttk.Frame(self)
+        self._main_frame.pack(fill=BOTH, expand=True)
+
+        self.__main_label = ttk.Label(self._main_frame, text='Consultar comanda deferida...', font=('Arial', 12))
+        self.__main_label.pack(pady=20)
+
+        '''
+            Campos de Entrada
+        '''
+        self._date_entry = ttk.DateEntry(
+            self._main_frame,
+            firstweekday=6, # domingo
+            startdate=date.today(),
+            bootstyle='info'
+        )
+        self._date_entry.configure(state='readonly')
+        self._date_entry_label = ttk.Label(self._main_frame, text='Selecione a data:', font=('Arial', 10, 'bold'))
+        self._timestamp_combo = ttk.Combobox(self._main_frame, width=20, state='readonly', validate='focus', validatecommand=(date_validator, '%P'))
+        self._timestamp_combo_label = ttk.Label(self._main_frame, text='Selecione o timestamp:', font=('Arial', 10, 'bold'))
+
+        '''
+            Botões
+        '''
+        self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.confirm_selected_date, bootstyle='info', width=10) # type: ignore
+        self._confer_btn = ttk.Button(self._main_frame, text='Consultar', command=self.confer_selected_order, bootstyle='success', width=10) # type: ignore
+
+        self._date_entry_label.pack(pady=5)
+        self._date_entry.pack(pady=5)
+        self._confirm_btn.pack(pady=10)
+        self._timestamp_combo_label.pack(pady=5)
+        self._timestamp_combo.pack(pady=5)
+        self._confer_btn.pack(pady=10)
+
+        tp(self._date_entry, 'Em que dia a comanda foi deferida?')
+        tp(self._confirm_btn, 'Confirmar a data selecionada.')
+        tp(self._timestamp_combo, 'Em que horário a comanda foi deferida?')
+        tp(self._confer_btn, 'Consultar a comanda selecionada.')
 
     def on_close(self):
         self.__parent_ctrl._confer_order_ctrl = None
@@ -317,3 +372,35 @@ class ConferOrderView(ttk.Toplevel):
 
     def on_escape(self):
         self.on_close()
+
+    def confirm_selected_date(self):
+        orders = self.__controller.fetch_order_list()
+
+        if orders == []:
+            msgbox.show_warning('Nenhuma comanda foi vendida na data selecionada.', 'Aviso')
+        else:
+            timestamps = []
+
+            for sale in orders:
+                timestamps.append(sale['timestamp'])
+
+            self._timestamp_combo.config(values=timestamps)
+
+    def confer_selected_order(self):
+        selected_timestamp = self._timestamp_combo.get()
+
+        if not selected_timestamp:
+            msgbox.show_warning('Um timestamp válido precisa ser selecionado.', 'Aviso')
+        else:
+            order = self.__controller.fetch_order()
+
+            if not order:
+                msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro')
+            else:
+                output = 'É a comanda:\n\n'
+                output += f'{order['timestamp']}\n'
+                for sale in order['sales']:
+                    output += f'{sale['name']} : {sale['qty']} - R$ {sale['value']}\n'
+                output += f'Total: R${order['value']}'
+
+                msgbox.show_info(output, 'Sucesso')

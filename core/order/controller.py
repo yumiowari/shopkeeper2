@@ -71,3 +71,13 @@ class ConferOrderController:
         self.__model.on_close()
 
         self._view.destroy()
+
+    def fetch_order_list(self):
+        selected_date = self._view._date_entry.get_date()
+
+        return self.__model.fetch_order_list(selected_date)
+    
+    def fetch_order(self):
+        selected_timestamp = self._view._timestamp_combo.get()
+
+        return self.__model.fetch_order(selected_timestamp)

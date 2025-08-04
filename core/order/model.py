@@ -8,6 +8,11 @@ from datetime import datetime
     O módulo datetime oferece classes para manipulação de data e hora.
 '''
 
+import os
+'''
+    os provê uma forma portátil de usar operações dependentes do sistema operacional.
+'''
+
 class Model:
     def __init__(self):
         self.__item = {
@@ -195,7 +200,51 @@ class ProductModel:
     
 class ConferOrderModel:
     def __init__(self):
-        pass
+        self.__sale = {
+            'name': '',
+            'qty': 0,
+            'value': 0.0
+        }
+
+        # commited order
+        self.__comm_order = {
+            'timestamp': '',
+            'sales': [], # list of sales
+            'value': 0.0
+        }
+
+        # commited orders
+        self.__comm_orders = []
 
     def on_close(self):
         pass
+
+    '''
+        Recupera a lista de comandas deferidas
+    '''
+    def fetch_order_list(self, selected_date):
+        for folder_name in os.listdir('data'):
+            folder_path = os.path.join('data', folder_name)
+
+            if os.path.isdir(folder_path):
+                # verifica se o nome da pasta começa com a data selecionada
+                if folder_name.startswith(selected_date.strftime('%Y-%m-%d')):
+                    file_path = os.path.join(folder_path, 'order.pkl')
+
+                    if os.path.exists(file_path):
+                        with open(file_path, 'rb') as file:
+                            self.__comm_order = pkl.load(file)
+
+                            self.__comm_orders.append(self.__comm_order)
+
+        return self.__comm_orders
+    
+    '''
+        Retorna a comanda referente ao timestamp selecionado
+    '''
+    def fetch_order(self, selected_timestamp):
+        for comm_order in self.__comm_orders:
+            if comm_order['timestamp'] == selected_timestamp:
+                return comm_order
+            
+        return {}
