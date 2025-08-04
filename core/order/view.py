@@ -22,7 +22,7 @@ def validate_number(x) -> bool:
     return x.isdigit() and int(x) <= 999 and int(x) >= 1
 
 '''
-    Janela da Comanda
+    Janela para cadastro de Comanda
 
     Disponibiliza a UI para gerenciar a comanda.
 '''
@@ -34,13 +34,13 @@ class View(ttk.Toplevel):
         self.__on_close = False
         self.__on_item_removal = False
 
-        self.title('Comanda')
+        self.title('Cadastro de Comanda')
         self.geometry('600x450')
         self.resizable(False, False)
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
-        self.bind_all('<Escape>', lambda e: self.on_escape())
+        self.bind('<Escape>', lambda e: self.on_escape())
 
         '''
             Frame Principal
@@ -111,7 +111,7 @@ class View(ttk.Toplevel):
             self.__on_close = True
             
             if msgbox.yesno('Deseja cancelar a comanda?', 'Cancelar comanda') == 'Sim':
-                self.__parent_ctrl._order_ctrl = None
+                self.__parent_ctrl._create_order_ctrl = None
 
                 self.__controller.on_close()
             else:
@@ -129,7 +129,7 @@ class View(ttk.Toplevel):
         if res > 0.0:
             msgbox.show_info(f'Comanda deferida no valor de R${res}', 'Sucesso')
 
-            self.__parent_ctrl._order_ctrl = None
+            self.__parent_ctrl._create_order_ctrl = None
 
             self.__controller.on_close()
         elif res < 0.0:
@@ -167,7 +167,7 @@ class View(ttk.Toplevel):
                     self.__on_item_removal = False
 
 '''
-    Janela do Produto
+    Janela para seleção de Produto
 
     Disponibiliza a UI para adicionar itens à comanda.
 '''
@@ -182,6 +182,8 @@ class ProductView(ttk.Toplevel):
         self.resizable(False, False)
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
+
+        self.bind('<Escape>', lambda e: self.on_escape())
 
         '''
             Observers
@@ -245,6 +247,9 @@ class ProductView(ttk.Toplevel):
         self.__parent_ctrl._product_ctrl = None
         self.destroy()
 
+    def on_escape(self):
+        self.on_close()
+
     def confirm_product(self):
         item_name = self._item_name_combo.get()
         item_qty = self._item_qty_spin.get()
@@ -285,4 +290,30 @@ class ProductView(ttk.Toplevel):
             msgbox.show_error('A seleção do produto falhou.', 'Erro')
 
     def cancel_product(self):
+        self.on_close()
+
+'''
+    Janela para consulta de Comanda
+
+    Disponibiliza a UI para consultar as comandas deferidas.
+'''
+class ConferOrderView(ttk.Toplevel):
+    def __init__(self, controller, parent_ctrl):
+        super().__init__()
+        self.__controller = controller
+        self.__parent_ctrl = parent_ctrl
+
+        self.title('Consulta de Comanda')
+        self.geometry('400x300')
+        self.resizable(False, False)
+
+        self.protocol('WM_DELETE_WINDOW', self.on_close)
+
+        self.bind('<Escape>', lambda e: self.on_escape())
+
+    def on_close(self):
+        self.__parent_ctrl._confer_order_ctrl = None
+        self.destroy()
+
+    def on_escape(self):
         self.on_close()

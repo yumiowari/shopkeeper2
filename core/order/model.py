@@ -192,3 +192,10 @@ class ProductModel:
                 return 0
 
         return 1
+    
+class ConferOrderModel:
+    def __init__(self):
+        pass
+
+    def on_close(self):
+        pass

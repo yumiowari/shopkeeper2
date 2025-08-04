@@ -3,7 +3,8 @@ from core.view import View
 from core.settings.controller import Controller as SettingsCtrl
 from core.stock.controller import Controller as StockCtrl
 from core.stock.controller import EntryController as StockEntryCtrl
-from core.order.controller import Controller as OrderCtrl
+from core.order.controller import Controller as CreateOrderCtrl
+from core.order.controller import ConferOrderController as ConferOrderCtrl
 
 class Controller:
     def __init__(self):
@@ -14,7 +15,8 @@ class Controller:
         self._settings_ctrl = None
         self._stock_ctrl = None
         self._stock_entry_ctrl = None
-        self._order_ctrl = None
+        self._create_order_ctrl = None
+        self._confer_order_ctrl = None
 
     def bootstrap(self):
         self.__view.mainloop()
@@ -46,11 +48,17 @@ class Controller:
     def make_stock_report(self):
         return self.__model.make_stock_report()
 
-    def open_order_window(self):
-        if self._order_ctrl is None or not self._order_ctrl._view.winfo_exists():
-            self._order_ctrl = OrderCtrl(master=self.__view, parent=self)
+    def open_create_order_window(self):
+        if self._create_order_ctrl is None or not self._create_order_ctrl._view.winfo_exists():
+            self._create_order_ctrl = CreateOrderCtrl(master=self.__view, parent=self)
         else:
-            self._order_ctrl._view.lift()
+            self._create_order_ctrl._view.lift()
+
+    def open_confer_order_window(self):
+        if self._confer_order_ctrl is None or not self._confer_order_ctrl._view.winfo_exists():
+            self._confer_order_ctrl = ConferOrderCtrl(master=self.__view, parent=self)
+        else:
+            self._confer_order_ctrl._view.lift()
 
     def make_order_report(self):
         selected_date = self.__view._dialog.date_selected

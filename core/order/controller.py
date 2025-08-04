@@ -2,6 +2,8 @@ from core.order.model import Model
 from core.order.view import View
 from core.order.model import ProductModel
 from core.order.view import ProductView
+from core.order.model import ConferOrderModel
+from core.order.view import ConferOrderView
 
 class Controller:
     def __init__(self, master=None, parent=None):
@@ -57,3 +59,15 @@ class ProductController:
         item_qty = self._view._item_qty_spin.get()
 
         return self.__model.confirm_product(item_name, item_qty)
+    
+class ConferOrderController:
+    def __init__(self, master=None, parent=None):
+        self.__model = ConferOrderModel()
+        self._view = ConferOrderView(self, parent_ctrl=parent)
+        self._view.transient(master)
+        self._view.grab_set()
+
+    def on_close(self):
+        self.__model.on_close()
+
+        self._view.destroy()
