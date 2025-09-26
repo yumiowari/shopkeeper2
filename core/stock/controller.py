@@ -10,34 +10,34 @@ class CRUDController:
         self._view.transient(master)
         self._view.grab_set()
 
-    def fetch_item_names(self):
-        return self.__model.fetch_item_names()
+    def fetch_product_names(self):
+        return self.__model.fetch_product_names()
 
-    def create_item(self):
-        item_name = self._view._create_item_name_entry.get()
-        item_cost = self._view._create_item_cost_entry.get().replace(',', '.')
-        item_price = self._view._create_item_price_entry.get().replace(',', '.')
-        item_qty = self._view._create_item_qty_spin.get()
+    def create_product(self):
+        product_name = self._view._create_product_name_entry.get()
+        product_cost = self._view._create_product_cost_entry.get().replace(',', '.')
+        product_price = self._view._create_product_price_entry.get().replace(',', '.')
+        product_qty = self._view._create_product_qty_spin.get()
 
-        return self.__model.create_item(item_name, item_cost, item_price, item_qty)
+        return self.__model.create_product(product_name, product_cost, product_price, product_qty)
 
-    def confer_item(self):
-        item_name = self._view._confer_item_name_combo.get()
+    def confer_product(self):
+        product_name = self._view._confer_product_name_combo.get()
 
-        return self.__model.confer_item(item_name)
+        return self.__model.confer_product(product_name)
 
-    def update_item(self):
-        item_name = self._view._update_item_name_combo.get()
-        item_cost = self._view._update_item_cost_entry.get().replace(',', '.')
-        item_price = self._view._update_item_price_entry.get().replace(',', '.')
-        item_qty = self._view._update_item_qty_spin.get()
+    def update_product(self):
+        product_name = self._view._update_product_name_combo.get()
+        product_cost = self._view._update_product_cost_entry.get().replace(',', '.')
+        product_price = self._view._update_product_price_entry.get().replace(',', '.')
+        product_qty = self._view._update_product_qty_spin.get()
 
-        return self.__model.update_item(item_name, item_cost, item_price, item_qty)
+        return self.__model.update_product(product_name, product_cost, product_price, product_qty)
 
-    def delete_item(self):
-        item_name = self._view._delete_item_name_combo.get()
+    def delete_product(self):
+        product_name = self._view._delete_product_name_combo.get()
 
-        return self.__model.delete_item(item_name)
+        return self.__model.delete_product(product_name)
     
 class EntryController:
     def __init__(self, master=None, parent=None):
@@ -46,11 +46,11 @@ class EntryController:
         self._view.transient(master)
         self._view.grab_set()
 
-    def fetch_item_names(self):
-        return self.__model.fetch_item_names()
+    def fetch_product_names(self):
+        return self.__model.fetch_product_names()
     
-    def entry_item(self):
-        item_name = self._view._entry_item_name_combo.get()
-        entry_qty = self._view._entry_item_qty_spin.get()
+    def entry_product(self):
+        product_name = self._view._entry_product_name_combo.get()
+        entry_qty = self._view._entry_product_qty_spin.get()
 
-        return self.__model.entry_item(item_name, entry_qty)
+        return self.__model.entry_product(product_name, entry_qty)

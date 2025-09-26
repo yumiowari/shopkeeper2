@@ -100,36 +100,36 @@ class CRUDView(ttk.Toplevel):
         '''
         self._create_frame = ttk.Frame(self._notebook)
 
-        self._create_label = ttk.Label(self._create_frame, text='Cadastrar novo item no inventário...', font=('Arial', 12))
+        self._create_label = ttk.Label(self._create_frame, text='Cadastrar novo produto no inventário...', font=('Arial', 12))
         
-        self._create_item_name_entry = ttk.Entry(self._create_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
-        self._create_item_name_label = ttk.Label(self._create_frame, text='Nome do item:', font=('Arial', 10, 'bold'))
-        self._create_item_name_entry.focus_set() # trás foco ao widget
-        self._create_item_cost_entry = ttk.Entry(self._create_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
-        self._create_item_cost_label = ttk.Label(self._create_frame, text='Custo do item:', font=('Arial', 10, 'bold'))
-        self._create_item_price_entry = ttk.Entry(self._create_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
-        self._create_item_price_label = ttk.Label(self._create_frame, text='Preço de venda:', font=('Arial', 10, 'bold'))
-        self._create_item_qty_spin = ttk.Spinbox(self._create_frame, from_=0, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
-        self._create_item_qty_label = ttk.Label(self._create_frame, text='Quantidade inicial:', font=('Arial', 10))
+        self._create_product_name_entry = ttk.Entry(self._create_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._create_product_name_label = ttk.Label(self._create_frame, text='Nome do produto:', font=('Arial', 10, 'bold'))
+        self._create_product_name_entry.focus_set() # trás foco ao widget
+        self._create_product_cost_entry = ttk.Entry(self._create_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
+        self._create_product_cost_label = ttk.Label(self._create_frame, text='Custo do produto:', font=('Arial', 10, 'bold'))
+        self._create_product_price_entry = ttk.Entry(self._create_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
+        self._create_product_price_label = ttk.Label(self._create_frame, text='Preço de venda:', font=('Arial', 10, 'bold'))
+        self._create_product_qty_spin = ttk.Spinbox(self._create_frame, from_=0, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
+        self._create_product_qty_label = ttk.Label(self._create_frame, text='Quantidade inicial:', font=('Arial', 10))
 
-        self._create_confirm_btn = ttk.Button(self._create_frame, text='Cadastrar', command=self.create_item, bootstyle='success', width=10) # type: ignore
+        self._create_confirm_btn = ttk.Button(self._create_frame, text='Cadastrar', command=self.create_product, bootstyle='success', width=10) # type: ignore
 
         self._create_label.pack(pady=10)
-        self._create_item_name_label.pack(pady=5)
-        self._create_item_name_entry.pack(pady=5)
-        self._create_item_cost_label.pack(pady=5)
-        self._create_item_cost_entry.pack(pady=5)
-        self._create_item_price_label.pack(pady=5)
-        self._create_item_price_entry.pack(pady=5)
-        self._create_item_qty_label.pack(pady=5)
-        self._create_item_qty_spin.pack(pady=5)
+        self._create_product_name_label.pack(pady=5)
+        self._create_product_name_entry.pack(pady=5)
+        self._create_product_cost_label.pack(pady=5)
+        self._create_product_cost_entry.pack(pady=5)
+        self._create_product_price_label.pack(pady=5)
+        self._create_product_price_entry.pack(pady=5)
+        self._create_product_qty_label.pack(pady=5)
+        self._create_product_qty_spin.pack(pady=5)
 
         self._create_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tp(self._create_item_name_entry, 'Qual o nome do item?')
-        tp(self._create_item_cost_entry, 'Qual o custo de produção do item?')
-        tp(self._create_item_price_entry, 'Qual o preço de venda do item?')
-        tp(self._create_item_qty_spin, 'Qual a quantidade inicial do item?')
+        tp(self._create_product_name_entry, 'Qual o nome do produto?')
+        tp(self._create_product_cost_entry, 'Qual o custo de produção do produto?')
+        tp(self._create_product_price_entry, 'Qual o preço de venda do produto?')
+        tp(self._create_product_qty_spin, 'Qual a quantidade inicial do produto?')
         tp(self._create_confirm_btn, 'Confirma o cadastro do produto no inventário.')
 
         '''
@@ -137,22 +137,22 @@ class CRUDView(ttk.Toplevel):
         '''
         self._confer_frame = ttk.Frame(self._notebook)
 
-        self._confer_item_label = ttk.Label(self._confer_frame, text='Consultar item no inventário...', font=('Arial', 12))
+        self._confer_product_label = ttk.Label(self._confer_frame, text='Consultar produto no inventário...', font=('Arial', 12))
 
-        self._confer_item_name_combo = ttk.Combobox(self._confer_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
-        self._confer_item_name_combo.config(values=self.__controller.fetch_item_names())
-        self._confer_item_name_combo_label = ttk.Label(self._confer_frame, text='Selecione o item:', font=('Arial', 10, 'bold'))
-        self._confer_item_name_combo.focus_set() # trás foco ao widget
+        self._confer_product_name_combo = ttk.Combobox(self._confer_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._confer_product_name_combo.config(values=self.__controller.fetch_product_names())
+        self._confer_product_name_combo_label = ttk.Label(self._confer_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
+        self._confer_product_name_combo.focus_set() # trás foco ao widget
 
-        self._confer_confirm_btn = ttk.Button(self._confer_frame, text='Consultar', command=self.confer_item, bootstyle='info', width=10) # type: ignore
+        self._confer_confirm_btn = ttk.Button(self._confer_frame, text='Consultar', command=self.confer_product, bootstyle='info', width=10) # type: ignore
 
-        self._confer_item_label.pack(pady=10)
-        self._confer_item_name_combo_label.pack(pady=5)
-        self._confer_item_name_combo.pack(pady=5)
+        self._confer_product_label.pack(pady=10)
+        self._confer_product_name_combo_label.pack(pady=5)
+        self._confer_product_name_combo.pack(pady=5)
 
         self._confer_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tp(self._confer_item_name_combo, 'Qual o nome do item?')
+        tp(self._confer_product_name_combo, 'Qual o nome do produto?')
         tp(self._confer_confirm_btn, 'Confirma a consulta do produto no inventário.')
 
         '''
@@ -160,37 +160,37 @@ class CRUDView(ttk.Toplevel):
         '''
         self._update_frame = ttk.Frame(self._notebook)
 
-        self._update_label = ttk.Label(self._update_frame, text='Atualizar item no inventário...', font=('Arial', 12))
+        self._update_label = ttk.Label(self._update_frame, text='Atualizar produto no inventário...', font=('Arial', 12))
 
-        self._update_item_name_combo = ttk.Combobox(self._update_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
-        self._update_item_name_combo.config(values=self.__controller.fetch_item_names())
-        self._update_item_name_combo_label = ttk.Label(self._update_frame, text='Selecione o item:', font=('Arial', 10, 'bold'))
-        self._update_item_name_combo.focus_set() # trás foco ao widget
-        self._update_item_cost_entry = ttk.Entry(self._update_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
-        self._update_item_cost_label = ttk.Label(self._update_frame, text='Novo custo do item:', font=('Arial', 10))
-        self._update_item_price_entry = ttk.Entry(self._update_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
-        self._update_item_price_label = ttk.Label(self._update_frame, text='Novo preço de venda:', font=('Arial', 10))
-        self._update_item_qty_spin = ttk.Spinbox(self._update_frame, from_=0, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
-        self._update_item_qty_label = ttk.Label(self._update_frame, text='Nova quantidade:', font=('Arial', 10))
+        self._update_product_name_combo = ttk.Combobox(self._update_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._update_product_name_combo.config(values=self.__controller.fetch_product_names())
+        self._update_product_name_combo_label = ttk.Label(self._update_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
+        self._update_product_name_combo.focus_set() # trás foco ao widget
+        self._update_product_cost_entry = ttk.Entry(self._update_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
+        self._update_product_cost_label = ttk.Label(self._update_frame, text='Novo custo do produto:', font=('Arial', 10))
+        self._update_product_price_entry = ttk.Entry(self._update_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
+        self._update_product_price_label = ttk.Label(self._update_frame, text='Novo preço de venda:', font=('Arial', 10))
+        self._update_product_qty_spin = ttk.Spinbox(self._update_frame, from_=0, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
+        self._update_product_qty_label = ttk.Label(self._update_frame, text='Nova quantidade:', font=('Arial', 10))
 
-        self._update_confirm_btn = ttk.Button(self._update_frame, text='Atualizar', command=self.update_item, bootstyle='warning', width=10) # type: ignore
+        self._update_confirm_btn = ttk.Button(self._update_frame, text='Atualizar', command=self.update_product, bootstyle='warning', width=10) # type: ignore
 
         self._update_label.pack(pady=10)
-        self._update_item_name_combo_label.pack(pady=5)
-        self._update_item_name_combo.pack(pady=5)
-        self._update_item_cost_label.pack(pady=5)
-        self._update_item_cost_entry.pack(pady=5)
-        self._update_item_price_label.pack(pady=5)
-        self._update_item_price_entry.pack(pady=5)
-        self._update_item_qty_label.pack(pady=5)
-        self._update_item_qty_spin.pack(pady=5)
+        self._update_product_name_combo_label.pack(pady=5)
+        self._update_product_name_combo.pack(pady=5)
+        self._update_product_cost_label.pack(pady=5)
+        self._update_product_cost_entry.pack(pady=5)
+        self._update_product_price_label.pack(pady=5)
+        self._update_product_price_entry.pack(pady=5)
+        self._update_product_qty_label.pack(pady=5)
+        self._update_product_qty_spin.pack(pady=5)
 
         self._update_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tp(self._update_item_name_combo, 'Qual o nome do item?')
-        tp(self._update_item_cost_entry, 'Qual o novo custo de produção do item?')
-        tp(self._update_item_price_entry, 'Qual o novo preço de venda do item?')
-        tp(self._update_item_qty_spin, 'Qual a nova quantidade do item?')
+        tp(self._update_product_name_combo, 'Qual o nome do produto?')
+        tp(self._update_product_cost_entry, 'Qual o novo custo de produção do produto?')
+        tp(self._update_product_price_entry, 'Qual o novo preço de venda do produto?')
+        tp(self._update_product_qty_spin, 'Qual a nova quantidade do produto?')
         tp(self._update_confirm_btn, 'Confirma a atualização do produto no inventário.')
 
         '''
@@ -198,22 +198,22 @@ class CRUDView(ttk.Toplevel):
         '''
         self._delete_frame = ttk.Frame(self._notebook)
 
-        self._delete_item_label = ttk.Label(self._delete_frame, text='Remover item do inventário...', font=('Arial', 12))
+        self._delete_product_label = ttk.Label(self._delete_frame, text='Remover produto do inventário...', font=('Arial', 12))
 
-        self._delete_item_name_combo = ttk.Combobox(self._delete_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
-        self._delete_item_name_combo.config(values=self.__controller.fetch_item_names())
-        self._delete_item_name_combo_label = ttk.Label(self._delete_frame, text='Selecione o item:', font=('Arial', 10, 'bold'))
-        self._delete_item_name_combo.focus_set() # trás foco ao widget
+        self._delete_product_name_combo = ttk.Combobox(self._delete_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._delete_product_name_combo.config(values=self.__controller.fetch_product_names())
+        self._delete_product_name_combo_label = ttk.Label(self._delete_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
+        self._delete_product_name_combo.focus_set() # trás foco ao widget
 
-        self._delete_confirm_btn = ttk.Button(self._delete_frame, text='Remover', command=self.delete_item, bootstyle='danger', width=10) # type: ignore
+        self._delete_confirm_btn = ttk.Button(self._delete_frame, text='Remover', command=self.delete_product, bootstyle='danger', width=10) # type: ignore
 
-        self._delete_item_label.pack(pady=10)
-        self._delete_item_name_combo_label.pack(pady=5)
-        self._delete_item_name_combo.pack(pady=5)
+        self._delete_product_label.pack(pady=10)
+        self._delete_product_name_combo_label.pack(pady=5)
+        self._delete_product_name_combo.pack(pady=5)
 
         self._delete_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tp(self._delete_item_name_combo, 'Qual o nome do item?')
+        tp(self._delete_product_name_combo, 'Qual o nome do produto?')
         tp(self._delete_confirm_btn, 'Confirma a remoção do produto do inventário.')
 
         self._notebook.add(self._create_frame, text='Cadastrar')
@@ -224,7 +224,7 @@ class CRUDView(ttk.Toplevel):
         self._notebook.pack(fill=BOTH, expand=True, padx=10, pady=10)
 
         # trás foco ao widget de entrada na aba 'create' ao abrir a janela
-        self.after(200, lambda: self._create_item_name_entry.focus_set())
+        self.after(200, lambda: self._create_product_name_entry.focus_set())
 
     def on_close(self):
         self.__parent_ctrl._stock_ctrl = None
@@ -234,171 +234,171 @@ class CRUDView(ttk.Toplevel):
         self.on_close()
 
     def update_comboboxes(self):
-        self._confer_item_name_combo.config(values=self.__controller.fetch_item_names())
-        self._update_item_name_combo.config(values=self.__controller.fetch_item_names())
-        self._delete_item_name_combo.config(values=self.__controller.fetch_item_names())
+        self._confer_product_name_combo.config(values=self.__controller.fetch_product_names())
+        self._update_product_name_combo.config(values=self.__controller.fetch_product_names())
+        self._delete_product_name_combo.config(values=self.__controller.fetch_product_names())
 
-    def create_item(self):
-        item_name = self._create_item_name_entry.get()
-        item_cost = self._create_item_cost_entry.get()
-        item_price = self._create_item_price_entry.get()
-        item_qty = self._create_item_qty_spin.get()
+    def create_product(self):
+        product_name = self._create_product_name_entry.get()
+        product_cost = self._create_product_cost_entry.get()
+        product_price = self._create_product_price_entry.get()
+        product_qty = self._create_product_qty_spin.get()
         
         flag = True
 
         # valida os campos de entrada
-        if not item_name or not item_cost or not item_price:
+        if not product_name or not product_cost or not product_price:
             msgbox.show_error('Todos os campos obrigatórios (em negrito) devem ser preenchidos.', 'Erro')
             
             flag = False
 
-        if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
+        if flag and not validate_alpha(product_name):
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro')
             
             flag = False
-        if flag and not validate_money(item_cost):
-            msgbox.show_error('O custo do item deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
+        if flag and not validate_money(product_cost):
+            msgbox.show_error('O custo do produto deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
 
             flag = False
-        if flag and not validate_money(item_price):
+        if flag and not validate_money(product_price):
             msgbox.show_error('O preço de venda deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
 
             flag = False
-        if flag and not validate_number(item_qty):
+        if flag and not validate_number(product_qty):
             msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro')
 
             flag = False
 
         if flag:
-            res = self.__controller.create_item()
+            res = self.__controller.create_product()
 
             if res == 0:
-                msgbox.show_info(f'O produto \"{item_name}\" foi cadastrado no banco de dados.', 'Sucesso')
+                msgbox.show_info(f'O produto \"{product_name}\" foi cadastrado no banco de dados.', 'Sucesso')
             elif res == 1:
-                msgbox.show_error(f'O produto \"{item_name}\" já existe no banco de dados.')
+                msgbox.show_error(f'O produto \"{product_name}\" já existe no banco de dados.')
         
                 flag = False
         if not flag:
             msgbox.show_error('O cadastro do produto falhou.', 'Erro')
 
-        self._create_item_name_entry.delete(0, 'end')
-        self._create_item_cost_entry.delete(0, 'end')
-        self._create_item_price_entry.delete(0, 'end')
-        self._create_item_qty_spin.set('')
+        self._create_product_name_entry.delete(0, 'end')
+        self._create_product_cost_entry.delete(0, 'end')
+        self._create_product_price_entry.delete(0, 'end')
+        self._create_product_qty_spin.set('')
 
         self.update_comboboxes()
 
-    def confer_item(self):
-        item_name = self._confer_item_name_combo.get()
+    def confer_product(self):
+        product_name = self._confer_product_name_combo.get()
 
         flag = True
 
         # valida o campo de entrada
-        if not item_name:
+        if not product_name:
             msgbox.show_error('Um produto precisa ser selecionado', 'Erro')
 
             flag = False
 
-        if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
+        if flag and not validate_alpha(product_name):
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro')
 
             flag = False
 
         if flag:
-            item = self.__controller.confer_item()
+            product = self.__controller.confer_product()
 
-            if item:
+            if product:
                 output = 'É o produto:\n\n'
-                output += f'Nome: {item['name']}\n'
-                output += f'Custo: R$ {item['cost']}\n'
-                output += f'Preço: R$ {item['price']}\n'
-                output += f'Quantidade: {item['qty']}\n'
+                output += f'Nome: {product.name}\n'
+                output += f'Custo: R$ {product.cost}\n'
+                output += f'Preço: R$ {product.price}\n'
+                output += f'Quantidade: {product.qty}\n'
 
                 msgbox.show_info(output, 'Sucesso')
             else:
-                msgbox.show_error(f'O produto \"{item_name}\" não foi encontrado no banco de dados.')
+                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.')
         if not flag:
             msgbox.show_error('A consulta do produto falhou.', 'Erro')
         
-        self._confer_item_name_combo.set('')
+        self._confer_product_name_combo.set('')
 
-    def update_item(self):
-        item_name = self._update_item_name_combo.get()
-        item_cost = self._update_item_cost_entry.get()
-        item_price = self._update_item_price_entry.get()
-        item_qty = self._update_item_qty_spin.get()
+    def update_product(self):
+        product_name = self._update_product_name_combo.get()
+        product_cost = self._update_product_cost_entry.get()
+        product_price = self._update_product_price_entry.get()
+        product_qty = self._update_product_qty_spin.get()
         
         flag = True
 
         # valida os campos de entrada
-        if not item_name:
+        if not product_name:
             msgbox.show_error('Um produto precisa ser selecionado.', 'Erro')
             
             flag = False
 
-        if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
+        if flag and not validate_alpha(product_name):
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro')
             
             flag = False
-        if flag and item_cost and not validate_money(item_cost):
-            msgbox.show_error('O custo do item deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
+        if flag and product_cost and not validate_money(product_cost):
+            msgbox.show_error('O custo do produto deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
 
             flag = False
-        if flag and item_price and not validate_money(item_price):
+        if flag and product_price and not validate_money(product_price):
             msgbox.show_error('O preço de venda deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro')
 
             flag = False
-        if flag and item_qty and not validate_number(item_qty):
+        if flag and product_qty and not validate_number(product_qty):
             msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro')
 
             flag = False
 
         if flag:        
-            res = self.__controller.update_item()
+            res = self.__controller.update_product()
 
             if res == 0:
-                msgbox.show_info(f'O produto \"{item_name}\" foi atualizado no banco de dados.', 'Sucesso')
+                msgbox.show_info(f'O produto \"{product_name}\" foi atualizado no banco de dados.', 'Sucesso')
             elif res == 1:
                 msgbox.show_warning('Nenhum atributo do produto foi alterado.', 'Aviso')
             elif res == 2:
-                msgbox.show_error(f'O produto \"{item_name}\" não foi encontrado no banco de dados.')
+                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.')
         if not flag:
-            msgbox.show_error('O cadastro do produto falhou.', 'Erro')
+            msgbox.show_error('A atualização do produto falhou.', 'Erro')
 
-        self._update_item_name_combo.set('')
-        self._update_item_cost_entry.delete(0, 'end')
-        self._update_item_price_entry.delete(0, 'end')
-        self._update_item_qty_spin.set('')
+        self._update_product_name_combo.set('')
+        self._update_product_cost_entry.delete(0, 'end')
+        self._update_product_price_entry.delete(0, 'end')
+        self._update_product_qty_spin.set('')
 
         self.update_comboboxes()
 
-    def delete_item(self):
-        item_name = self._delete_item_name_combo.get()
+    def delete_product(self):
+        product_name = self._delete_product_name_combo.get()
 
         flag = True
 
         # valida o campo de entrada
-        if not item_name:
+        if not product_name:
             msgbox.show_error('Um produto precisa ser selecionado', 'Erro')
 
             flag = False
 
-        if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
+        if flag and not validate_alpha(product_name):
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro')
 
             flag = False
 
         if flag:
-            res = self.__controller.delete_item()
+            res = self.__controller.delete_product()
 
             if res == 0:
-                msgbox.show_info(f'O produto \"{item_name}\" foi removido do banco de dados.', 'Sucesso')
+                msgbox.show_info(f'O produto \"{product_name}\" foi removido do banco de dados.', 'Sucesso')
             elif res == 1:
                 msgbox.show_error
         if not flag:
             msgbox.show_error('A remoção do produto falhou.', 'Erro')
 
-        self._delete_item_name_combo.set('')
+        self._delete_product_name_combo.set('')
 
         self.update_comboboxes()
 
@@ -433,27 +433,27 @@ class EntryView(ttk.Toplevel):
 
         self._entry_label = ttk.Label(self._entry_frame, text='Registrar entrada/saída de produtos...', font=('Arial', 12))
 
-        self._entry_item_name_combo = ttk.Combobox(self._entry_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
-        self._entry_item_name_combo.config(values=self.__controller.fetch_item_names())
-        self._entry_item_name_combo_label = ttk.Label(self._entry_frame, text='Selecione o item:', font=('Arial', 10, 'bold'))
-        self._entry_item_name_combo.focus_set() # trás foco ao widget
-        self._entry_item_qty_spin = ttk.Spinbox(self._entry_frame, from_=-99, to=99, width=5, validate='focus', validatecommand=(number_validator, '%P'))
-        self._entry_item_qty_label = ttk.Label(self._entry_frame, text='Nova quantidade:', font=('Arial', 10))
+        self._entry_product_name_combo = ttk.Combobox(self._entry_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._entry_product_name_combo.config(values=self.__controller.fetch_product_names())
+        self._entry_product_name_combo_label = ttk.Label(self._entry_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
+        self._entry_product_name_combo.focus_set() # trás foco ao widget
+        self._entry_product_qty_spin = ttk.Spinbox(self._entry_frame, from_=-99, to=99, width=5, validate='focus', validatecommand=(number_validator, '%P'))
+        self._entry_product_qty_label = ttk.Label(self._entry_frame, text='Nova quantidade:', font=('Arial', 10))
 
-        self._entry_confirm_btn = ttk.Button(self._entry_frame, text='Registrar', command=self.entry_item, bootstyle='primary', width=10) # type: ignore
+        self._entry_confirm_btn = ttk.Button(self._entry_frame, text='Registrar', command=self.entry_product, bootstyle='primary', width=10) # type: ignore
 
         self._entry_label.pack(pady=10)
-        self._entry_item_name_combo_label.pack(pady=5)
-        self._entry_item_name_combo.pack(pady=5)
-        self._entry_item_qty_label.pack(pady=5)
-        self._entry_item_qty_spin.pack(pady=5)
+        self._entry_product_name_combo_label.pack(pady=5)
+        self._entry_product_name_combo.pack(pady=5)
+        self._entry_product_qty_label.pack(pady=5)
+        self._entry_product_qty_spin.pack(pady=5)
 
         self._entry_confirm_btn.pack(side=BOTTOM, pady=10)
 
         self._entry_frame.pack(fill=BOTH, expand=True, padx=10, pady=10)
 
-        tp(self._entry_item_name_combo, 'Qual o nome do item?')
-        tp(self._entry_item_qty_spin, 'Qual a quantidade a ser incrementada?')
+        tp(self._entry_product_name_combo, 'Qual o nome do produto?')
+        tp(self._entry_product_qty_spin, 'Qual a quantidade a ser incrementada?')
         tp(self._entry_confirm_btn, 'Confirma o registro da entrada/saída do produto no inventário.')
 
     def on_close(self):
@@ -463,36 +463,36 @@ class EntryView(ttk.Toplevel):
     def on_escape(self):
         self.on_close()
 
-    def entry_item(self):
-        item_name = self._entry_item_name_combo.get()
-        item_qty = self._entry_item_qty_spin.get()
+    def entry_product(self):
+        product_name = self._entry_product_name_combo.get()
+        product_qty = self._entry_product_qty_spin.get()
         
         flag = True
 
         # valida os campos de entrada
-        if not item_name:
+        if not product_name:
             msgbox.show_error('Um produto precisa ser selecionado.', 'Erro')
             
             flag = False
 
-        if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve contabilizar no máximo 30 caracteres.', 'Erro')
+        if flag and not validate_alpha(product_name):
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro')
             
             flag = False
-        if flag and item_qty and not validate_entry_number(item_qty):
+        if flag and product_qty and not validate_entry_number(product_qty):
             msgbox.show_error('A quantidade deve ser um número inteiro entre -99 e 99, diferente de zero.', 'Erro')
 
             flag = False
 
         if flag:        
-            res = self.__controller.entry_item()
+            res = self.__controller.entry_product()
 
             if res == 0:
-                msgbox.show_info(f'A quantidade do produto \"{item_name}\" foi alterada no banco de dados.', 'Sucesso')
+                msgbox.show_info(f'A quantidade do produto \"{product_name}\" foi alterada no banco de dados.', 'Sucesso')
             elif res == 1:
-                msgbox.show_error(f'O produto \"{item_name}\" não foi encontrado no banco de dados.')
+                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.')
         if not flag:
             msgbox.show_error('O registro da entrada/saída do produto falhou.', 'Erro')
 
-        self._entry_item_name_combo.set('')
-        self._entry_item_qty_spin.set('')
+        self._entry_product_name_combo.set('')
+        self._entry_product_qty_spin.set('')

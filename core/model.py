@@ -1,4 +1,4 @@
-from core.components.SGBD import *
+import core.components.SGBD as SGBD
 '''
     SGBD implementa funções para manipulação do banco de dados.
 '''
@@ -33,30 +33,10 @@ import pickle as pkl
 
 class Model:
     def __init__(self):
-        self.__item = {
-            'name': '',
-            'cost': 0.0,
-            'price': 0.0,
-            'qty': 0
-        }
-
         self.__stock = []
-
-        self.__sale = {
-            'name': '',
-            'qty': 0,
-            'value': 0.0
-        }
 
         # "current order"
         self.__curr_order = [] # list of sales
-
-        # "commited order"
-        self.__comm_order = {
-            'timestamp': '',
-            'sales': [],
-            'value': 0.0
-        }
 
     '''
         Imprime o relatório do estoque no arquivo PDF
@@ -70,18 +50,20 @@ class Model:
             ['Produto', 'Custo', 'Preço', 'Quantidade']
         ]
 
-        self.__stock = fetch_stock()
+        self.__stock = SGBD.fetch_stock()
+
+        self.__stock.sort(key=lambda s: s.id) # ordena a lista pelo identificador
 
         if self.__stock == []:
             return 1
 
-        for item in self.__stock:
+        for product in self.__stock:
             row = []
 
-            row.append(item['name'])
-            row.append(item['cost'])
-            row.append(item['price'])
-            row.append(item['qty'])
+            row.append(product.name)
+            row.append(f"R$ {product.cost:.2f}".replace('.', ','))
+            row.append(f"R$ {product.price:.2f}".replace('.', ','))
+            row.append(product.qty)
 
             table.append(row)
 
@@ -129,8 +111,8 @@ class Model:
             'profit': 0.0
         }
 
-        # recupera o estoque para calcular o lucro para cada item
-        self.__stock = fetch_stock()
+        # recupera o estoque para calcular o lucro para cada produto
+        self.__stock = SGBD.fetch_stock()
 
         for folder_name in os.listdir('data'):
             folder_path = os.path.join('data', folder_name)
@@ -142,17 +124,17 @@ class Model:
                     
                     if os.path.exists(file_path):
                         with open(file_path, 'rb') as file:
-                            self.__comm_order = pkl.load(file)
+                            comm_order = pkl.load(file)
 
                             # incrementa a receita
-                            report['revenue'] += float(self.__comm_order['value'])
+                            report['revenue'] += float(comm_order.value)
 
                             # incrementa o lucro
-                            for sale in self.__comm_order['sales']:
-                                for item in self.__stock:
-                                    if sale['name'] == item['name']:
+                            for sale in comm_order.sales:
+                                for product in self.__stock:
+                                    if sale.product_id == product.id:
                                         # LUCRO += (PREÇO - CUSTO) * QUANTIDADE
-                                        report['profit'] += float(float(float(item['price']) - float(item['cost'])) * int(sale['qty']))
+                                        report['profit'] += float(float(float(product.price) - float(product.cost)) * int(sale.qty))
 
                                         break
 

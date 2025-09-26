@@ -37,7 +37,7 @@ class CreateOrderView(ttk.Toplevel):
         self.__controller = controller
         self.__parent_ctrl = parent_ctrl
         self.__on_close = False
-        self.__on_item_removal = False
+        self.__on_product_removal = False
 
         self.title('Cadastro de Comanda')
         self.geometry('600x450')
@@ -75,15 +75,15 @@ class CreateOrderView(ttk.Toplevel):
         self.__right_bottom_frame.pack(fill=NONE, side=RIGHT, padx=5, pady=5)
 
         # Combobox para listar os itens selecionados
-        self._selected_items_combo = ttk.Combobox(self._top_frame, width=20, state='readonly')
-        self._selected_items_combo.config(values=self.__controller.fetch_selected_items())
-        self._selected_items_combo_label = ttk.Label(self._top_frame, text='São os itens na comanda:')
-        self._selected_items_combo.focus_set() # trás foco ao widget
+        self._selected_products_combo = ttk.Combobox(self._top_frame, width=20, state='readonly')
+        self._selected_products_combo.config(values=self.__controller.fetch_selected_products())
+        self._selected_products_combo_label = ttk.Label(self._top_frame, text='São os itens na comanda:')
+        self._selected_products_combo.focus_set() # trás foco ao widget
 
-        self._selected_items_combo_label.pack(padx=5, pady=5)
-        self._selected_items_combo.pack(padx=5, pady=5)
+        self._selected_products_combo_label.pack(padx=5, pady=5)
+        self._selected_products_combo.pack(padx=5, pady=5)
 
-        tp(self._selected_items_combo, 'Lista dos itens selecionados na comanda.')
+        tp(self._selected_products_combo, 'Lista dos itens selecionados na comanda.')
 
         '''
             Botões
@@ -145,31 +145,31 @@ class CreateOrderView(ttk.Toplevel):
             msgbox.show_warning('A comanda está vazia.', 'Aviso')
 
     def remove_product(self):
-        item_name = ''
+        product_name = ''
 
-        if self._selected_items_combo.get():
-            item_name = self._selected_items_combo.get().split(')', 1)[1].strip()
+        if self._selected_products_combo.get():
+            product_name = self._selected_products_combo.get().split(')', 1)[1].strip()
 
-        if not item_name:
+        if not product_name:
             msgbox.show_error('Um produto precisa ser selecionado.', 'Erro')
         else:
-            if not self.__on_item_removal:
-                self.__on_item_removal = True
+            if not self.__on_product_removal:
+                self.__on_product_removal = True
 
-                if msgbox.yesno('Deseja remover o item da comanda?', 'Remoção de item') == 'Sim':
+                if msgbox.yesno('Deseja remover o produto da comanda?', 'Remoção de produto') == 'Sim':
                     res = self.__controller.remove_product()
 
                     if res == 0:
                         msgbox.show_info('O produto foi removido da comanda.', 'Sucesso')
 
-                        self._selected_items_combo.config(values=self.__controller.fetch_selected_items())
-                        self._selected_items_combo.set('')
+                        self._selected_products_combo.config(values=self.__controller.fetch_selected_products())
+                        self._selected_products_combo.set('')
                     else:
                         msgbox.show_error('O produto não existe na comanda. A remoção do produto falhou.', 'Erro')
                 
-                    self.__on_item_removal = False
+                    self.__on_product_removal = False
                 else:
-                    self.__on_item_removal = False
+                    self.__on_product_removal = False
 
 '''
     Janela para seleção de Produto
@@ -218,12 +218,12 @@ class SelectProductView(ttk.Toplevel):
         '''
             Campos de Entrada
         '''
-        self._item_name_combo = ttk.Combobox(self._top_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
-        self._item_name_combo.config(values=self.__controller.fetch_item_names())
-        self._item_name_combo_label = ttk.Label(self._top_frame, text='Selecione o item:', font=('Arial', 10, 'bold'))
-        self._item_name_combo.focus_set() # trás foco ao widget
-        self._item_qty_spin = ttk.Spinbox(self._top_frame, from_=1, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
-        self._item_qty_spin_label = ttk.Label(self._top_frame, text='Quantidade:', font=('Arial', 10, 'bold'))
+        self._product_name_combo = ttk.Combobox(self._top_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._product_name_combo.config(values=self.__controller.fetch_product_names())
+        self._product_name_combo_label = ttk.Label(self._top_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
+        self._product_name_combo.focus_set() # trás foco ao widget
+        self._product_qty_spin = ttk.Spinbox(self._top_frame, from_=1, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
+        self._product_qty_spin_label = ttk.Label(self._top_frame, text='Quantidade:', font=('Arial', 10, 'bold'))
 
         '''
             Botões
@@ -235,17 +235,17 @@ class SelectProductView(ttk.Toplevel):
         self.bind('<Control-c>', lambda e: self.cancel_product())
         self.bind('<Control-C>', lambda e: self.cancel_product())
 
-        self._item_name_combo_label.pack(pady=5)
-        self._item_name_combo.pack(pady=5)
-        self._item_qty_spin_label.pack(pady=5)
-        self._item_qty_spin.pack(pady=5)
+        self._product_name_combo_label.pack(pady=5)
+        self._product_name_combo.pack(pady=5)
+        self._product_qty_spin_label.pack(pady=5)
+        self._product_qty_spin.pack(pady=5)
         
         self._confirm_btn.pack(side=LEFT, pady=5)
         self._cancel_btn.pack(side=RIGHT, pady=5)
 
-        tp(self._item_name_combo, 'Selecione o item a ser adicionado à comanda.')
-        tp(self._item_qty_spin, 'Informe a quantidade do item a ser adicionado à comanda.')
-        tp(self._confirm_btn, '(Ctrl+A) Adicionar o item selecionado à comanda.')
+        tp(self._product_name_combo, 'Selecione o produto a ser adicionado à comanda.')
+        tp(self._product_qty_spin, 'Informe a quantidade do produto a ser adicionado à comanda.')
+        tp(self._confirm_btn, '(Ctrl+A) Adicionar o produto selecionado à comanda.')
         tp(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.')
 
     def on_close(self):
@@ -256,23 +256,23 @@ class SelectProductView(ttk.Toplevel):
         self.on_close()
 
     def confirm_product(self):
-        item_name = self._item_name_combo.get()
-        item_qty = self._item_qty_spin.get()
+        product_name = self._product_name_combo.get()
+        product_qty = self._product_qty_spin.get()
 
         flag = True
 
         # valida os campos de entrada
-        if not item_name or not item_qty:
+        if not product_name or not product_qty:
             msgbox.show_error('Todos os campos obrigatórios devem ser preenchidos.', 'Erro')
         
             flag = False
 
-        if flag and not validate_alpha(item_name):
-            msgbox.show_error('O nome do item deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
+        if flag and not validate_alpha(product_name):
+            msgbox.show_error('O nome do produto deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
 
             flag = False
         
-        if flag and not validate_number(item_qty):
+        if flag and not validate_number(product_qty):
             msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro')
 
             flag = False
@@ -281,14 +281,14 @@ class SelectProductView(ttk.Toplevel):
             res = self.__controller.confirm_product()
 
             if res == 0:
-                msgbox.show_info('Item adicionado na comanda.', 'Sucesso')
+                msgbox.show_info('produto adicionado na comanda.', 'Sucesso')
 
                 # atualiza a combobox de itens selecionados na janela mãe
-                self.__parent_ctrl._view._selected_items_combo.config(values=self.__parent_ctrl.fetch_selected_items())
+                self.__parent_ctrl._view._selected_products_combo.config(values=self.__parent_ctrl.fetch_selected_products())
 
                 self.on_close()
             elif res == 1:
-                msgbox.show_error('O item não existe no banco de dados.')
+                msgbox.show_error('O produto não existe no banco de dados.')
 
                 flag = False
         if not flag:
@@ -373,7 +373,7 @@ class ConferOrderView(ttk.Toplevel):
             timestamps = []
 
             for order in order_list:
-                timestamps.append(order['timestamp'])
+                timestamps.append(order.timestamp)
 
             self._timestamp_combo.config(values=timestamps)
 
@@ -388,9 +388,9 @@ class ConferOrderView(ttk.Toplevel):
             if order == {}:
                 msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro')
             else:
-                output = f'É a comanda: {order['timestamp']}\n\n'
-                for sale in order['sales']:
-                    output += f'{sale['name']} - {sale['qty']} - R$ {sale['value']}\n'
-                output += f'\nTotal: R${order['value']}'
+                output = f'É a comanda: {order.timestamp}\n\n'
+                for sale in order.sales:
+                    output += f'{sale.product_id} - {sale.qty} - R$ {sale.value}\n'
+                output += f'\nTotal: R${order.value}'
 
                 msgbox.show_info(output, 'Sucesso')

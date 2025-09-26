@@ -22,8 +22,8 @@ class CreateOrderController:
 
         self._view.destroy()
 
-    def fetch_selected_items(self):
-        return self.__model.fetch_selected_items()
+    def fetch_selected_products(self):
+        return self.__model.fetch_selected_products()
     
     def commit_sale(self):
         return self.__model.commit_sale()
@@ -35,9 +35,9 @@ class CreateOrderController:
             self._select_product_ctrl._view.lift()
 
     def remove_product(self):
-        item_name = self._view._selected_items_combo.get().split(')', 1)[1].strip()
+        product_name = self._view._selected_products_combo.get().split(')', 1)[1].strip()
 
-        return self.__model.remove_product(item_name)
+        return self.__model.remove_product(product_name)
 
 class SelectProductController:
     def __init__(self, master=None, parent=None):
@@ -51,14 +51,14 @@ class SelectProductController:
 
         self._view.destroy()
 
-    def fetch_item_names(self):
-        return self.__model.fetch_item_names()
+    def fetch_product_names(self):
+        return self.__model.fetch_product_names()
     
     def confirm_product(self):
-        item_name = self._view._item_name_combo.get()
-        item_qty = self._view._item_qty_spin.get()
+        product_name = self._view._product_name_combo.get()
+        product_qty = self._view._product_qty_spin.get()
 
-        return self.__model.confirm_product(item_name, item_qty)
+        return self.__model.confirm_product(product_name, product_qty)
     
 class ConferOrderController:
     def __init__(self, master=None, parent=None):

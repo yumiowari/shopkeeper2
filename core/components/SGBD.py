@@ -48,7 +48,7 @@ def delete_curr_order():
         os.remove('data/order.pkl')
 
 def store_comm_order(order):
-    path = 'data/' + order['timestamp']
+    path = 'data/' + order.timestamp
 
     os.makedirs(path, exist_ok=True)
 

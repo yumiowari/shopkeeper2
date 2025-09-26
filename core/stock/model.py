@@ -1,17 +1,16 @@
-from core.components.SGBD import *
+import core.components.SGBD as SGBD
 '''
     SGBD implementa funções para manipulação do banco de dados.
 '''
 
+from core.components.objects import *
+'''
+    Importa as definições dos objetos de dados.
+'''
+
+
 class CRUDModel:
     def __init__(self):
-        self.__item = {
-            'name': '',
-            'cost': 0.0,
-            'price': 0.0,
-            'qty': 0
-        }
-
         self.__stock = []
 
     '''
@@ -19,52 +18,53 @@ class CRUDModel:
 
         Retorna...
             0 - Sucesso;
-            1 - Item repetido.
+            1 - Produto repetido.
     '''
-    def create_item(self, item_name, item_cost, item_price, item_qty):
-        self.__item['name'] = item_name
-        self.__item['cost'] = float(item_cost)
-        self.__item['price'] = float(item_price)
-        if not item_qty:
-            self.__item['qty'] = 0
+    def create_product(self, name, cost, price, qty):
+        self.__stock = SGBD.fetch_stock()
+        
+        size = len(self.__stock)
+
+        if not qty:
+            product = Product(int(size), name, float(cost), float(price), 0)
         else:
-            self.__item['qty'] = int(item_qty)
+            product = Product(int(size), name, float(cost), float(price), int(qty))
 
-        self.__stock = fetch_stock()
+        # verifica se algum produto já existe com o mesmo nome
+        if any(product.name == name for product in self.__stock):
+            return 1 # produto repetido
 
-        # verifica se o item já existe com mesmo nome
-        if any(item['name'] == item_name for item in self.__stock):
-            return 1 # item repetido
+        self.__stock.append(product)
 
-        self.__stock.append(self.__item.copy())
-
-        update_stock(self.__stock)
+        SGBD.update_stock(self.__stock)
 
         return 0 # sucesso
 
     '''
         Retorna a lista de produtos no estoque
     '''
-    def fetch_item_names(self):
-        self.__stock = fetch_stock()
+    def fetch_product_names(self):
+        self.__stock = SGBD.fetch_stock()
 
         if not self.__stock:
             return []
         else:
-            return [item['name'] for item in self.__stock]
+            return [product.name for product in self.__stock]
 
     '''
         Consulta o produto no Inventário
     '''
-    def confer_item(self, item_name):
-        self.__stock = fetch_stock()
+    def confer_product(self, product_name):
+        self.__stock = SGBD.fetch_stock()
 
         if not self.__stock:
             return None
         else:
-            for item in self.__stock:
-                if item['name'] == item_name:
-                    return item
+            for product in self.__stock:
+                if product.name == product_name:
+                    return product
+                
+            return None
 
     '''
         Atualiza o produto no estoque
@@ -72,52 +72,52 @@ class CRUDModel:
         Retorna...
             0 - Sucesso;
             1 - Sem alterações;
-            2 - Item não encontrado.
+            2 - Produto não encontrado.
     '''
-    def update_item(self, item_name, item_cost, item_price, item_qty):
+    def update_product(self, product_name, product_cost, product_price, product_qty):
         # correção de campos vazios
-        if not item_cost:
-            item_cost = 0.0
-        if not item_price:
-            item_price = 0.0
-        if not item_qty:
-            item_qty = ''
+        if not product_cost:
+            product_cost = 0.0
+        if not product_price:
+            product_price = 0.0
+        if not product_qty:
+            product_qty = ''
 
-        self.__stock = fetch_stock()
+        self.__stock = SGBD.fetch_stock()
 
-        for item in self.__stock:
-            if item['name'] == item_name:
-                if float(item_cost) == item['cost'] and float(item_price) == item['price'] and int(item_qty) == item['qty']:
+        for product in self.__stock:
+            if product.name == product_name:
+                if float(product_cost) == product.cost and float(product_price) == product.price and int(product_qty) == product.qty:
                     return 1 # sem alterações
                 else:
-                    if item_cost != 0.0:
-                        item['cost'] = float(item_cost)
-                    if item_price != 0.0:
-                        item['price'] = float(item_price)
-                    if item_qty != '':
-                        item['qty'] = int(item_qty)
+                    if product_cost != 0.0:
+                        product.cost = float(product_cost)
+                    if product_price != 0.0:
+                        product.price = float(product_price)
+                    if product_qty != '':
+                        product.qty = int(product_qty)
 
-                update_stock(self.__stock)
+                SGBD.update_stock(self.__stock)
 
                 return 0
             
-        return 2 # item não encontrado
+        return 2 # produto não encontrado
 
     '''
         Remove o produto do estoque
 
         Retorna...
             0 - Sucesso;
-            1 - Item não encontrado.
+            1 - Produto não encontrado.
     '''
-    def delete_item(self, item_name):
-        self.__stock = fetch_stock()
+    def delete_product(self, product_name):
+        self.__stock = SGBD.fetch_stock()
 
-        for item in self.__stock:
-            if item['name'] == item_name:
-                self.__stock.remove(item)
+        for product in self.__stock:
+            if product.name == product_name:
+                self.__stock.remove(product)
 
-                update_stock(self.__stock)
+                SGBD.update_stock(self.__stock)
 
                 return 0
 
@@ -127,31 +127,31 @@ class EntryModel:
     def __init__(self):
         self.__stock = []
 
-    def fetch_item_names(self):
-        self.__stock = fetch_stock()
+    def fetch_product_names(self):
+        self.__stock = SGBD.fetch_stock()
 
         if not self.__stock:
             return []
         else:
-            return [item['name'] for item in self.__stock]
+            return [product.name for product in self.__stock]
         
     '''
         Registra a entrada/saída do produto no Inventário
 
         Retorna...
             0 - Sucesso;
-            1 - Item não encontrado.
+            1 - Produto não encontrado.
     '''
-    def entry_item(self, item_name, entry_qty):
-        self.__stock = fetch_stock()
+    def entry_product(self, product_name, entry_qty):
+        self.__stock = SGBD.fetch_stock()
 
-        for item in self.__stock:
-            if item['name'] == item_name:
-                curr_qty = item['qty']
+        for product in self.__stock:
+            if product.name == product_name:
+                curr_qty = product.qty
                 curr_qty += int(entry_qty)
-                item['qty'] = curr_qty
+                product.qty = curr_qty
 
-                update_stock(self.__stock)
+                SGBD.update_stock(self.__stock)
 
                 return 0
 
