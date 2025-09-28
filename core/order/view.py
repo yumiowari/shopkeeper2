@@ -281,7 +281,7 @@ class SelectProductView(ttk.Toplevel):
             res = self.__controller.confirm_product()
 
             if res == 0:
-                msgbox.show_info('produto adicionado na comanda.', 'Sucesso')
+                msgbox.show_info('Produto adicionado na comanda.', 'Sucesso')
 
                 # atualiza a combobox de itens selecionados na janela mãe
                 self.__parent_ctrl._view._selected_products_combo.config(values=self.__parent_ctrl.fetch_selected_products())

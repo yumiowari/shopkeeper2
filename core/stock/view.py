@@ -26,7 +26,7 @@ def validate_entry_number(x) -> bool:
         diferente de zero.
     '''
     if x == '':
-        return True
+        return False
     try:
         n = int(x)
 
@@ -438,7 +438,7 @@ class EntryView(ttk.Toplevel):
         self._entry_product_name_combo_label = ttk.Label(self._entry_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
         self._entry_product_name_combo.focus_set() # trás foco ao widget
         self._entry_product_qty_spin = ttk.Spinbox(self._entry_frame, from_=-99, to=99, width=5, validate='focus', validatecommand=(number_validator, '%P'))
-        self._entry_product_qty_label = ttk.Label(self._entry_frame, text='Nova quantidade:', font=('Arial', 10))
+        self._entry_product_qty_label = ttk.Label(self._entry_frame, text='Entrada:', font=('Arial', 10))
 
         self._entry_confirm_btn = ttk.Button(self._entry_frame, text='Registrar', command=self.entry_product, bootstyle='primary', width=10) # type: ignore
 
@@ -466,7 +466,7 @@ class EntryView(ttk.Toplevel):
     def entry_product(self):
         product_name = self._entry_product_name_combo.get()
         product_qty = self._entry_product_qty_spin.get()
-        
+
         flag = True
 
         # valida os campos de entrada
@@ -474,13 +474,17 @@ class EntryView(ttk.Toplevel):
             msgbox.show_error('Um produto precisa ser selecionado.', 'Erro')
             
             flag = False
+        if flag and not product_qty:
+            msgbox.show_error('Uma entrada precisa ser informada.', 'Erro')
+
+            flag = False
 
         if flag and not validate_alpha(product_name):
             msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro')
             
             flag = False
         if flag and product_qty and not validate_entry_number(product_qty):
-            msgbox.show_error('A quantidade deve ser um número inteiro entre -99 e 99, diferente de zero.', 'Erro')
+            msgbox.show_error('A entrada deve ser um número inteiro entre -99 e 99, diferente de zero.', 'Erro')
 
             flag = False
 
