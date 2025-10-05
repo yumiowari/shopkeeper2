@@ -92,15 +92,18 @@ class CreateOrderModel:
                     self.__stock.insert(0, product)
             #
 
-        SGBD.store_comm_order(comm_order)
+        if comm_order.value == 0:
+            return 0 # nenhum produto foi selecionado
 
-        # atualiza o estoque (no disco rígido)
+        # defere a comanda no disco rígido
         if flag:
+            SGBD.store_comm_order(comm_order)
+
             SGBD.update_stock(self.__stock)
 
             return comm_order.value
         else:
-            return -1
+            return -1 # não havia estoque disponível
                 
     '''
         Remove o produto selecionado
