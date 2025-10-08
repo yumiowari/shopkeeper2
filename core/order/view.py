@@ -385,7 +385,7 @@ class ConferOrderView(ttk.Toplevel):
         else:
             order = self.__controller.fetch_order()
 
-            if order == {}:
+            if order == None:
                 msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro')
             else:
                 output = f'É a comanda: {order.timestamp}\n\n'
