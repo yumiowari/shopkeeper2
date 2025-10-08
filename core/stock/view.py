@@ -22,7 +22,7 @@ def validate_number(x) -> bool:
 
 def validate_entry_number(x) -> bool:
     '''
-        Valida se o input é número inteiro entre -99 e 99, 
+        Valida se o input é número inteiro entre -999 e 999, 
         diferente de zero.
     '''
     if x == '':
@@ -30,7 +30,7 @@ def validate_entry_number(x) -> bool:
     try:
         n = int(x)
 
-        if n >= -99 and n <= 99 and n != 0:
+        if n >= -999 and n <= 999 and n != 0:
             return True
         else:
             return False
@@ -484,7 +484,7 @@ class EntryView(ttk.Toplevel):
             
             flag = False
         if flag and product_qty and not validate_entry_number(product_qty):
-            msgbox.show_error('A entrada deve ser um número inteiro entre -99 e 99, diferente de zero.', 'Erro')
+            msgbox.show_error('A entrada deve ser um número inteiro entre -999 e 999, diferente de zero.', 'Erro')
 
             flag = False
 
