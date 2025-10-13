@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import * # type: ignore
+from ttkbootstrap.constants import *
 # "type: ignore" impede avisos de erros desnecessários
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.dialogs import DatePickerDialog
@@ -14,6 +14,11 @@ from datetime import date
 '''
     O módulo datetime oferece classes para manipulação de data e hora.
 '''
+
+from core.components.loading import LoadingDialog
+"""
+    Janela modal simples de carregamento com barra indeterminada.
+"""
 
 class View(ttk.Window):
     '''
@@ -124,8 +129,8 @@ class View(ttk.Window):
         '''
             Botões de acesso rápido
         '''
-        self.__order_btn = ttk.Button(self.__bottom_frame, text='Vender', command=self.__controller.open_create_order_window, bootstyle='success', width=10) # type: ignore
-        self.__entry_btn = ttk.Button(self.__bottom_frame, text='Entrada', command=self.__controller.open_stock_entry_window, bootstyle='info', width=10) # type: ignore
+        self.__order_btn = ttk.Button(self.__bottom_frame, text='Vender', command=self.__controller.open_create_order_window, bootstyle='success', width=10)
+        self.__entry_btn = ttk.Button(self.__bottom_frame, text='Entrada', command=self.__controller.open_stock_entry_window, bootstyle='info', width=10)
 
         self.__order_btn.pack(side=LEFT, padx=10, pady=10)
         self.__entry_btn.pack(side=RIGHT, padx=10, pady=10)
@@ -147,11 +152,17 @@ class View(ttk.Window):
             self.__on_stock_report = True
 
             if msgbox.yesno('Deseja imprimir o relatório do estoque?', 'Confirmação') == 'Sim':
-                res = self.__controller.make_stock_report()
+                loading = LoadingDialog(self, message='Gerando relatório do comandas...')
+
+                loading.update()
+
+                feedback = self.__controller.make_stock_report()
+
+                self.after(500, loading.close)  
             
-                if res == 0:
+                if feedback == 0:
                     msgbox.show_info('Relatório do estoque impresso no diretório raiz da aplicação.', 'Sucesso')
-                elif res == 1:
+                elif feedback == 1:
                     msgbox.show_error('O inventário está vazio: Não existem itens disponíveis para impressão.', 'Erro')
             
                 self.__on_stock_report = False
@@ -171,8 +182,14 @@ class View(ttk.Window):
             bootstyle='info'
         )
 
-        if msgbox.yesno(f'Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?', 'Confirmação') == 'Sim':
+        if msgbox.yesno(f"Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?", 'Confirmação') == 'Sim':
+            loading = LoadingDialog(self, message='Gerando relatório do comandas...')
+
+            loading.update()
+
             report = self.__controller.make_order_report()
+
+            self.after(500, loading.close)
 
             if report['revenue'] == 0.0 and report['profit'] == 0.0:
                 msgbox.show_error('Nenhuma comanda foi cadastrada na data selecionada.', 'Erro')

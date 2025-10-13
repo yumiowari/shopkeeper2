@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import * # type: ignore
+from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tp
 '''
@@ -88,16 +88,16 @@ class CreateOrderView(ttk.Toplevel):
         '''
             Botões
         '''
-        self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text='Confirmar', command=self.commit_sale, bootstyle='success', width=10) # type: ignore
+        self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text='Confirmar', command=self.commit_sale, bootstyle='success', width=10)
         self.bind('<Control-f>', lambda e: self.commit_sale())
         self.bind('<Control-F>', lambda e: self.commit_sale())
-        self._cancel_sale_btn = ttk.Button(self.__left_bottom_frame, text='Cancelar', command=self.cancel_sale, bootstyle='danger', width=10) # type: ignore
+        self._cancel_sale_btn = ttk.Button(self.__left_bottom_frame, text='Cancelar', command=self.cancel_sale, bootstyle='danger', width=10)
         self.bind('<Control-c>', lambda e: self.cancel_sale())
         self.bind('<Control-C>', lambda e: self.cancel_sale())
-        self._add_product_btn = ttk.Button(self.__right_bottom_frame, text='Adicionar produto', command=self.__controller.add_product, bootstyle='primary', width=20) # type: ignore
+        self._add_product_btn = ttk.Button(self.__right_bottom_frame, text='Adicionar produto', command=self.__controller.add_product, bootstyle='primary', width=20)
         self.bind('<Control-a>', lambda e: self.__controller.add_product())
         self.bind('<Control-A>', lambda e: self.__controller.add_product())
-        self._remove_product_btn = ttk.Button(self.__right_bottom_frame, text='Remover produto', command=self.remove_product, bootstyle='warning', width=20) # type: ignore
+        self._remove_product_btn = ttk.Button(self.__right_bottom_frame, text='Remover produto', command=self.remove_product, bootstyle='warning', width=20)
         self.bind('<Control-r>', lambda e: self.remove_product())
         self.bind('<Control-R>', lambda e: self.remove_product())
 
@@ -228,10 +228,10 @@ class SelectProductView(ttk.Toplevel):
         '''
             Botões
         '''
-        self._confirm_btn = ttk.Button(self.__bottom_frame, text='Adicionar', command=self.confirm_product, bootstyle='success', width=10) # type: ignore
+        self._confirm_btn = ttk.Button(self.__bottom_frame, text='Adicionar', command=self.confirm_product, bootstyle='success', width=10)
         self.bind('<Control-a>', lambda e: self.confirm_product())
         self.bind('<Control-A>', lambda e: self.confirm_product())
-        self._cancel_btn = ttk.Button(self.__bottom_frame, text='Cancelar', command=self.cancel_product, bootstyle='danger', width=10) # type: ignore
+        self._cancel_btn = ttk.Button(self.__bottom_frame, text='Cancelar', command=self.cancel_product, bootstyle='danger', width=10)
         self.bind('<Control-c>', lambda e: self.cancel_product())
         self.bind('<Control-C>', lambda e: self.cancel_product())
 
@@ -342,8 +342,8 @@ class ConferOrderView(ttk.Toplevel):
         '''
             Botões
         '''
-        self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.confirm_selected_date, bootstyle='info', width=10) # type: ignore
-        self._confer_btn = ttk.Button(self._main_frame, text='Consultar', command=self.confer_selected_order, bootstyle='success', width=10) # type: ignore
+        self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.confirm_selected_date, bootstyle='info', width=10)
+        self._confer_btn = ttk.Button(self._main_frame, text='Consultar', command=self.confer_selected_order, bootstyle='success', width=10)
 
         self._date_entry_label.pack(pady=5)
         self._date_entry.pack(pady=5)

@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import * # type: ignore
+from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tp
 '''
@@ -57,7 +57,7 @@ class View(ttk.Toplevel):
         '''
             Botões
         '''
-        self._confirm_btn = ttk.Button(self.__bottom_frame, text='Confirmar', command=self.confirm_theme, bootstyle='success', width=10) # type: ignore
+        self._confirm_btn = ttk.Button(self.__bottom_frame, text='Confirmar', command=self.confirm_theme, bootstyle='success', width=10)
 
         self._confirm_btn.pack(padx=5, pady=5)
 

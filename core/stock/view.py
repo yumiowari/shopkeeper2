@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import * # type: ignore
+from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tp
 '''
@@ -112,7 +112,7 @@ class CRUDView(ttk.Toplevel):
         self._create_product_qty_spin = ttk.Spinbox(self._create_frame, from_=0, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
         self._create_product_qty_label = ttk.Label(self._create_frame, text='Quantidade inicial:', font=('Arial', 10))
 
-        self._create_confirm_btn = ttk.Button(self._create_frame, text='Cadastrar', command=self.create_product, bootstyle='success', width=10) # type: ignore
+        self._create_confirm_btn = ttk.Button(self._create_frame, text='Cadastrar', command=self.create_product, bootstyle='success', width=10)
 
         self._create_label.pack(pady=10)
         self._create_product_name_label.pack(pady=5)
@@ -144,7 +144,7 @@ class CRUDView(ttk.Toplevel):
         self._confer_product_name_combo_label = ttk.Label(self._confer_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
         self._confer_product_name_combo.focus_set() # trás foco ao widget
 
-        self._confer_confirm_btn = ttk.Button(self._confer_frame, text='Consultar', command=self.confer_product, bootstyle='info', width=10) # type: ignore
+        self._confer_confirm_btn = ttk.Button(self._confer_frame, text='Consultar', command=self.confer_product, bootstyle='info', width=10)
 
         self._confer_product_label.pack(pady=10)
         self._confer_product_name_combo_label.pack(pady=5)
@@ -173,7 +173,7 @@ class CRUDView(ttk.Toplevel):
         self._update_product_qty_spin = ttk.Spinbox(self._update_frame, from_=0, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
         self._update_product_qty_label = ttk.Label(self._update_frame, text='Nova quantidade:', font=('Arial', 10))
 
-        self._update_confirm_btn = ttk.Button(self._update_frame, text='Atualizar', command=self.update_product, bootstyle='warning', width=10) # type: ignore
+        self._update_confirm_btn = ttk.Button(self._update_frame, text='Atualizar', command=self.update_product, bootstyle='warning', width=10)
 
         self._update_label.pack(pady=10)
         self._update_product_name_combo_label.pack(pady=5)
@@ -205,7 +205,7 @@ class CRUDView(ttk.Toplevel):
         self._delete_product_name_combo_label = ttk.Label(self._delete_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
         self._delete_product_name_combo.focus_set() # trás foco ao widget
 
-        self._delete_confirm_btn = ttk.Button(self._delete_frame, text='Remover', command=self.delete_product, bootstyle='danger', width=10) # type: ignore
+        self._delete_confirm_btn = ttk.Button(self._delete_frame, text='Remover', command=self.delete_product, bootstyle='danger', width=10)
 
         self._delete_product_label.pack(pady=10)
         self._delete_product_name_combo_label.pack(pady=5)
@@ -440,7 +440,7 @@ class EntryView(ttk.Toplevel):
         self._entry_product_qty_spin = ttk.Spinbox(self._entry_frame, from_=-99, to=99, width=5, validate='focus', validatecommand=(number_validator, '%P'))
         self._entry_product_qty_label = ttk.Label(self._entry_frame, text='Entrada:', font=('Arial', 10))
 
-        self._entry_confirm_btn = ttk.Button(self._entry_frame, text='Registrar', command=self.entry_product, bootstyle='primary', width=10) # type: ignore
+        self._entry_confirm_btn = ttk.Button(self._entry_frame, text='Registrar', command=self.entry_product, bootstyle='primary', width=10)
 
         self._entry_label.pack(pady=10)
         self._entry_product_name_combo_label.pack(pady=5)
