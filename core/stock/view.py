@@ -275,11 +275,11 @@ class CRUDView(ttk.Toplevel):
             flag = False
 
         if flag:
-            res = self.__controller.create_product()
+            feedback = self.__controller.create_product()
 
-            if res == 0:
+            if feedback == 0:
                 msgbox.show_info(f'O produto \"{product_name}\" foi cadastrado no banco de dados.', 'Sucesso')
-            elif res == 1:
+            elif feedback == 1:
                 msgbox.show_error(f'O produto \"{product_name}\" já existe no banco de dados.')
         
                 flag = False
@@ -360,13 +360,13 @@ class CRUDView(ttk.Toplevel):
             flag = False
 
         if flag:        
-            res = self.__controller.update_product()
+            feedback = self.__controller.update_product()
 
-            if res == 0:
+            if feedback == 0:
                 msgbox.show_info(f'O produto \"{product_name}\" foi atualizado no banco de dados.', 'Sucesso')
-            elif res == 1:
+            elif feedback == 1:
                 msgbox.show_warning('Nenhum atributo do produto foi alterado.', 'Aviso')
-            elif res == 2:
+            elif feedback == 2:
                 msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.')
         if not flag:
             msgbox.show_error('A atualização do produto falhou.', 'Erro')
@@ -395,11 +395,11 @@ class CRUDView(ttk.Toplevel):
             flag = False
 
         if flag:
-            res = self.__controller.delete_product()
+            feedback = self.__controller.delete_product()
 
-            if res == 0:
+            if feedback == 0:
                 msgbox.show_info(f'O produto \"{product_name}\" foi removido do banco de dados.', 'Sucesso')
-            elif res == 1:
+            elif feedback == 1:
                 msgbox.show_error
         if not flag:
             msgbox.show_error('A remoção do produto falhou.', 'Erro')
@@ -497,11 +497,11 @@ class EntryView(ttk.Toplevel):
             flag = False
 
         if flag:        
-            res = self.__controller.entry_product()
+            feedback = self.__controller.entry_product()
 
-            if res == 0:
+            if feedback == 0:
                 msgbox.show_info(f'A quantidade do produto \"{product_name}\" foi alterada no banco de dados.', 'Sucesso')
-            elif res == 1:
+            elif feedback == 1:
                 msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.')
         if not flag:
             msgbox.show_error('O registro da entrada/saída do produto falhou.', 'Erro')

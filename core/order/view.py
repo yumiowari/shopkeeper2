@@ -137,21 +137,21 @@ class CreateOrderView(ttk.Toplevel):
 
         loading.update()
         
-        res = self.__controller.commit_sale()
+        value = self.__controller.commit_sale()
 
         self.after(500, loading.close)
 
-        if res > 0.0:
-            msgbox.show_info(f'Comanda deferida no valor de R${res}', 'Sucesso')
+        if value > 0.0:
+            msgbox.show_info(f'Comanda deferida no valor de R${value}', 'Sucesso')
 
             self.__parent_ctrl._create_order_ctrl = None
 
             self.__controller.on_close()
-        elif res < 0.0:
+        elif value < 0.0:
             msgbox.show_error('Não há estoque disponível para finalizar a comanda.', 'Erro')
 
             msgbox.show_warning('A comanda permanece indeferida.', 'Aviso')
-        elif res == 0.0:
+        elif value == 0.0:
             msgbox.show_warning('A comanda está vazia.', 'Aviso')
 
     def remove_product(self):
@@ -167,9 +167,9 @@ class CreateOrderView(ttk.Toplevel):
                 self.__on_product_removal = True
 
                 if msgbox.yesno('Deseja remover o produto da comanda?', 'Remoção de produto') == 'Sim':
-                    res = self.__controller.remove_product()
+                    feedback = self.__controller.remove_product()
 
-                    if res == 0:
+                    if feedback == 0:
                         msgbox.show_info('O produto foi removido da comanda.', 'Sucesso')
 
                         self._selected_products_combo.config(values=self.__controller.fetch_selected_products())
@@ -229,7 +229,7 @@ class SelectProductView(ttk.Toplevel):
         '''
             Campos de Entrada
         '''
-        self._product_name_combo = ttk.Combobox(self._top_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._product_name_combo = ttk.Combobox(self._top_frame, width=20)
         self._product_name_combo.config(values=self.__controller.fetch_product_names())
         self._product_name_combo_label = ttk.Label(self._top_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
         self._product_name_combo.focus_set() # trás foco ao widget
@@ -278,10 +278,10 @@ class SelectProductView(ttk.Toplevel):
         
             flag = False
 
-        if flag and not validate_alpha(product_name):
-            msgbox.show_error('O nome do produto deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
-
-            flag = False
+        #if flag and not validate_alpha(product_name):
+        #    msgbox.show_error('O nome do produto deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
+        #
+        #    flag = False
         
         if flag and not validate_number(product_qty):
             msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro')
@@ -289,16 +289,16 @@ class SelectProductView(ttk.Toplevel):
             flag = False
 
         if flag:
-            res = self.__controller.confirm_product()
+            feedback = self.__controller.confirm_product()
 
-            if res == 0:
+            if feedback == 0:
                 msgbox.show_info('Produto adicionado na comanda.', 'Sucesso')
 
                 # atualiza a combobox de itens selecionados na janela mãe
                 self.__parent_ctrl._view._selected_products_combo.config(values=self.__parent_ctrl.fetch_selected_products())
 
                 self.on_close()
-            elif res == 1:
+            elif feedback == 1:
                 msgbox.show_error('O produto não existe no banco de dados.')
 
                 flag = False
