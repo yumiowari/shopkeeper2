@@ -12,6 +12,11 @@ from datetime import date
     O módulo datetime oferece classes para manipulação de data e hora.
 '''
 
+from core.components.loading import LoadingDialog
+"""
+    Janela modal simples de carregamento com barra indeterminada.
+"""
+
 def validate_alpha(x) -> bool:
     '''
         Valida se o input é alfabético de até 30 caracteres.
@@ -22,8 +27,6 @@ def validate_number(x) -> bool:
     '''
         Valida se o input é número inteiro entre 1 e 999.
     '''
-    if x == '':
-        return True
     return x.isdigit() and int(x) <= 999 and int(x) >= 1
 
 '''
@@ -42,6 +45,7 @@ class CreateOrderView(ttk.Toplevel):
         self.title('Cadastro de Comanda')
         self.geometry('600x450')
         self.resizable(False, False)
+        self.place_window_center()
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
@@ -83,7 +87,7 @@ class CreateOrderView(ttk.Toplevel):
         self._selected_products_combo_label.pack(padx=5, pady=5)
         self._selected_products_combo.pack(padx=5, pady=5)
 
-        tp(self._selected_products_combo, 'Lista dos itens selecionados na comanda.')
+        tp(self._selected_products_combo, 'Lista dos itens selecionados na comanda.', bootstyle=(PRIMARY, INVERSE))
 
         '''
             Botões
@@ -106,10 +110,10 @@ class CreateOrderView(ttk.Toplevel):
         self._add_product_btn.pack(side=BOTTOM, padx=5, pady=5)
         self._remove_product_btn.pack(side=BOTTOM, padx=5, pady=5)
 
-        tp(self._commit_sale_btn, '(Ctrl+F) Registrar a comanda no banco de dados.')
-        tp(self._cancel_sale_btn, '(Ctrl+C) Cancelar a comanda.')
-        tp(self._add_product_btn, '(Ctrl+A) Adicionar um produto à comanda.')
-        tp(self._remove_product_btn, '(Ctrl+R) Remover um produto da comanda.')
+        tp(self._commit_sale_btn, '(Ctrl+F) Registrar a comanda no banco de dados.', bootstyle=(SUCCESS, INVERSE))
+        tp(self._cancel_sale_btn, '(Ctrl+C) Cancelar a comanda.', bootstyle=(DANGER, INVERSE))
+        tp(self._add_product_btn, '(Ctrl+A) Adicionar um produto à comanda.', bootstyle=(PRIMARY, INVERSE))
+        tp(self._remove_product_btn, '(Ctrl+R) Remover um produto da comanda.', bootstyle=(WARNING, INVERSE))
 
     def on_close(self):
         if not self.__on_close:
@@ -129,7 +133,13 @@ class CreateOrderView(ttk.Toplevel):
         self.on_close()
 
     def commit_sale(self):
+        loading = LoadingDialog(self, message='Deferindo comanda...')
+
+        loading.update()
+        
         res = self.__controller.commit_sale()
+
+        self.after(500, loading.close)
 
         if res > 0.0:
             msgbox.show_info(f'Comanda deferida no valor de R${res}', 'Sucesso')
@@ -185,6 +195,7 @@ class SelectProductView(ttk.Toplevel):
         self.title('Seleção de Produto')
         self.geometry('400x300')
         self.resizable(False, False)
+        self.place_window_center()
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
@@ -243,10 +254,10 @@ class SelectProductView(ttk.Toplevel):
         self._confirm_btn.pack(side=LEFT, pady=5)
         self._cancel_btn.pack(side=RIGHT, pady=5)
 
-        tp(self._product_name_combo, 'Selecione o produto a ser adicionado à comanda.')
-        tp(self._product_qty_spin, 'Informe a quantidade do produto a ser adicionado à comanda.')
-        tp(self._confirm_btn, '(Ctrl+A) Adicionar o produto selecionado à comanda.')
-        tp(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.')
+        tp(self._product_name_combo, 'Selecione o produto a ser adicionado à comanda.', bootstyle=(PRIMARY, INVERSE))
+        tp(self._product_qty_spin, 'Informe a quantidade do produto a ser adicionado à comanda.', bootstyle=(PRIMARY, INVERSE))
+        tp(self._confirm_btn, '(Ctrl+A) Adicionar o produto selecionado à comanda.', bootstyle=(SUCCESS, INVERSE))
+        tp(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.', bootstyle=(DANGER, INVERSE))
 
     def on_close(self):
         self.__parent_ctrl._select_product_ctrl = None
@@ -311,6 +322,7 @@ class ConferOrderView(ttk.Toplevel):
         self.title('Consulta de Comanda')
         self.geometry('600x450')
         self.resizable(False, False)
+        self.place_window_center()
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
@@ -332,7 +344,7 @@ class ConferOrderView(ttk.Toplevel):
             self._main_frame,
             firstweekday=6, # domingo
             startdate=date.today(),
-            bootstyle='info'
+            bootstyle='primary'
         )
         self._date_entry.configure(state='readonly')
         self._date_entry_label = ttk.Label(self._main_frame, text='Selecione a data:', font=('Arial', 10, 'bold'))
@@ -342,7 +354,7 @@ class ConferOrderView(ttk.Toplevel):
         '''
             Botões
         '''
-        self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.confirm_selected_date, bootstyle='info', width=10)
+        self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.confirm_selected_date, bootstyle='primary', width=10)
         self._confer_btn = ttk.Button(self._main_frame, text='Consultar', command=self.confer_selected_order, bootstyle='success', width=10)
 
         self._date_entry_label.pack(pady=5)
@@ -352,10 +364,10 @@ class ConferOrderView(ttk.Toplevel):
         self._timestamp_combo.pack(pady=5)
         self._confer_btn.pack(pady=10)
 
-        tp(self._date_entry, 'Em que dia a comanda foi deferida?')
-        tp(self._confirm_btn, 'Confirmar a data selecionada.')
-        tp(self._timestamp_combo, 'Em que horário a comanda foi deferida?')
-        tp(self._confer_btn, 'Consultar a comanda selecionada.')
+        tp(self._date_entry, 'Em que dia a comanda foi deferida?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._confirm_btn, 'Confirmar a data selecionada.', bootstyle=(PRIMARY, INVERSE))
+        tp(self._timestamp_combo, 'Em que horário a comanda foi deferida?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._confer_btn, 'Consultar a comanda selecionada.', bootstyle=(SUCCESS, INVERSE))
 
     def on_close(self):
         self.__parent_ctrl._confer_order_ctrl = None

@@ -72,6 +72,7 @@ class CRUDView(ttk.Toplevel):
         self.title('Inventário')
         self.geometry('600x450')
         self.resizable(False, False)
+        self.place_window_center()
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
@@ -126,11 +127,12 @@ class CRUDView(ttk.Toplevel):
 
         self._create_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tp(self._create_product_name_entry, 'Qual o nome do produto?')
-        tp(self._create_product_cost_entry, 'Qual o custo de produção do produto?')
-        tp(self._create_product_price_entry, 'Qual o preço de venda do produto?')
-        tp(self._create_product_qty_spin, 'Qual a quantidade inicial do produto?')
-        tp(self._create_confirm_btn, 'Confirma o cadastro do produto no inventário.')
+        tp(self._create_product_name_entry, 'Qual o nome do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._create_product_cost_entry, 'Qual o custo de produção do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._create_product_price_entry, 'Qual o preço de venda do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._create_product_qty_spin, 'Qual a quantidade inicial do produto?', bootstyle=(PRIMARY, INVERSE))
+
+        tp(self._create_confirm_btn, 'Confirma o cadastro do produto no inventário.', bootstyle=(SUCCESS, INVERSE))
 
         '''
             READ (CONFER)
@@ -152,8 +154,9 @@ class CRUDView(ttk.Toplevel):
 
         self._confer_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tp(self._confer_product_name_combo, 'Qual o nome do produto?')
-        tp(self._confer_confirm_btn, 'Confirma a consulta do produto no inventário.')
+        tp(self._confer_product_name_combo, 'Qual o nome do produto?', bootstyle=(PRIMARY, INVERSE))
+
+        tp(self._confer_confirm_btn, 'Confirma a consulta do produto no inventário.', bootstyle=(INFO, INVERSE))
 
         '''
             UPDATE
@@ -187,11 +190,12 @@ class CRUDView(ttk.Toplevel):
 
         self._update_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tp(self._update_product_name_combo, 'Qual o nome do produto?')
-        tp(self._update_product_cost_entry, 'Qual o novo custo de produção do produto?')
-        tp(self._update_product_price_entry, 'Qual o novo preço de venda do produto?')
-        tp(self._update_product_qty_spin, 'Qual a nova quantidade do produto?')
-        tp(self._update_confirm_btn, 'Confirma a atualização do produto no inventário.')
+        tp(self._update_product_name_combo, 'Qual o nome do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._update_product_cost_entry, 'Qual o novo custo de produção do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._update_product_price_entry, 'Qual o novo preço de venda do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._update_product_qty_spin, 'Qual a nova quantidade do produto?', bootstyle=(PRIMARY, INVERSE))
+
+        tp(self._update_confirm_btn, 'Confirma a atualização do produto no inventário.', bootstyle=(WARNING, INVERSE))
 
         '''
             DELETE
@@ -213,8 +217,9 @@ class CRUDView(ttk.Toplevel):
 
         self._delete_confirm_btn.pack(side=BOTTOM, pady=10)
 
-        tp(self._delete_product_name_combo, 'Qual o nome do produto?')
-        tp(self._delete_confirm_btn, 'Confirma a remoção do produto do inventário.')
+        tp(self._delete_product_name_combo, 'Qual o nome do produto?', bootstyle=(PRIMARY, INVERSE))
+
+        tp(self._delete_confirm_btn, 'Confirma a remoção do produto do inventário.', bootstyle=(DANGER, INVERSE))
 
         self._notebook.add(self._create_frame, text='Cadastrar')
         self._notebook.add(self._confer_frame, text='Consultar')
@@ -309,6 +314,7 @@ class CRUDView(ttk.Toplevel):
 
             if product:
                 output = 'É o produto:\n\n'
+                output += f'ID: {product.id}\n'
                 output += f'Nome: {product.name}\n'
                 output += f'Custo: R$ {product.cost}\n'
                 output += f'Preço: R$ {product.price}\n'
@@ -416,6 +422,7 @@ class EntryView(ttk.Toplevel):
         self.title('Entrada')
         self.geometry('400x300')
         self.resizable(False, False)
+        self.place_window_center()
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
@@ -452,9 +459,10 @@ class EntryView(ttk.Toplevel):
 
         self._entry_frame.pack(fill=BOTH, expand=True, padx=10, pady=10)
 
-        tp(self._entry_product_name_combo, 'Qual o nome do produto?')
-        tp(self._entry_product_qty_spin, 'Qual a quantidade a ser incrementada?')
-        tp(self._entry_confirm_btn, 'Confirma o registro da entrada/saída do produto no inventário.')
+        tp(self._entry_product_name_combo, 'Qual o nome do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._entry_product_qty_spin, 'Qual a quantidade a ser incrementada?', bootstyle=(PRIMARY, INVERSE))
+
+        tp(self._entry_confirm_btn, 'Confirma o registro da entrada/saída do produto no inventário.', bootstyle=(PRIMARY, INVERSE))
 
     def on_close(self):
         self.__parent_ctrl._stock_entry_ctrl = None

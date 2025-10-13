@@ -1,6 +1,5 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
-# "type: ignore" impede avisos de erros desnecessários
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.dialogs import DatePickerDialog
 from ttkbootstrap.tooltip import ToolTip as tp
@@ -31,9 +30,11 @@ class View(ttk.Window):
     def __init__(self, controller):
         super().__init__()
         self.__controller = controller
+
         self.title('$hopkeeper')
         self.geometry('800x600')
         self.resizable(False, False)
+        self.place_window_center()
 
         # atualiza o tema da janela
         Style().theme_use(self.__controller.fetch_curr_theme())
@@ -135,8 +136,8 @@ class View(ttk.Window):
         self.__order_btn.pack(side=LEFT, padx=10, pady=10)
         self.__entry_btn.pack(side=RIGHT, padx=10, pady=10)
 
-        tp(self.__order_btn, '(Ctrl+V) Cadastrar uma comanda.')
-        tp(self.__entry_btn, '(Ctrl+E) Cadastrar uma entrada/saída de produto.')
+        tp(self.__order_btn, '(Ctrl+V) Cadastrar uma comanda.', bootstyle=(SUCCESS, INVERSE))
+        tp(self.__entry_btn, '(Ctrl+E) Cadastrar uma entrada/saída de produto.', bootstyle=(INFO, INVERSE))
 
         '''
             Rodapé
