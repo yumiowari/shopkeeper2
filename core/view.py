@@ -152,7 +152,7 @@ class View(ttk.Window):
         if not self.__on_stock_report:
             self.__on_stock_report = True
 
-            if msgbox.yesno('Deseja imprimir o relatório do estoque?', 'Confirmação') == 'Sim':
+            if msgbox.yesno('Deseja imprimir o relatório do estoque?', 'Confirmação', parent=self) == 'Sim':
                 loading = LoadingDialog(self, message='Gerando relatório do comandas...')
 
                 loading.update()
@@ -162,9 +162,9 @@ class View(ttk.Window):
                 self.after(500, loading.close)  
             
                 if feedback == 0:
-                    msgbox.show_info('Relatório do estoque impresso no diretório raiz da aplicação.', 'Sucesso')
+                    msgbox.show_info('Relatório do estoque impresso no diretório raiz da aplicação.', 'Sucesso', parent=self)
                 elif feedback == 1:
-                    msgbox.show_error('O inventário está vazio: Não existem itens disponíveis para impressão.', 'Erro')
+                    msgbox.show_error('O inventário está vazio: Não existem itens disponíveis para impressão.', 'Erro', parent=self)
             
                 self.__on_stock_report = False
             else:
@@ -180,10 +180,11 @@ class View(ttk.Window):
             title='Seleção de data',
             firstweekday=6, # domingo
             startdate=date.today(),
-            bootstyle='info'
+            bootstyle='info',
+            parent=self
         )
 
-        if msgbox.yesno(f"Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?", 'Confirmação') == 'Sim':
+        if msgbox.yesno(f"Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?", 'Confirmação', parent=self) == 'Sim':
             loading = LoadingDialog(self, message='Gerando relatório do comandas...')
 
             loading.update()
@@ -193,7 +194,7 @@ class View(ttk.Window):
             self.after(500, loading.close)
 
             if report['revenue'] == 0.0 and report['profit'] == 0.0:
-                msgbox.show_error('Nenhuma comanda foi cadastrada na data selecionada.', 'Erro')
+                msgbox.show_error('Nenhuma comanda foi cadastrada na data selecionada.', 'Erro', parent=self)
             else:
                 output = f'É o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}:\n\n'
                 output += 'Receita: R$ ' + str(report['revenue']) + '\n'
@@ -201,7 +202,7 @@ class View(ttk.Window):
 
                 msgbox.show_info(output, 'Sucesso')
         else:
-            msgbox.show_warning('A impressão do relatório foi cancelada: Nenhum arquivo foi criado.', 'Aviso')
+            msgbox.show_warning('A impressão do relatório foi cancelada: Nenhum arquivo foi criado.', 'Aviso', parent=self)
             
     '''
         Rotina de Encerramento Gracioso
@@ -210,7 +211,7 @@ class View(ttk.Window):
         if not self.__on_shutdown:
             self.__on_shutdown = True
             
-            if msgbox.yesno('Deseja encerrar a aplicação?', 'Confirmação') == 'Sim':
+            if msgbox.yesno('Deseja encerrar a aplicação?', 'Confirmação', parent=self) == 'Sim':
                 self.__controller.shutdown()
             else:
                 self.__on_shutdown = False

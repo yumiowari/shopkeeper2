@@ -119,7 +119,7 @@ class CreateOrderView(ttk.Toplevel):
         if not self.__on_close:
             self.__on_close = True
             
-            if msgbox.yesno('Deseja cancelar a comanda?', 'Cancelar comanda') == 'Sim':
+            if msgbox.yesno('Deseja cancelar a comanda?', 'Cancelar comanda', parent=self) == 'Sim':
                 self.__parent_ctrl._create_order_ctrl = None
 
                 self.__controller.on_close()
@@ -142,17 +142,17 @@ class CreateOrderView(ttk.Toplevel):
         self.after(500, loading.close)
 
         if value > 0.0:
-            msgbox.show_info(f'Comanda deferida no valor de R${value}', 'Sucesso')
+            msgbox.show_info(f'Comanda deferida no valor de R${value}', 'Sucesso', parent=self)
 
             self.__parent_ctrl._create_order_ctrl = None
 
             self.__controller.on_close()
         elif value < 0.0:
-            msgbox.show_error('Não há estoque disponível para finalizar a comanda.', 'Erro')
+            msgbox.show_error('Não há estoque disponível para finalizar a comanda.', 'Erro', parent=self)
 
-            msgbox.show_warning('A comanda permanece indeferida.', 'Aviso')
+            msgbox.show_warning('A comanda permanece indeferida.', 'Aviso', parent=self)
         elif value == 0.0:
-            msgbox.show_warning('A comanda está vazia.', 'Aviso')
+            msgbox.show_warning('A comanda está vazia.', 'Aviso', parent=self)
 
     def remove_product(self):
         product_name = ''
@@ -161,21 +161,21 @@ class CreateOrderView(ttk.Toplevel):
             product_name = self._selected_products_combo.get().split(')', 1)[1].strip()
 
         if not product_name:
-            msgbox.show_error('Um produto precisa ser selecionado.', 'Erro')
+            msgbox.show_error('Um produto precisa ser selecionado.', 'Erro', parent=self)
         else:
             if not self.__on_product_removal:
                 self.__on_product_removal = True
 
-                if msgbox.yesno('Deseja remover o produto da comanda?', 'Remoção de produto') == 'Sim':
+                if msgbox.yesno('Deseja remover o produto da comanda?', 'Remoção de produto', parent=self) == 'Sim':
                     feedback = self.__controller.remove_product()
 
                     if feedback == 0:
-                        msgbox.show_info('O produto foi removido da comanda.', 'Sucesso')
+                        msgbox.show_info('O produto foi removido da comanda.', 'Sucesso', parent=self)
 
                         self._selected_products_combo.config(values=self.__controller.fetch_selected_products())
                         self._selected_products_combo.set('')
                     else:
-                        msgbox.show_error('O produto não existe na comanda. A remoção do produto falhou.', 'Erro')
+                        msgbox.show_error('O produto não existe na comanda. A remoção do produto falhou.', 'Erro', parent=self)
                 
                     self.__on_product_removal = False
                 else:
@@ -274,17 +274,17 @@ class SelectProductView(ttk.Toplevel):
 
         # valida os campos de entrada
         if not product_name or not product_qty:
-            msgbox.show_error('Todos os campos obrigatórios devem ser preenchidos.', 'Erro')
+            msgbox.show_error('Todos os campos obrigatórios devem ser preenchidos.', 'Erro', parent=self)
         
             flag = False
 
         #if flag and not validate_alpha(product_name):
-        #    msgbox.show_error('O nome do produto deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro')
+        #    msgbox.show_error('O nome do produto deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro', parent=self)
         #
         #    flag = False
         
         if flag and not validate_number(product_qty):
-            msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro')
+            msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro', parent=self)
 
             flag = False
 
@@ -292,18 +292,18 @@ class SelectProductView(ttk.Toplevel):
             feedback = self.__controller.confirm_product()
 
             if feedback == 0:
-                msgbox.show_info('Produto adicionado na comanda.', 'Sucesso')
+                msgbox.show_info('Produto adicionado na comanda.', 'Sucesso', parent=self)
 
                 # atualiza a combobox de itens selecionados na janela mãe
                 self.__parent_ctrl._view._selected_products_combo.config(values=self.__parent_ctrl.fetch_selected_products())
 
                 self.on_close()
             elif feedback == 1:
-                msgbox.show_error('O produto não existe no banco de dados.')
+                msgbox.show_error('O produto não existe no banco de dados.', parent=self)
 
                 flag = False
         if not flag:
-            msgbox.show_error('A seleção do produto falhou.', 'Erro')
+            msgbox.show_error('A seleção do produto falhou.', 'Erro', parent=self)
 
     def cancel_product(self):
         self.on_close()
@@ -380,7 +380,7 @@ class ConferOrderView(ttk.Toplevel):
         order_list = self.__controller.fetch_order_list()
 
         if order_list == []:
-            msgbox.show_warning('Nenhuma comanda foi vendida na data selecionada.', 'Aviso')
+            msgbox.show_warning('Nenhuma comanda foi vendida na data selecionada.', 'Aviso', parent=self)
         else:
             timestamps = []
 
@@ -393,16 +393,16 @@ class ConferOrderView(ttk.Toplevel):
         selected_timestamp = self._timestamp_combo.get()
 
         if not selected_timestamp:
-            msgbox.show_warning('Um timestamp válido precisa ser selecionado.', 'Aviso')
+            msgbox.show_warning('Um timestamp válido precisa ser selecionado.', 'Aviso', parent=self)
         else:
             order = self.__controller.fetch_order()
 
             if order == None:
-                msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro')
+                msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro', parent=self)
             else:
                 output = f'É a comanda: {order.timestamp}\n\n'
                 for sale in order.sales:
                     output += f'{sale.product_id} - {sale.qty} - R$ {sale.value}\n'
                 output += f'\nTotal: R${order.value}'
 
-                msgbox.show_info(output, 'Sucesso')
+                msgbox.show_info(output, 'Sucesso', parent=self)
