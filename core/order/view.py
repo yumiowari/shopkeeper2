@@ -17,12 +17,6 @@ from core.components.loading import LoadingDialog
     Janela modal simples de carregamento com barra indeterminada.
 """
 
-def validate_alpha(x) -> bool:
-    '''
-        Valida se o input é alfabético de até 30 caracteres.
-    '''
-    return (x == '' or not x.isdigit()) and len(x) <= 30
-
 def validate_number(x) -> bool:
     '''
         Valida se o input é número inteiro entre 1 e 999.
@@ -133,7 +127,7 @@ class CreateOrderView(ttk.Toplevel):
         self.on_close()
 
     def commit_sale(self):
-        loading = LoadingDialog(self, message='Deferindo comanda...')
+        loading = LoadingDialog(self, message='Deferindo comanda...', mode='indeterminate', bootstyle='primary')
 
         loading.update()
         
@@ -206,7 +200,6 @@ class SelectProductView(ttk.Toplevel):
 
             Funções associadas a algum campo de entrada para validar o conteúdo digitado.
         '''
-        alpha_validator = self.register(validate_alpha)
         number_validator = self.register(validate_number)
 
         '''
@@ -277,11 +270,6 @@ class SelectProductView(ttk.Toplevel):
             msgbox.show_error('Todos os campos obrigatórios devem ser preenchidos.', 'Erro', parent=self)
         
             flag = False
-
-        #if flag and not validate_alpha(product_name):
-        #    msgbox.show_error('O nome do produto deve conter apenas letras e ter no máximo 30 caracteres.', 'Erro', parent=self)
-        #
-        #    flag = False
         
         if flag and not validate_number(product_qty):
             msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro', parent=self)

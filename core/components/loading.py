@@ -11,10 +11,10 @@ class LoadingDialog(ttk.Toplevel):
         Janela modal simples de carregamento com barra indeterminada.
     '''
 
-    def __init__(self, parent, message='Processando...', bootstyle=INFO):
+    def __init__(self, parent, message, mode ,bootstyle):
         super().__init__(parent)
-        self.title('Aguarde')
-        self.geometry('250x100')
+        self.title('Carregamento')
+        self.geometry('300x100')
         self.resizable(False, False)
         self.transient(parent)
         self.grab_set()
@@ -22,7 +22,7 @@ class LoadingDialog(ttk.Toplevel):
         self.protocol("WM_DELETE_WINDOW", lambda: None) # impede o usuário de fechar o widget
 
         ttk.Label(self, text=message, bootstyle=f'{bootstyle}').pack(padx=10, pady=10)
-        self.bar = ttk.Progressbar(self, mode='indeterminate', bootstyle=f'{bootstyle}-striped')
+        self.bar = ttk.Progressbar(self, mode=mode, bootstyle=bootstyle)
         self.bar.pack(fill='x', padx=10, pady=10)
         self.bar.start(20)
 

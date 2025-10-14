@@ -19,6 +19,11 @@ from core.components.loading import LoadingDialog
     Janela modal simples de carregamento com barra indeterminada.
 """
 
+from core.components.auth import AuthDialog
+"""
+    Janela modal simples para autenticação de usuário administrador.
+"""
+
 class View(ttk.Window):
     '''
         Classe para renderizar o conteúdo da janela principal (ttk.Window).
@@ -91,9 +96,9 @@ class View(ttk.Window):
 
         # Menu de Estoque
         self.__stock_menu = ttk.Menu(self.__menu_bar, tearoff=0)
-        self.__stock_menu.add_command(label='Inventário', accelerator='Ctrl+I', command=self.__controller.open_stock_window)
-        self.bind('<Control-i>', lambda e: self.__controller.open_stock_window())
-        self.bind('<Control-I>', lambda e: self.__controller.open_stock_window())
+        self.__stock_menu.add_command(label='Inventário', accelerator='Ctrl+I', command=self.open_stock_window)
+        self.bind('<Control-i>', lambda e: self.open_stock_window())
+        self.bind('<Control-I>', lambda e: self.open_stock_window())
         # bind() observa a hotkey apenas na janela de foco.
         self.__stock_menu.add_command(label='Entrada', accelerator='Ctrl+E', command=self.__controller.open_stock_entry_window)
         self.bind('<Control-e>', lambda e: self.__controller.open_stock_entry_window())
@@ -117,16 +122,6 @@ class View(ttk.Window):
         self.bind('<Control-Shift-v>', lambda e: self.make_order_report())
         self.__menu_bar.add_cascade(label='Caixa', menu=self.__sales_menu)
 
-        # Menu de Ajuda 
-        self.__help_menu = ttk.Menu(self.__menu_bar, tearoff=0)
-        self.__help_menu.add_command(label='Sobre', command=self.__controller.open_about_window)
-        self.__menu_bar.add_cascade(label='Ajuda', menu=self.__help_menu)
-
-        # Menu de Créditos
-        self.__credits_menu = ttk.Menu(self.__menu_bar, tearoff=0)
-        self.__credits_menu.add_command(label='Créditos', command=self.__controller.open_credits_window)
-        self.__menu_bar.add_cascade(label='Créditos', menu=self.__credits_menu)
-
         '''
             Botões de acesso rápido
         '''
@@ -145,6 +140,16 @@ class View(ttk.Window):
         self.__footer = ttk.Label(self, text='Copyright © 2025 Rafael Renó Corrêa | owariyumi@gmail.com', font=('Arial', 10), anchor='center')
         self.__footer.pack(side=BOTTOM, fill=X, pady=5)
 
+    def open_stock_window(self):
+        auth = AuthDialog(self)
+
+        self.wait_window(auth) # espera o diálogo terminar
+
+        if auth.access_granted:
+            self.__controller.open_stock_window()
+        else:
+            msgbox.show_warning('A autenticação do usuário falhou.', 'Falha', parent=self)
+
     '''
         Função para imprimir o relatório de estoque em PDF.
     '''
@@ -153,7 +158,7 @@ class View(ttk.Window):
             self.__on_stock_report = True
 
             if msgbox.yesno('Deseja imprimir o relatório do estoque?', 'Confirmação', parent=self) == 'Sim':
-                loading = LoadingDialog(self, message='Gerando relatório do comandas...')
+                loading = LoadingDialog(self, message='Gerando relatório do comandas...', mode='indeterminate', bootstyle='primary')
 
                 loading.update()
 
@@ -185,7 +190,7 @@ class View(ttk.Window):
         )
 
         if msgbox.yesno(f"Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?", 'Confirmação', parent=self) == 'Sim':
-            loading = LoadingDialog(self, message='Gerando relatório do comandas...')
+            loading = LoadingDialog(self, message='Gerando relatório do comandas...', mode='indeterminate', bootstyle='primary')
 
             loading.update()
 
@@ -203,7 +208,7 @@ class View(ttk.Window):
                 msgbox.show_info(output, 'Sucesso')
         else:
             msgbox.show_warning('A impressão do relatório foi cancelada: Nenhum arquivo foi criado.', 'Aviso', parent=self)
-            
+
     '''
         Rotina de Encerramento Gracioso
     '''
