@@ -14,6 +14,8 @@ from datetime import date
     O módulo datetime oferece classes para manipulação de data e hora.
 '''
 
+from PIL import Image, ImageTk
+
 from core.components.loading import LoadingDialog
 """
     Janela modal simples de carregamento com barra indeterminada.
@@ -41,6 +43,16 @@ class View(ttk.Window):
         self.resizable(False, False)
         self.place_window_center()
 
+        self.update_idletasks()
+        x0 = self.winfo_rootx()
+        y0 = self.winfo_rooty()
+        w = self.winfo_width()
+        h = self.winfo_height()
+
+        # coordenadas (x, y) para posicionar Dialogs
+        self.__x = x0 + w // 4
+        self.__y = y0 + h // 4
+
         # atualiza o tema da janela
         Style().theme_use(self.__controller.fetch_curr_theme())
 
@@ -59,16 +71,28 @@ class View(ttk.Window):
         '''
         self.__main_frame = ttk.Frame(self)
         self.__top_frame = ttk.Frame(self.__main_frame)
+        self.__middle_frame = ttk.Frame(self.__main_frame)
         self.__bottom_frame = ttk.Frame(self.__main_frame)
 
         self.__main_frame.pack(fill=BOTH, expand=True)
         self.__top_frame.pack(fill=X, side=TOP, padx=10, pady=10)
+        self.__middle_frame.pack(expand=True)
         self.__bottom_frame.pack(fill=NONE, side=BOTTOM, padx=10, pady=10)
         # fill...
         # X - Preenche a largura
         # Y - Preenche a altura
         # BOTH - Preenche ambos
         # NONE - Não preenche nada
+
+        '''
+            Logotipo
+        '''
+        img = Image.open('./media/logo.png')
+        img = img.resize((300, 300))
+        photo = ImageTk.PhotoImage(img)
+        self.__logo = ttk.Label(self.__middle_frame, image=photo)
+        self.__logo.image = photo
+        self.__logo.pack(padx=10, pady=10)
 
         '''
             Labels
@@ -148,7 +172,7 @@ class View(ttk.Window):
         if auth.access_granted:
             self.__controller.open_stock_window()
         else:
-            msgbox.show_warning('A autenticação do usuário falhou.', 'Falha', parent=self)
+            dialog = msgbox.show_warning('A autenticação do usuário falhou.', 'Falha', parent=self, position=(self.__x, self.__y))
 
     '''
         Função para imprimir o relatório de estoque em PDF.
@@ -157,8 +181,8 @@ class View(ttk.Window):
         if not self.__on_stock_report:
             self.__on_stock_report = True
 
-            if msgbox.yesno('Deseja imprimir o relatório do estoque?', 'Confirmação', parent=self) == 'Sim':
-                loading = LoadingDialog(self, message='Gerando relatório do comandas...', mode='indeterminate', bootstyle='primary')
+            if msgbox.yesno('Deseja imprimir o relatório do estoque?', 'Confirmação', parent=self, position=(self.__x, self.__y)) == 'Sim':
+                loading = LoadingDialog(self, message='Gerando relatório do comandas...', mode='indeterminate', bootstyle='primary', x=self.__x, y=self.__y)
 
                 loading.update()
 
@@ -167,9 +191,9 @@ class View(ttk.Window):
                 self.after(500, loading.close)  
             
                 if feedback == 0:
-                    msgbox.show_info('Relatório do estoque impresso no diretório raiz da aplicação.', 'Sucesso', parent=self)
+                    msgbox.show_info('Relatório do estoque impresso no diretório raiz da aplicação.', 'Sucesso', parent=self, position=(self.__x, self.__y))
                 elif feedback == 1:
-                    msgbox.show_error('O inventário está vazio: Não existem itens disponíveis para impressão.', 'Erro', parent=self)
+                    msgbox.show_error('O inventário está vazio: Não existem itens disponíveis para impressão.', 'Erro', parent=self, position=(self.__x, self.__y))
             
                 self.__on_stock_report = False
             else:
@@ -189,8 +213,8 @@ class View(ttk.Window):
             parent=self
         )
 
-        if msgbox.yesno(f"Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?", 'Confirmação', parent=self) == 'Sim':
-            loading = LoadingDialog(self, message='Gerando relatório do comandas...', mode='indeterminate', bootstyle='primary')
+        if msgbox.yesno(f"Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?", 'Confirmação', parent=self, position=(self.__x, self.__y)) == 'Sim':
+            loading = LoadingDialog(self, message='Gerando relatório do comandas...', mode='indeterminate', bootstyle='primary', x=self.__x, y=self.__y)
 
             loading.update()
 
@@ -199,15 +223,15 @@ class View(ttk.Window):
             self.after(500, loading.close)
 
             if report['revenue'] == 0.0 and report['profit'] == 0.0:
-                msgbox.show_error('Nenhuma comanda foi cadastrada na data selecionada.', 'Erro', parent=self)
+                msgbox.show_error('Nenhuma comanda foi cadastrada na data selecionada.', 'Erro', parent=self, position=(self.__x, self.__y))
             else:
                 output = f'É o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}:\n\n'
                 output += 'Receita: R$ ' + str(report['revenue']) + '\n'
                 output += 'Lucro: R$ ' + str(report['profit']) + '\n'
 
-                msgbox.show_info(output, 'Sucesso')
+                msgbox.show_info(output, 'Sucesso', position=(self.__x, self.__y))
         else:
-            msgbox.show_warning('A impressão do relatório foi cancelada: Nenhum arquivo foi criado.', 'Aviso', parent=self)
+            msgbox.show_warning('A impressão do relatório foi cancelada: Nenhum arquivo foi criado.', 'Aviso', parent=self, position=(self.__x, self.__y))
 
     '''
         Rotina de Encerramento Gracioso
@@ -216,7 +240,7 @@ class View(ttk.Window):
         if not self.__on_shutdown:
             self.__on_shutdown = True
             
-            if msgbox.yesno('Deseja encerrar a aplicação?', 'Confirmação', parent=self) == 'Sim':
+            if msgbox.yesno('Deseja encerrar a aplicação?', 'Confirmação', parent=self, position=(self.__x, self.__y)) == 'Sim':
                 self.__controller.shutdown()
             else:
                 self.__on_shutdown = False

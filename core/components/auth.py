@@ -14,8 +14,19 @@ class AuthDialog(ttk.Toplevel):
         self.title('Autenticação')
         self.geometry('400x300')
         self.resizable(False, False)
+        self.place_window_center()
         self.transient(parent)
         self.grab_set()
+
+        self.update_idletasks()
+        x0 = self.winfo_rootx()
+        y0 = self.winfo_rooty()
+        w = self.winfo_width()
+        h = self.winfo_height()
+
+        # coordenadas (x, y) para posicionar Dialogs
+        self.__x = x0 + w // 4
+        self.__y = y0 + h // 4
 
         self.access_granted = False # flag de autenticação
 
@@ -63,7 +74,7 @@ class AuthDialog(ttk.Toplevel):
         password = self._password_entry.get()
 
         if not username or not password:
-            msgbox.show_error('Todos os campos obrigatórios devem ser preenchidos.', 'Erro', parent=self)
+            msgbox.show_error('Todos os campos obrigatórios devem ser preenchidos.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             self.destroy()
 
@@ -74,7 +85,7 @@ class AuthDialog(ttk.Toplevel):
         if model.validate_credentials(username, password):
             self.access_granted = True
         else:
-            msgbox.show_error('Credenciais inválidas.', 'Erro', parent=self)
+            msgbox.show_error('Credenciais inválidas.', 'Erro', parent=self, position=(self.__x, self.__y))
 
         self.destroy()
 

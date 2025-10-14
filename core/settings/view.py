@@ -22,6 +22,16 @@ class View(ttk.Toplevel):
         self.geometry('400x300')
         self.resizable(False, False)
 
+        self.update_idletasks()
+        x0 = self.winfo_rootx()
+        y0 = self.winfo_rooty()
+        w = self.winfo_width()
+        h = self.winfo_height()
+
+        # coordenadas (x, y) para posicionar Dialogs
+        self.__x = x0 + w // 4
+        self.__y = y0 + h // 4
+
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
         self.bind('<Escape>', lambda e: self.on_escape())
@@ -72,6 +82,6 @@ class View(ttk.Toplevel):
         theme_name = self._theme_name_combo.get()
 
         if not theme_name:
-            msgbox.show_error('Um tema precisa ser selecionado.', 'Erro')
+            msgbox.show_error('Um tema precisa ser selecionado.', 'Erro', position=(self.__x, self.__y))
         else:
             self.__controller.confirm_theme()
