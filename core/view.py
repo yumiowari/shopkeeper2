@@ -87,7 +87,7 @@ class View(ttk.Window):
         '''
             Logotipo
         '''
-        img = Image.open('./media/logo.png')
+        img = Image.open('./media/Logotipo 3 - Colorido.png')
         img = img.resize((300, 300))
         photo = ImageTk.PhotoImage(img)
         self.__logo = ttk.Label(self.__middle_frame, image=photo)
