@@ -156,6 +156,17 @@ class SelectProductModel:
     def confirm_product(self, product_name, product_qty):
         self.__stock = SGBD.fetch_stock()
 
+        # se inseriu o ID do produto,
+        if product_name.isdigit():
+            for product in self.__stock:
+                if product.id == int(product_name):
+                    product_name = product.name # sobrescreve com o nome do produto
+
+                    break
+
+        if product_name.isdigit():
+            return 1 # o ID do produto não era válido.
+
         for product in self.__stock:
             if product.name == product_name:
                 id = product.id

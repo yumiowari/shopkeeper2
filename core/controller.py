@@ -36,7 +36,7 @@ class Controller:
     def open_stock_window(self):
         if self._stock_ctrl is None or not self._stock_ctrl._view.winfo_exists():
             self._stock_ctrl = StockCtrl(master=self.__view, parent=self)
-        else: # se já existe, traz para frente
+        else:
             self._stock_ctrl._view.lift()
 
     def open_stock_entry_window(self):
@@ -64,9 +64,3 @@ class Controller:
         selected_date = self.__view._dialog.date_selected
 
         return self.__model.make_order_report(selected_date)
-
-    def open_about_window(self):
-        pass
-
-    def open_credits_window(self):
-        pass

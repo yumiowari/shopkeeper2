@@ -56,3 +56,14 @@ def store_comm_order(order):
 
     with open(path, 'wb') as file:
         pkl.dump(order, file)
+
+'''
+    Autenticação
+'''
+def update_credentials(credentials):
+    with open('data/credentials.pkl', 'wb') as file:
+        pkl.dump(credentials, file)
+
+def fetch_credentials():
+    with open('data/credentials.pkl', 'rb') as file:
+        return pkl.load(file)

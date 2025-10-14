@@ -47,7 +47,7 @@ class Model:
     '''
     def make_stock_report(self):
         table = [
-            ['Produto', 'Custo', 'Preço', 'Quantidade']
+            ['ID', 'Produto', 'Custo', 'Preço', 'Quantidade']
         ]
 
         self.__stock = SGBD.fetch_stock()
@@ -60,6 +60,7 @@ class Model:
         for product in self.__stock:
             row = []
 
+            row.append(product.id)
             row.append(product.name)
             row.append(f"R$ {product.cost:.2f}".replace('.', ','))
             row.append(f"R$ {product.price:.2f}".replace('.', ','))
