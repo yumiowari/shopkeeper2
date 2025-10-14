@@ -21,6 +21,7 @@ class View(ttk.Toplevel):
         self.title('Preferências')
         self.geometry('400x300')
         self.resizable(False, False)
+        self.place_window_center()
 
         self.update_idletasks()
         x0 = self.winfo_rootx()
