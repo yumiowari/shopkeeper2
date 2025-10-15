@@ -47,9 +47,9 @@ class CreateOrderView(ttk.Toplevel):
         w = self.winfo_width()
         h = self.winfo_height()
 
-        # coordenadas (x, y) para posicionar Dialogs
-        self.__x = x0 + w // 4
-        self.__y = y0 + h // 4
+        # coordenadas (x, y) para posicionar os Dialogs
+        self.__x = x0 + w // 6
+        self.__y = y0 + h // 6
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
@@ -207,7 +207,7 @@ class SelectProductView(ttk.Toplevel):
         w = self.winfo_width()
         h = self.winfo_height()
 
-        # coordenadas (x, y) para posicionar Dialogs
+        # coordenadas (x, y) para posicionar os Dialogs
         self.__x = x0 + w // 4
         self.__y = y0 + h // 4
 
@@ -338,7 +338,7 @@ class ConferOrderView(ttk.Toplevel):
         w = self.winfo_width()
         h = self.winfo_height()
 
-        # coordenadas (x, y) para posicionar Dialogs
+        # coordenadas (x, y) para posicionar os Dialogs
         self.__x = x0 + w // 4
         self.__y = y0 + h // 4
 

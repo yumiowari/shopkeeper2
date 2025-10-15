@@ -49,9 +49,9 @@ class View(ttk.Window):
         w = self.winfo_width()
         h = self.winfo_height()
 
-        # coordenadas (x, y) para posicionar Dialogs
-        self.__x = x0 + w // 4
-        self.__y = y0 + h // 4
+        # coordenadas (x, y) para posicionar os Dialogs
+        self.__x = x0 + w // 6
+        self.__y = y0 + h // 6
 
         # atualiza o tema da janela
         Style().theme_use(self.__controller.fetch_curr_theme())
@@ -209,8 +209,8 @@ class View(ttk.Window):
             title='Seleção de data',
             firstweekday=6, # domingo
             startdate=date.today(),
-            bootstyle='info',
-            parent=self
+            bootstyle='info'
+            # removed parent=self
         )
 
         if msgbox.yesno(f"Deseja imprimir o relatório do dia {self._dialog.date_selected.strftime('%d/%m/%Y')}?", 'Confirmação', parent=self, position=(self.__x, self.__y)) == 'Sim':

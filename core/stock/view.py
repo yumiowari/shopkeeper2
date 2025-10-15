@@ -74,6 +74,16 @@ class CRUDView(ttk.Toplevel):
         self.resizable(False, False)
         self.place_window_center()
 
+        self.update_idletasks()
+        x0 = self.winfo_rootx()
+        y0 = self.winfo_rooty()
+        w = self.winfo_width()
+        h = self.winfo_height()
+
+        # coordenadas (x, y) para posicionar os Dialogs
+        self.__x = x0 + w // 6
+        self.__y = y0 + h // 6
+
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
         self.bind('<Escape>', lambda e: self.on_escape())
@@ -253,24 +263,24 @@ class CRUDView(ttk.Toplevel):
 
         # valida os campos de entrada
         if not product_name or not product_cost or not product_price:
-            msgbox.show_error('Todos os campos obrigatórios (em negrito) devem ser preenchidos.', 'Erro', parent=self)
+            msgbox.show_error('Todos os campos obrigatórios (em negrito) devem ser preenchidos.', 'Erro', parent=self, position=(self.__x, self.__y))
             
             flag = False
 
         if flag and not validate_alpha(product_name):
-            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self)
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
             
             flag = False
         if flag and not validate_money(product_cost):
-            msgbox.show_error('O custo do produto deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self)
+            msgbox.show_error('O custo do produto deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
         if flag and not validate_money(product_price):
-            msgbox.show_error('O preço de venda deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self)
+            msgbox.show_error('O preço de venda deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
         if flag and not validate_number(product_qty):
-            msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro', parent=self)
+            msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
 
@@ -278,13 +288,13 @@ class CRUDView(ttk.Toplevel):
             feedback = self.__controller.create_product()
 
             if feedback == 0:
-                msgbox.show_info(f'O produto \"{product_name}\" foi cadastrado no banco de dados.', 'Sucesso', parent=self)
+                msgbox.show_info(f'O produto \"{product_name}\" foi cadastrado no banco de dados.', 'Sucesso', parent=self, position=(self.__x, self.__y))
             elif feedback == 1:
-                msgbox.show_error(f'O produto \"{product_name}\" já existe no banco de dados.', parent=self)
+                msgbox.show_error(f'O produto \"{product_name}\" já existe no banco de dados.', parent=self, position=(self.__x, self.__y))
         
                 flag = False
         if not flag:
-            msgbox.show_error('O cadastro do produto falhou.', 'Erro', parent=self)
+            msgbox.show_error('O cadastro do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
 
         self._create_product_name_entry.delete(0, 'end')
         self._create_product_cost_entry.delete(0, 'end')
@@ -300,12 +310,12 @@ class CRUDView(ttk.Toplevel):
 
         # valida o campo de entrada
         if not product_name:
-            msgbox.show_error('Um produto precisa ser selecionado', 'Erro', parent=self)
+            msgbox.show_error('Um produto precisa ser selecionado', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
 
         if flag and not validate_alpha(product_name):
-            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self)
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
 
@@ -320,11 +330,11 @@ class CRUDView(ttk.Toplevel):
                 output += f'Preço: R$ {product.price}\n'
                 output += f'Quantidade: {product.qty}\n'
 
-                msgbox.show_info(output, 'Sucesso', parent=self)
+                msgbox.show_info(output, 'Sucesso', parent=self, position=(self.__x, self.__y))
             else:
-                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.', parent=self)
+                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.', parent=self, position=(self.__x, self.__y))
         if not flag:
-            msgbox.show_error('A consulta do produto falhou.', 'Erro', parent=self)
+            msgbox.show_error('A consulta do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
         
         self._confer_product_name_combo.set('')
 
@@ -338,24 +348,24 @@ class CRUDView(ttk.Toplevel):
 
         # valida os campos de entrada
         if not product_name:
-            msgbox.show_error('Um produto precisa ser selecionado.', 'Erro', parent=self)
+            msgbox.show_error('Um produto precisa ser selecionado.', 'Erro', parent=self, position=(self.__x, self.__y))
             
             flag = False
 
         if flag and not validate_alpha(product_name):
-            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self)
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
             
             flag = False
         if flag and product_cost and not validate_money(product_cost):
-            msgbox.show_error('O custo do produto deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self)
+            msgbox.show_error('O custo do produto deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
         if flag and product_price and not validate_money(product_price):
-            msgbox.show_error('O preço de venda deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self)
+            msgbox.show_error('O preço de venda deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
         if flag and product_qty and not validate_number(product_qty):
-            msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro', parent=self)
+            msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
 
@@ -363,13 +373,13 @@ class CRUDView(ttk.Toplevel):
             feedback = self.__controller.update_product()
 
             if feedback == 0:
-                msgbox.show_info(f'O produto \"{product_name}\" foi atualizado no banco de dados.', 'Sucesso', parent=self)
+                msgbox.show_info(f'O produto \"{product_name}\" foi atualizado no banco de dados.', 'Sucesso', parent=self, position=(self.__x, self.__y))
             elif feedback == 1:
-                msgbox.show_warning('Nenhum atributo do produto foi alterado.', 'Aviso', parent=self)
+                msgbox.show_warning('Nenhum atributo do produto foi alterado.', 'Aviso', parent=self, position=(self.__x, self.__y))
             elif feedback == 2:
-                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.', parent=self)
+                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.', parent=self, position=(self.__x, self.__y))
         if not flag:
-            msgbox.show_error('A atualização do produto falhou.', 'Erro', parent=self)
+            msgbox.show_error('A atualização do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
 
         self._update_product_name_combo.set('')
         self._update_product_cost_entry.delete(0, 'end')
@@ -385,12 +395,12 @@ class CRUDView(ttk.Toplevel):
 
         # valida o campo de entrada
         if not product_name:
-            msgbox.show_error('Um produto precisa ser selecionado', 'Erro', parent=self)
+            msgbox.show_error('Um produto precisa ser selecionado', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
 
         if flag and not validate_alpha(product_name):
-            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self)
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
 
@@ -398,11 +408,11 @@ class CRUDView(ttk.Toplevel):
             feedback = self.__controller.delete_product()
 
             if feedback == 0:
-                msgbox.show_info(f'O produto \"{product_name}\" foi removido do banco de dados.', 'Sucesso', parent=self)
+                msgbox.show_info(f'O produto \"{product_name}\" foi removido do banco de dados.', 'Sucesso', parent=self, position=(self.__x, self.__y))
             elif feedback == 1:
-                msgbox.show_error('O produto não foi encontrado no banco de dados.', 'Erro', parent=self)
+                msgbox.show_error('O produto não foi encontrado no banco de dados.', 'Erro', parent=self, position=(self.__x, self.__y))
         if not flag:
-            msgbox.show_error('A remoção do produto falhou.', 'Erro', parent=self)
+            msgbox.show_error('A remoção do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
 
         self._delete_product_name_combo.set('')
 
@@ -423,6 +433,16 @@ class EntryView(ttk.Toplevel):
         self.geometry('400x300')
         self.resizable(False, False)
         self.place_window_center()
+
+        self.update_idletasks()
+        x0 = self.winfo_rootx()
+        y0 = self.winfo_rooty()
+        w = self.winfo_width()
+        h = self.winfo_height()
+
+        # coordenadas (x, y) para posicionar os Dialogs
+        self.__x = x0 + w // 6
+        self.__y = y0 + h // 6
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
@@ -479,20 +499,20 @@ class EntryView(ttk.Toplevel):
 
         # valida os campos de entrada
         if not product_name:
-            msgbox.show_error('Um produto precisa ser selecionado.', 'Erro', parent=self)
+            msgbox.show_error('Um produto precisa ser selecionado.', 'Erro', parent=self, position=(self.__x, self.__y))
             
             flag = False
         if flag and not product_qty:
-            msgbox.show_error('Uma entrada precisa ser informada.', 'Erro', parent=self)
+            msgbox.show_error('Uma entrada precisa ser informada.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
 
         if flag and not validate_alpha(product_name):
-            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self)
+            msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
             
             flag = False
         if flag and product_qty and not validate_entry_number(product_qty):
-            msgbox.show_error('A entrada deve ser um número inteiro entre -999 e 999, diferente de zero.', 'Erro', parent=self)
+            msgbox.show_error('A entrada deve ser um número inteiro entre -999 e 999, diferente de zero.', 'Erro', parent=self, position=(self.__x, self.__y))
 
             flag = False
 
@@ -500,11 +520,11 @@ class EntryView(ttk.Toplevel):
             feedback = self.__controller.entry_product()
 
             if feedback == 0:
-                msgbox.show_info(f'A quantidade do produto \"{product_name}\" foi alterada no banco de dados.', 'Sucesso', parent=self)
+                msgbox.show_info(f'A quantidade do produto \"{product_name}\" foi alterada no banco de dados.', 'Sucesso', parent=self, position=(self.__x, self.__y))
             elif feedback == 1:
-                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.', parent=self)
+                msgbox.show_error(f'O produto \"{product_name}\" não foi encontrado no banco de dados.', parent=self, position=(self.__x, self.__y))
         if not flag:
-            msgbox.show_error('O registro da entrada/saída do produto falhou.', 'Erro', parent=self)
+            msgbox.show_error('O registro da entrada/saída do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
 
         self._entry_product_name_combo.set('')
         self._entry_product_qty_spin.set('')
