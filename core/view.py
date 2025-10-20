@@ -26,14 +26,14 @@ from core.components.auth import AuthDialog
     Janela modal simples para autenticação de usuário administrador.
 """
 
+'''
+    Classe para renderizar o conteúdo da janela principal (ttk.Window).
+
+    Todas as demais janelas (ttk.Toplevel) são filhas da janela principal.
+
+    Encerrar a janela principal implica em encerrar a aplicação.
+'''
 class View(ttk.Window):
-    '''
-        Classe para renderizar o conteúdo da janela principal (ttk.Window).
-
-        Todas as demais janelas (ttk.Toplevel) são filhas da janela principal.
-
-        Encerrar a janela principal implica em encerrar a aplicação.
-    '''
     def __init__(self, controller):
         super().__init__()
         self.__controller = controller
@@ -88,7 +88,7 @@ class View(ttk.Window):
             Logotipo
         '''
         img = Image.open('./media/Logotipo 3 - Colorido.png')
-        img = img.resize((300, 300))
+        img = img.resize((200, 200))
         photo = ImageTk.PhotoImage(img)
         self.__logo = ttk.Label(self.__middle_frame, image=photo)
         self.__logo.image = photo

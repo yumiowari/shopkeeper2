@@ -29,25 +29,7 @@ def update_stock(stock):
 '''
     Comandas
 '''
-def fetch_curr_order():
-    if os.path.isfile('data/order.pkl'):
-        with open('data/order.pkl', 'rb') as file:
-            try:
-                return pkl.load(file)
-            except EOFError:
-                return []
-    else:
-        return []
-    
-def update_curr_order(order):
-    with open('data/order.pkl', 'wb') as file:
-        pkl.dump(order, file)
-
-def delete_curr_order():
-    if os.path.isfile('data/order.pkl'):
-        os.remove('data/order.pkl')
-
-def store_comm_order(order):
+def commit_order(order):
     path = 'data/' + order.timestamp
 
     os.makedirs(path, exist_ok=True)
