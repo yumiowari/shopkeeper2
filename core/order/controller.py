@@ -42,3 +42,6 @@ class ConferOrderController:
         selected_timestamp = self._view._timestamp_combo.get()
 
         return self.__model.fetch_order(selected_timestamp)
+    
+    def fetch_stock(self):
+        return self.__model.fetch_stock()

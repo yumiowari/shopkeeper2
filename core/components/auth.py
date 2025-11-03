@@ -47,11 +47,13 @@ class AuthDialog(ttk.Toplevel):
             Campos de Entrada
         '''
         self._username_entry = ttk.Entry(self._main_frame, width=20)
+        self._username_entry.focus_set() # trás foco ao widget
         self._username_entry_label = ttk.Label(self._main_frame, text='Nome de usuário:', font=('Arial', 10, 'bold'))
         self._password_entry = ttk.Entry(self._main_frame, width=20, show='*')
         self._password_entry_label = ttk.Label(self._main_frame, text='Senha:', font=('Arial', 10, 'bold'))
 
         self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.validate_user, bootstyle='success', width=10)
+        self.bind('<Return>', lambda e: self.validate_user())
 
         self._username_entry_label.pack(pady=5)
         self._username_entry.pack(pady=5)

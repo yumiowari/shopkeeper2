@@ -56,8 +56,6 @@ class CreateOrderView(ttk.Toplevel):
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
-        self.bind('<Escape>', lambda e: self.on_escape())
-
         number_validator = self.register(validate_number)
 
         '''
@@ -76,9 +74,9 @@ class CreateOrderView(ttk.Toplevel):
         self._button_frame.pack(side=BOTTOM, padx=10, pady=10)
 
         stock = self.__controller.fetch_product_names()
-        self.__options = []
+        self.__options = {}
 
-        columns_per_row = 4
+        columns_per_row = 3
         row = 0
         column = 0
 
@@ -86,15 +84,20 @@ class CreateOrderView(ttk.Toplevel):
             self._scroll_frame.columnconfigure(c, weight=1)
 
         for product in stock:
-            option = ttk.LabelFrame(self._scroll_frame, text=product)
+            short_name = product[:15] # pega apenas o primeiros 15 caracteres
+
+            option = ttk.Labelframe(self._scroll_frame, text=short_name)
 
             option.grid(row=row, column=column, padx=10, pady=10)
 
-            option.qty = ttk.Spinbox(option, width=5, from_=0, to=999, validate='focus', validatecommand=(number_validator, '%P'))
+            spinbox = ttk.Spinbox(option, width=5, from_=0, to=999, validate='focus', validatecommand=(number_validator, '%P'))
 
-            option.qty.pack(padx=10, pady=10)
+            spinbox.pack(padx=10, pady=10)
 
-            self.__options.append(option)
+            self.__options[product] = {
+                "frame": option,
+                "qty": spinbox
+            }
 
             column += 1
             if column >= columns_per_row:
@@ -102,17 +105,15 @@ class CreateOrderView(ttk.Toplevel):
                 row += 1
 
         self.__confirm_btn = ttk.Button(self._button_frame, text='Confirmar', command=self.commit_order, bootstyle='success', width=10)
-        self.bind('<Control-f>', lambda e: self.commit_order())
-        self.bind('<Control-F>', lambda e: self.commit_order())
+        self.bind('<Return>', lambda e: self.commit_order())
         self.__cancel_btn = ttk.Button(self._button_frame, text='Cancelar', command=self.cancel_order, bootstyle='danger', width=10)
-        self.bind('<Control-c>', lambda e: self.cancel_order())
-        self.bind('<Control-C>', lambda e: self.cancel_order())
+        self.bind('<Escape>', lambda e: self.cancel_order())
 
         self.__confirm_btn.pack(side=LEFT, padx=10, pady=10)
         self.__cancel_btn.pack(side=RIGHT, padx=10, pady=10)
 
-        tp(self.__confirm_btn, '(Ctrl+F) Confirma o cadastro da comanda.', bootstyle=(SUCCESS, INVERSE))
-        tp(self.__cancel_btn, '(Ctrl+C) Cancela o cadastro da comanda.', bootstyle=(DANGER, INVERSE))
+        tp(self.__confirm_btn, 'Confirma o cadastro da comanda.', bootstyle=(SUCCESS, INVERSE))
+        tp(self.__cancel_btn, 'Cancela o cadastro da comanda.', bootstyle=(DANGER, INVERSE))
 
     def on_close(self):
         if not self.__on_close:
@@ -124,9 +125,6 @@ class CreateOrderView(ttk.Toplevel):
                 self.__controller.on_close()
             else:
                 self.__on_close = False
-
-    def on_escape(self):
-        self.on_close()
 
     def commit_order(self):
         order = []
@@ -259,6 +257,8 @@ class ConferOrderView(ttk.Toplevel):
             for order in order_list:
                 timestamps.append(order.timestamp)
 
+            timestamps = sorted(order.timestamp for order in order_list) # ordena de acordo com o timestamp
+
             self._timestamp_combo.config(values=timestamps)
 
     def confer_selected_order(self):
@@ -268,13 +268,20 @@ class ConferOrderView(ttk.Toplevel):
             msgbox.show_warning('Um timestamp válido precisa ser selecionado.', 'Aviso', parent=self, position=(self.__x, self.__y))
         else:
             order = self.__controller.fetch_order()
+            stock = self.__controller.fetch_stock()
 
             if order == None:
                 msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro', parent=self, position=(self.__x, self.__y))
             else:
                 output = f'É a comanda: {order.timestamp}\n\n'
+                
                 for sale in order.sales:
-                    output += f'{sale.product_id} - {sale.qty} - R$ {sale.value}\n'
+                    for product in stock:
+                        if sale.product_id == product.id:
+                            output += f'{product.name} - {sale.qty} - R$ {sale.value}\n'
+
+                            break
+
                 output += f'\nTotal: R${order.value}'
 
                 msgbox.show_info(output, 'Sucesso', parent=self, position=(self.__x, self.__y))

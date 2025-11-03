@@ -105,6 +105,7 @@ class CRUDView(ttk.Toplevel):
             Implementa os quatro CRUDs de Inventário em quatro páginas separadas.
         '''
         self._notebook = ttk.Notebook(self)
+        self.bind('<Return>', lambda e: self.on_enter_pressed(e))
 
         '''
             CREATE
@@ -418,6 +419,18 @@ class CRUDView(ttk.Toplevel):
 
         self.update_comboboxes()
 
+    def on_enter_pressed(self, event):
+        current_tab = self._notebook.select() # retorna o widget da aba ativa
+
+        if current_tab == str(self._create_frame):
+            self._create_confirm_btn.invoke()
+        elif current_tab == str(self._confer_frame):
+            self._confer_confirm_btn.invoke()
+        elif current_tab == str(self._update_frame):
+            self._update_confirm_btn.invoke()
+        elif current_tab == str(self._delete_frame):
+            self._delete_confirm_btn.invoke()
+
 '''
     Janela de Entrada/Saída do Inventário
 
@@ -468,6 +481,7 @@ class EntryView(ttk.Toplevel):
         self._entry_product_qty_label = ttk.Label(self._entry_frame, text='Entrada:', font=('Arial', 10))
 
         self._entry_confirm_btn = ttk.Button(self._entry_frame, text='Registrar', command=self.entry_product, bootstyle='primary', width=10)
+        self.bind('<Return>', lambda e: self.entry_product())
 
         self._entry_label.pack(pady=10)
         self._entry_product_name_combo_label.pack(pady=5)

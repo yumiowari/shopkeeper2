@@ -134,3 +134,9 @@ class ConferOrderModel:
                 return comm_order
             
         return None
+    
+    '''
+        Retorna o inventário
+    '''
+    def fetch_stock(self):
+        return SGBD.fetch_stock()
