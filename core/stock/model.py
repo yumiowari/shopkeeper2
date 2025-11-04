@@ -23,7 +23,7 @@ class CRUDModel:
     def create_product(self, name, cost, price, qty):
         self.__stock = SGBD.fetch_stock()
         
-        size = len(self.__stock)
+        size = len(self.__stock) + 1
 
         if not qty:
             product = Product(int(size), name, float(cost), float(price), 0)

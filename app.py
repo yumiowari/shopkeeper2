@@ -11,7 +11,9 @@ import core.components.SGBD as SGBD
 '''
 
 if __name__ == '__main__':
-    if not os.path.isfile('data/credentials.pkl'):
+    credentials = SGBD.fetch_credentials()
+    
+    if credentials == []:
         print('\n===== CADASTRO DE USUÁRIO ADMINISTRADOR =====\n')
         username = input('Insira o nome de usuário: ')
         password = input('Insira a senha: ')

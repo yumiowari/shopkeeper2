@@ -107,23 +107,25 @@ class ConferOrderModel:
         Recupera a lista de comandas deferidas
     '''
     def fetch_order_list(self, selected_date):
-        self.__comm_orders = []
+        #self.__comm_orders = []
+        #
+        #for folder_name in os.listdir('data'):
+        #    folder_path = os.path.join('data', folder_name)
+        #
+        #    if os.path.isdir(folder_path):
+        #        # verifica se o nome da pasta começa com a data selecionada
+        #        if folder_name.startswith(selected_date.strftime('%Y-%m-%d')):
+        #            file_path = os.path.join(folder_path, 'order.pkl')
+        #
+        #            if os.path.exists(file_path):
+        #                with open(file_path, 'rb') as file:
+        #                    comm_order = pkl.load(file)
+        #
+        #                    self.__comm_orders.append(comm_order)
 
-        for folder_name in os.listdir('data'):
-            folder_path = os.path.join('data', folder_name)
+        self.__comm_orders = SGBD.fetch_order_list(selected_date)
 
-            if os.path.isdir(folder_path):
-                # verifica se o nome da pasta começa com a data selecionada
-                if folder_name.startswith(selected_date.strftime('%Y-%m-%d')):
-                    file_path = os.path.join(folder_path, 'order.pkl')
-
-                    if os.path.exists(file_path):
-                        with open(file_path, 'rb') as file:
-                            comm_order = pkl.load(file)
-
-                            self.__comm_orders.append(comm_order)
-
-        return self.__comm_orders
+        return SGBD.fetch_order_list(selected_date)
     
     '''
         Retorna a comanda referente ao timestamp selecionado
@@ -132,6 +134,7 @@ class ConferOrderModel:
         for comm_order in self.__comm_orders:
             if comm_order.timestamp == selected_timestamp:
                 return comm_order
+        # método rápido, aproveita a consulta anterior em fetch_order_list
             
         return None
     

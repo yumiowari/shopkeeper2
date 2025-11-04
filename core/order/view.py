@@ -76,7 +76,7 @@ class CreateOrderView(ttk.Toplevel):
         stock = self.__controller.fetch_product_names()
         self.__options = {}
 
-        columns_per_row = 3
+        columns_per_row = 4
         row = 0
         column = 0
 
@@ -84,7 +84,7 @@ class CreateOrderView(ttk.Toplevel):
             self._scroll_frame.columnconfigure(c, weight=1)
 
         for product in stock:
-            short_name = product[:15] # pega apenas o primeiros 15 caracteres
+            short_name = product[:15] # utiliza somente os primeiros 15 caracteres
 
             option = ttk.Labelframe(self._scroll_frame, text=short_name)
 
@@ -106,6 +106,8 @@ class CreateOrderView(ttk.Toplevel):
 
         self.__confirm_btn = ttk.Button(self._button_frame, text='Confirmar', command=self.commit_order, bootstyle='success', width=10)
         self.bind('<Return>', lambda e: self.commit_order())
+        self.bind('<KP_Enter>', lambda e: self.commit_order())
+        
         self.__cancel_btn = ttk.Button(self._button_frame, text='Cancelar', command=self.cancel_order, bootstyle='danger', width=10)
         self.bind('<Escape>', lambda e: self.cancel_order())
 
@@ -129,40 +131,35 @@ class CreateOrderView(ttk.Toplevel):
     def commit_order(self):
         order = []
 
-        for product in self.__options:
-            product_name = product.cget('text')
-            product_qty = product.qty.get()
+        for product_name, option in self.__options.items():
+            product_qty = option["qty"].get()
 
             if not product_qty == '' and (not product_qty.isdigit() or int(product_qty) < 0):
                 msgbox.show_error(f"'{product_qty}' não é uma quantidade válida.", 'Erro', parent=self, position=(self.__x, self.__y))
-
                 return
 
-            if product_qty == '' or product_qty == 0:
+            if product_qty == '' or int(product_qty) == 0:
                 continue
 
-            order.append({'name': product_name, 'qty': product_qty})
+            order.append({'name': product_name, 'qty': int(product_qty)})
 
         if not order:
             msgbox.show_warning('Pelo menos um produto precisa ser selecionado.\nNenhuma alteração foi feita.', 'Aviso', parent=self, position=(self.__x, self.__y))
+            return
 
         loading = LoadingDialog(self, message='Deferindo comanda...', mode='indeterminate', bootstyle='primary', x=self.__x, y=self.__y)
-
         loading.update()
 
         value = self.__controller.commit_order(order)
-
         self.after(500, loading.close)
 
         if value == 0.0:
             msgbox.show_error('Não há estoque disponível para finalizar a comanda.', 'Erro', parent=self, position=(self.__x, self.__y))
         elif value < 0.0:
             msgbox.show_error('Algum produto selecionado é inválido ou foi excluído.', 'Erro', parent=self, position=(self.__x, self.__y))
-        elif value > 0.0:
+        else:
             msgbox.show_info(f'Comanda deferida com valor de R${value}', 'Sucesso', parent=self, position=(self.__x, self.__y))
-
             self.__parent_ctrl._create_order_ctrl = None
-
             self.__controller.on_close()
 
     def cancel_order(self):
@@ -257,7 +254,7 @@ class ConferOrderView(ttk.Toplevel):
             for order in order_list:
                 timestamps.append(order.timestamp)
 
-            timestamps = sorted(order.timestamp for order in order_list) # ordena de acordo com o timestamp
+            #timestamps = sorted(order.timestamp for order in order_list) # ordena de acordo com o timestamp
 
             self._timestamp_combo.config(values=timestamps)
 

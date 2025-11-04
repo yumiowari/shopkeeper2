@@ -8,6 +8,11 @@ import core.components.SGBD as SGBD
     SGBD implementa funções para manipulação do banco de dados.
 '''
 
+import bcrypt
+'''
+    bcrypt é uma biblioteca para gerar e verificar hashes seguros de senhas, protegendo contra ataques de força bruta e vazamentos de dados.
+'''
+
 class AuthDialog(ttk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
@@ -54,6 +59,7 @@ class AuthDialog(ttk.Toplevel):
 
         self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.validate_user, bootstyle='success', width=10)
         self.bind('<Return>', lambda e: self.validate_user())
+        self.bind('<KP_Enter>', lambda e: self.validate_user())
 
         self._username_entry_label.pack(pady=5)
         self._username_entry.pack(pady=5)
@@ -96,8 +102,10 @@ class AuthModel:
         self.__credentials = SGBD.fetch_credentials()
 
     def validate_credentials(self, username, password):
-        if username == self.__credentials['username'] and password == self.__credentials['password']:
-            return True
-        else:
-            return False
-        
+        for credential in self.__credentials:
+            if username == credential['username']:
+                stored_hash = credential['password'].encode('utf-8')
+                if bcrypt.checkpw(password.encode('utf-8'), stored_hash):
+                    return True
+            
+        return False

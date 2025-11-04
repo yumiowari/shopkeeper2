@@ -106,6 +106,7 @@ class CRUDView(ttk.Toplevel):
         '''
         self._notebook = ttk.Notebook(self)
         self.bind('<Return>', lambda e: self.on_enter_pressed(e))
+        self.bind('<KP_Enter>', lambda e: self.on_enter_pressed(e))
 
         '''
             CREATE
@@ -482,6 +483,7 @@ class EntryView(ttk.Toplevel):
 
         self._entry_confirm_btn = ttk.Button(self._entry_frame, text='Registrar', command=self.entry_product, bootstyle='primary', width=10)
         self.bind('<Return>', lambda e: self.entry_product())
+        self.bind('<KP_Enter>', lambda e: self.entry_product())
 
         self._entry_label.pack(pady=10)
         self._entry_product_name_combo_label.pack(pady=5)
