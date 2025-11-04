@@ -69,6 +69,8 @@ class View(ttk.Toplevel):
             Botões
         '''
         self._confirm_btn = ttk.Button(self.__bottom_frame, text='Confirmar', command=self.confirm_theme, bootstyle='success', width=10)
+        self.bind('<Return>', lambda e: self.confirm_theme())
+        self.bind('<KP_Enter>', lambda e: self.confirm_theme())
 
         self._confirm_btn.pack(padx=5, pady=5)
 
