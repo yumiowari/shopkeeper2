@@ -14,7 +14,7 @@ Todos os direitos reservados.
 
 Instale o Python:
 
-`sudo apt install python3`
+`sudo apt install python3 python3-venv`
 
 Inicie um ambiente virtual Python:
 
@@ -28,8 +28,13 @@ Instale as dependências:
 
 - `pip install reportlab`
 - `pip install ttkbootstrap`
+- `pip install python-dotenv`
+- `pip install psycopg`
+- `pip install bcrypt`
 
-Inicie a aplicação:
+Inicialize as tabelas no banco PostgreSQL a partir do arquivo `db/schema.sql`. Em seguida, copie o arquivo `core/components/.env.example` para `core/components/.env` e preencha com as informações necessárias.
+
+Por fim, inicie a aplicação:
 
 `python3 app.py`
 
