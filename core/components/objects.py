@@ -1,6 +1,7 @@
 class Product:
     def __init__(self, i, n, c, p, q):
         self.__id = i
+        self.__category = None
         self.__name = n
         self.__cost = c
         self.__price = p
@@ -13,6 +14,14 @@ class Product:
     @id.setter
     def id(self, i):
         self.__id = i
+
+    @property
+    def category(self):
+        return self.__category
+    
+    @category.setter
+    def category(self, c):
+        self.__category = c
 
     @property
     def name(self):

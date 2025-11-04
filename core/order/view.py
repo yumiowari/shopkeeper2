@@ -2,6 +2,7 @@ import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tp
+from ttkbootstrap.scrolled import ScrolledFrame
 '''
     O módulo ttkbootstrap oferece uma extensão para o tkinter que permite
     temas modernos de estilo simples sob demanda inspirados no Bootstrap.
@@ -19,9 +20,11 @@ from core.components.loading import LoadingDialog
 
 def validate_number(x) -> bool:
     '''
-        Valida se o input é número inteiro entre 1 e 999.
+        Valida se o input é número inteiro até 999.
     '''
-    return x.isdigit() and int(x) <= 999 and int(x) >= 1
+    if x == '':
+        return True
+    return x.isdigit() and int(x) <= 999
 
 '''
     Janela para cadastro de Comanda
@@ -53,267 +56,113 @@ class CreateOrderView(ttk.Toplevel):
 
         self.protocol('WM_DELETE_WINDOW', self.on_close)
 
-        self.bind('<Escape>', lambda e: self.on_escape())
-
-        '''
-            Frame Principal
-        '''
-        self._main_frame = ttk.Frame(self)
-        self._main_frame.pack(fill=BOTH, expand=True)
-        # X - Preenche a largura
-        # Y - Preenche a altura
-        # BOTH - Preenche ambos
-        # NONE - Não preenche nada
-
-        self.__main_label = ttk.Label(self._main_frame, text='Cadastrar comanda...', font=('Arial', 12))
-        self.__main_label.pack(pady=20)
-
-        # Frame Superior
-        self._top_frame = ttk.Frame(self._main_frame)
-        self._top_frame.pack(fill=NONE, side=TOP, padx=10, pady=10)
-
-        # Frame Inferior (para os botões)
-        self.__bottom_frame = ttk.Frame(self._main_frame)
-        self.__bottom_frame.pack(fill=NONE, side=BOTTOM, padx=10, pady=10)
-
-        self.__left_bottom_frame = ttk.Frame(self.__bottom_frame)
-        self.__left_bottom_frame.pack(fill=NONE, side=LEFT, padx=5, pady=5)
-
-        self.__right_bottom_frame = ttk.Frame(self.__bottom_frame)
-        self.__right_bottom_frame.pack(fill=NONE, side=RIGHT, padx=5, pady=5)
-
-        # Combobox para listar os itens selecionados
-        self._selected_products_combo = ttk.Combobox(self._top_frame, width=20, state='readonly')
-        self._selected_products_combo.config(values=self.__controller.fetch_selected_products())
-        self._selected_products_combo_label = ttk.Label(self._top_frame, text='São os itens na comanda:')
-        self._selected_products_combo.focus_set() # trás foco ao widget
-
-        self._selected_products_combo_label.pack(padx=5, pady=5)
-        self._selected_products_combo.pack(padx=5, pady=5)
-
-        tp(self._selected_products_combo, 'Lista dos itens selecionados na comanda.', bootstyle=(PRIMARY, INVERSE))
-
-        '''
-            Botões
-        '''
-        self._commit_sale_btn = ttk.Button(self.__left_bottom_frame, text='Confirmar', command=self.commit_sale, bootstyle='success', width=10)
-        self.bind('<Control-f>', lambda e: self.commit_sale())
-        self.bind('<Control-F>', lambda e: self.commit_sale())
-        self._cancel_sale_btn = ttk.Button(self.__left_bottom_frame, text='Cancelar', command=self.cancel_sale, bootstyle='danger', width=10)
-        self.bind('<Control-c>', lambda e: self.cancel_sale())
-        self.bind('<Control-C>', lambda e: self.cancel_sale())
-        self._add_product_btn = ttk.Button(self.__right_bottom_frame, text='Adicionar produto', command=self.__controller.add_product, bootstyle='primary', width=16)
-        self.bind('<Control-a>', lambda e: self.__controller.add_product())
-        self.bind('<Control-A>', lambda e: self.__controller.add_product())
-        self._remove_product_btn = ttk.Button(self.__right_bottom_frame, text='Remover produto', command=self.remove_product, bootstyle='warning', width=16)
-        self.bind('<Control-r>', lambda e: self.remove_product())
-        self.bind('<Control-R>', lambda e: self.remove_product())
-
-        self._commit_sale_btn.pack(side=TOP, padx=5, pady=5)
-        self._cancel_sale_btn.pack(side=TOP, padx=5, pady=5)
-        self._add_product_btn.pack(side=BOTTOM, padx=5, pady=5)
-        self._remove_product_btn.pack(side=BOTTOM, padx=5, pady=5)
-
-        tp(self._commit_sale_btn, '(Ctrl+F) Registrar a comanda no banco de dados.', bootstyle=(SUCCESS, INVERSE))
-        tp(self._cancel_sale_btn, '(Ctrl+C) Cancelar a comanda.', bootstyle=(DANGER, INVERSE))
-        tp(self._add_product_btn, '(Ctrl+A) Adicionar um produto à comanda.', bootstyle=(PRIMARY, INVERSE))
-        tp(self._remove_product_btn, '(Ctrl+R) Remover um produto da comanda.', bootstyle=(WARNING, INVERSE))
-
-    def on_close(self):
-        if not self.__on_close:
-            self.__on_close = True
-            
-            if msgbox.yesno('Deseja cancelar a comanda?', 'Cancelar comanda', parent=self, position=(self.__x, self.__y)) == 'Sim':
-                self.__parent_ctrl._create_order_ctrl = None
-
-                self.__controller.on_close()
-            else:
-                self.__on_close = False
-
-    def on_escape(self):
-        self.on_close()
-
-    def cancel_sale(self):
-        self.on_close()
-
-    def commit_sale(self):
-        loading = LoadingDialog(self, message='Deferindo comanda...', mode='indeterminate', bootstyle='primary', x=self.__x, y=self.__y)
-
-        loading.update()
-        
-        value = self.__controller.commit_sale()
-
-        self.after(500, loading.close)
-
-        if value > 0.0:
-            msgbox.show_info(f'Comanda deferida no valor de R${value}', 'Sucesso', parent=self, position=(self.__x, self.__y))
-
-            self.__parent_ctrl._create_order_ctrl = None
-
-            self.__controller.on_close()
-        elif value < 0.0:
-            msgbox.show_error('Não há estoque disponível para finalizar a comanda.', 'Erro', parent=self, position=(self.__x, self.__y))
-
-            msgbox.show_warning('A comanda permanece indeferida.', 'Aviso', parent=self, position=(self.__x, self.__y))
-        elif value == 0.0:
-            msgbox.show_warning('A comanda está vazia.', 'Aviso', parent=self, position=(self.__x, self.__y))
-
-    def remove_product(self):
-        product_name = ''
-
-        if self._selected_products_combo.get():
-            product_name = self._selected_products_combo.get().split(')', 1)[1].strip()
-
-        if not product_name:
-            msgbox.show_error('Um produto precisa ser selecionado.', 'Erro', parent=self, position=(self.__x, self.__y))
-        else:
-            if not self.__on_product_removal:
-                self.__on_product_removal = True
-
-                if msgbox.yesno('Deseja remover o produto da comanda?', 'Remoção de produto', parent=self, position=(self.__x, self.__y)) == 'Sim':
-                    feedback = self.__controller.remove_product()
-
-                    if feedback == 0:
-                        msgbox.show_info('O produto foi removido da comanda.', 'Sucesso', parent=self, position=(self.__x, self.__y))
-
-                        self._selected_products_combo.config(values=self.__controller.fetch_selected_products())
-                        self._selected_products_combo.set('')
-                    else:
-                        msgbox.show_error('O produto não existe na comanda. A remoção do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
-                
-                    self.__on_product_removal = False
-                else:
-                    self.__on_product_removal = False
-
-'''
-    Janela para seleção de Produto
-
-    Disponibiliza a UI para adicionar itens à comanda.
-'''
-class SelectProductView(ttk.Toplevel):
-    def __init__(self, controller, parent_ctrl):
-        super().__init__()
-        self.__controller = controller
-        self.__parent_ctrl = parent_ctrl
-
-        self.title('Seleção de Produto')
-        self.geometry('400x300')
-        self.resizable(False, False)
-        self.place_window_center()
-
-        self.update_idletasks()
-        x0 = self.winfo_rootx()
-        y0 = self.winfo_rooty()
-        w = self.winfo_width()
-        h = self.winfo_height()
-
-        # coordenadas (x, y) para posicionar os Dialogs
-        self.__x = x0 + w // 4
-        self.__y = y0 + h // 4
-
-        self.protocol('WM_DELETE_WINDOW', self.on_close)
-
-        self.bind('<Escape>', lambda e: self.on_escape())
-
-        '''
-            Observers
-
-            Funções associadas a algum campo de entrada para validar o conteúdo digitado.
-        '''
         number_validator = self.register(validate_number)
 
         '''
             Frame Principal
         '''
         self._main_frame = ttk.Frame(self)
-        self._main_frame.pack(fill=BOTH, expand=True)
+        self._main_frame.pack(fill=BOTH, expand=YES, padx=10, pady=10)
 
-        # Frame Superior
-        self._top_frame = ttk.Frame(self._main_frame)
-        self._top_frame.pack(fill=X, side=TOP, padx=10, pady=10)
+        self.__main_label = ttk.Label(self._main_frame, text='Insira as quantidades dos produtos...', font=('Arial', 12, 'bold'))
+        self.__main_label.pack(padx=10, pady=10)
 
-        # Frame Inferior (para os botões)
-        self.__bottom_frame = ttk.Frame(self._main_frame)
-        self.__bottom_frame.pack(fill=X, side=BOTTOM, padx=10, pady=10)
+        self._scroll_frame = ScrolledFrame(self._main_frame, autohide=True)
+        self._scroll_frame.pack(fill=BOTH, expand=YES, padx=10, pady=10)
 
-        self.__main_label = ttk.Label(self._top_frame, text='Adicionar produto à comanda...', font=('Arial', 12))
-        self.__main_label.pack(pady=20)
+        self._button_frame = ttk.Frame(self._main_frame)
+        self._button_frame.pack(side=BOTTOM, padx=10, pady=10)
 
-        '''
-            Campos de Entrada
-        '''
-        self._product_name_combo = ttk.Combobox(self._top_frame, width=20)
-        self._product_name_combo.config(values=self.__controller.fetch_product_names())
-        self._product_name_combo_label = ttk.Label(self._top_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
-        self._product_name_combo.focus_set() # trás foco ao widget
-        self._product_qty_spin = ttk.Spinbox(self._top_frame, from_=1, to=999, width=5, validate='focus', validatecommand=(number_validator, '%P'))
-        self._product_qty_spin_label = ttk.Label(self._top_frame, text='Quantidade:', font=('Arial', 10, 'bold'))
+        stock = self.__controller.fetch_product_names()
+        self.__options = {}
 
-        '''
-            Botões
-        '''
-        self._confirm_btn = ttk.Button(self.__bottom_frame, text='Adicionar', command=self.confirm_product, bootstyle='success', width=10)
-        self.bind('<Control-a>', lambda e: self.confirm_product())
-        self.bind('<Control-A>', lambda e: self.confirm_product())
-        self._cancel_btn = ttk.Button(self.__bottom_frame, text='Cancelar', command=self.cancel_product, bootstyle='danger', width=10)
-        self.bind('<Control-c>', lambda e: self.cancel_product())
-        self.bind('<Control-C>', lambda e: self.cancel_product())
+        columns_per_row = 4
+        row = 0
+        column = 0
 
-        self._product_name_combo_label.pack(pady=5)
-        self._product_name_combo.pack(pady=5)
-        self._product_qty_spin_label.pack(pady=5)
-        self._product_qty_spin.pack(pady=5)
+        for c in range(columns_per_row):
+            self._scroll_frame.columnconfigure(c, weight=1)
+
+        for product in stock:
+            short_name = product[:15] # utiliza somente os primeiros 15 caracteres
+
+            option = ttk.Labelframe(self._scroll_frame, text=short_name)
+
+            option.grid(row=row, column=column, padx=10, pady=10)
+
+            spinbox = ttk.Spinbox(option, width=5, from_=0, to=999, validate='focus', validatecommand=(number_validator, '%P'))
+
+            spinbox.pack(padx=10, pady=10)
+
+            self.__options[product] = {
+                "frame": option,
+                "qty": spinbox
+            }
+
+            column += 1
+            if column >= columns_per_row:
+                column = 0
+                row += 1
+
+        self.__confirm_btn = ttk.Button(self._button_frame, text='Confirmar', command=self.commit_order, bootstyle='success', width=10)
+        self.bind('<Return>', lambda e: self.commit_order())
+        self.bind('<KP_Enter>', lambda e: self.commit_order())
         
-        self._confirm_btn.pack(side=LEFT, pady=5)
-        self._cancel_btn.pack(side=RIGHT, pady=5)
+        self.__cancel_btn = ttk.Button(self._button_frame, text='Cancelar', command=self.cancel_order, bootstyle='danger', width=10)
+        self.bind('<Escape>', lambda e: self.cancel_order())
 
-        tp(self._product_name_combo, 'Selecione o produto a ser adicionado à comanda.', bootstyle=(PRIMARY, INVERSE))
-        tp(self._product_qty_spin, 'Informe a quantidade do produto a ser adicionado à comanda.', bootstyle=(PRIMARY, INVERSE))
-        tp(self._confirm_btn, '(Ctrl+A) Adicionar o produto selecionado à comanda.', bootstyle=(SUCCESS, INVERSE))
-        tp(self._cancel_btn, '(Ctrl+C) Cancelar a adição do produto à comanda.', bootstyle=(DANGER, INVERSE))
+        self.__confirm_btn.pack(side=LEFT, padx=10, pady=10)
+        self.__cancel_btn.pack(side=RIGHT, padx=10, pady=10)
+
+        tp(self.__confirm_btn, 'Confirma o cadastro da comanda.', bootstyle=(SUCCESS, INVERSE))
+        tp(self.__cancel_btn, 'Cancela o cadastro da comanda.', bootstyle=(DANGER, INVERSE))
 
     def on_close(self):
-        self.__parent_ctrl._select_product_ctrl = None
-        self.destroy()
+        if not self.__on_close:
+            self.__on_close = True
+            
+            if msgbox.yesno('Deseja cancelar a comanda?', 'Cancelar comanda', parent=self, position=(self.__x, self.__y)) == 'Sim':
+                self.__parent_ctrl.create_order_ctrl = None
 
-    def on_escape(self):
-        self.on_close()
+                self.__controller.on_close()
+            else:
+                self.__on_close = False
 
-    def confirm_product(self):
-        product_name = self._product_name_combo.get()
-        product_qty = self._product_qty_spin.get()
+    def commit_order(self):
+        order = []
 
-        flag = True
+        for product_name, option in self.__options.items():
+            product_qty = option["qty"].get()
 
-        # valida os campos de entrada
-        if not product_name or not product_qty:
-            msgbox.show_error('Todos os campos obrigatórios devem ser preenchidos.', 'Erro', parent=self, position=(self.__x, self.__y))
-        
-            flag = False
-        
-        if flag and not validate_number(product_qty):
-            msgbox.show_error('A quantidade deve ser um número inteiro entre 0 e 999.', 'Erro', parent=self, position=(self.__x, self.__y))
+            if not product_qty == '' and (not product_qty.isdigit() or int(product_qty) < 0):
+                msgbox.show_error(f"'{product_qty}' não é uma quantidade válida.", 'Erro', parent=self, position=(self.__x, self.__y))
+                return
 
-            flag = False
+            if product_qty == '' or int(product_qty) == 0:
+                continue
 
-        if flag:
-            feedback = self.__controller.confirm_product()
+            order.append({'name': product_name, 'qty': int(product_qty)})
 
-            if feedback == 0:
-                msgbox.show_info('Produto adicionado na comanda.', 'Sucesso', parent=self, position=(self.__x, self.__y))
+        if not order:
+            msgbox.show_warning('Pelo menos um produto precisa ser selecionado.\nNenhuma alteração foi feita.', 'Aviso', parent=self, position=(self.__x, self.__y))
+            return
 
-                # atualiza a combobox de itens selecionados na janela mãe
-                self.__parent_ctrl._view._selected_products_combo.config(values=self.__parent_ctrl.fetch_selected_products())
+        loading = LoadingDialog(self, message='Deferindo comanda...', mode='indeterminate', bootstyle='primary', x=self.__x, y=self.__y)
+        loading.update()
 
-                self.on_close()
-            elif feedback == 1:
-                msgbox.show_error('O produto não existe no banco de dados.', parent=self, position=(self.__x, self.__y))
+        value = self.__controller.commit_order(order)
+        self.after(500, loading.close)
 
-                flag = False
-        if not flag:
-            msgbox.show_error('A seleção do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
+        if value == 0.0:
+            msgbox.show_error('Não há estoque disponível para finalizar a comanda.', 'Erro', parent=self, position=(self.__x, self.__y))
+        elif value < 0.0:
+            msgbox.show_error('Algum produto selecionado é inválido ou foi excluído.', 'Erro', parent=self, position=(self.__x, self.__y))
+        else:
+            msgbox.show_info(f'Comanda deferida com valor de R${value}', 'Sucesso', parent=self, position=(self.__x, self.__y))
+            self.__parent_ctrl._create_order_ctrl = None
+            self.__controller.on_close()
 
-    def cancel_product(self):
+    def cancel_order(self):
         self.on_close()
 
 '''
@@ -405,6 +254,8 @@ class ConferOrderView(ttk.Toplevel):
             for order in order_list:
                 timestamps.append(order.timestamp)
 
+            #timestamps = sorted(order.timestamp for order in order_list) # ordena de acordo com o timestamp
+
             self._timestamp_combo.config(values=timestamps)
 
     def confer_selected_order(self):
@@ -414,13 +265,20 @@ class ConferOrderView(ttk.Toplevel):
             msgbox.show_warning('Um timestamp válido precisa ser selecionado.', 'Aviso', parent=self, position=(self.__x, self.__y))
         else:
             order = self.__controller.fetch_order()
+            stock = self.__controller.fetch_stock()
 
             if order == None:
                 msgbox.show_error('A comanda selecionada é inválida ou foi excluída.', 'Erro', parent=self, position=(self.__x, self.__y))
             else:
                 output = f'É a comanda: {order.timestamp}\n\n'
+                
                 for sale in order.sales:
-                    output += f'{sale.product_id} - {sale.qty} - R$ {sale.value}\n'
+                    for product in stock:
+                        if sale.product_id == product.id:
+                            output += f'{product.name} - {sale.qty} - R$ {sale.value}\n'
+
+                            break
+
                 output += f'\nTotal: R${order.value}'
 
                 msgbox.show_info(output, 'Sucesso', parent=self, position=(self.__x, self.__y))
