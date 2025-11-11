@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS "User"
     id SERIAL PRIMARY KEY,
 
     name     TEXT UNIQUE,
+    email    TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL
 );
 

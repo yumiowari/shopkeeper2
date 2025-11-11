@@ -41,6 +41,9 @@ class CreateOrderModel:
     def fetch_product_names(self):
         self.__stock = SGBD.fetch_stock()
 
+        # ordena o estoque de acordo com os identificadores dos produtos
+        self.__stock.sort(key=lambda p: p.id)
+
         product_names = []
 
         for product in self.__stock:
