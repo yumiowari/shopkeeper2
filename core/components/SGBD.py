@@ -193,6 +193,54 @@ def fetch_order_list(selected_date):
 
     return comm_orders
 
+def fetch_order_report(selected_date):
+    date_pattern = f"{selected_date.strftime('%Y-%m-%d')}%"
+
+    report = {
+        'revenue': 0.0,
+        'profit': 0.0
+    }
+
+    with psycopg.connect(
+        f'dbname={db_name} user={db_user} password={db_password} host={db_host}'
+    ) as connection:
+        with connection.cursor() as cursor:
+
+            # Receita
+            cursor.execute(
+                '''
+                SELECT COALESCE(SUM(value), 0)
+                FROM "Order"
+                WHERE timestamp LIKE %s
+                ''',
+                (date_pattern,)
+            )
+            row = cursor.fetchone()
+            revenue = row[0] if row else 0.0
+            report['revenue'] = float(revenue)
+
+            # Lucro
+            cursor.execute(
+                '''
+                SELECT 
+                    s.qty,
+                    p.cost,
+                    p.price
+                FROM "Sale" s
+                JOIN "Product" p ON p.id = s.product_id
+                JOIN "Order" o ON o.id = s.order_id
+                WHERE o.timestamp LIKE %s
+                ''',
+                (date_pattern,)
+            )
+
+            rows = cursor.fetchall() or []
+
+            for qty, cost, price in rows:
+                report['profit'] += (float(price) - float(cost)) * int(qty)
+
+    return report
+
 '''
     Autenticação
 '''
