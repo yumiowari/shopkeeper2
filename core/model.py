@@ -1,6 +1,6 @@
-import core.components.SGBD as SGBD
+import core.components.db as db
 '''
-    SGBD implementa funções para manipulação do banco de dados.
+    db implementa funções para manipulação do banco de dados.
 '''
 
 import csv
@@ -50,7 +50,7 @@ class Model:
             ['ID', 'Produto', 'Custo', 'Preço', 'Quantidade']
         ]
 
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
 
         self.__stock.sort(key=lambda s: s.id) # ordena a lista pelo identificador
 
@@ -107,41 +107,7 @@ class Model:
             Valores nulos - Nenhuma comanda foi cadastrada na data selecionada.
     '''
     def make_order_report(self, selected_date):
-        #report = {
-        #    'revenue': 0.0,
-        #    'profit': 0.0
-        #}
-        #
-        # recupera o estoque para calcular o lucro para cada produto
-        #self.__stock = SGBD.fetch_stock()
-        #
-        #for folder_name in os.listdir('data'):
-        #    folder_path = os.path.join('data', folder_name)
-        #
-        #    if os.path.isdir(folder_path):
-        #        # verifica se o nome da pasta começa com a data selecionada
-        #        if folder_name.startswith(selected_date.strftime('%Y-%m-%d')):
-        #            file_path = os.path.join(folder_path, 'order.pkl')
-        #            
-        #            if os.path.exists(file_path):
-        #                with open(file_path, 'rb') as file:
-        #                    comm_order = pkl.load(file)
-        #
-        #                    # incrementa a receita
-        #                    report['revenue'] += float(comm_order.value)
-        #
-        #                    # incrementa o lucro
-        #                    for sale in comm_order.sales:
-        #                        for product in self.__stock:
-        #                            if sale.product_id == product.id:
-        #                                # LUCRO += (PREÇO - CUSTO) * QUANTIDADE
-        #                                report['profit'] += float(float(float(product.price) - float(product.cost)) * int(sale.qty))
-        #
-        #                                break
-        #
-        #return report
-
-        return SGBD.fetch_order_report(selected_date)
+        return db.fetch_order_report(selected_date)
 
     '''
         Função para carregar o tema persistido na memória
@@ -151,4 +117,4 @@ class Model:
             with open('data/curr_theme.txt', 'r') as f:
                 return f.read().strip()
         except FileNotFoundError:
-            return 'litera' # retorna o tema padrão (litera)
+            return 'litera' # retorna o tema padrão

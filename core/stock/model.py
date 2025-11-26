@@ -1,6 +1,6 @@
-import core.components.SGBD as SGBD
+import core.components.db as db
 '''
-    SGBD implementa funções para manipulação do banco de dados.
+    db implementa funções para manipulação do banco de dados.
 '''
 
 from core.components.objects import *
@@ -21,7 +21,7 @@ class CRUDModel:
             1 - Produto repetido.
     '''
     def create_product(self, name, cost, price, qty):
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
         
         size = len(self.__stock) + 1
 
@@ -36,7 +36,7 @@ class CRUDModel:
 
         self.__stock.append(product)
 
-        SGBD.update_stock(self.__stock)
+        db.update_stock(self.__stock)
 
         return 0 # sucesso
 
@@ -44,7 +44,7 @@ class CRUDModel:
         Retorna a lista de produtos no estoque
     '''
     def fetch_product_names(self):
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
 
         if not self.__stock:
             return []
@@ -55,7 +55,7 @@ class CRUDModel:
         Consulta o produto no Inventário
     '''
     def confer_product(self, product_name):
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
 
         if not self.__stock:
             return None
@@ -83,7 +83,7 @@ class CRUDModel:
         if not product_qty:
             product_qty = ''
 
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
 
         for product in self.__stock:
             if product.name == product_name:
@@ -97,7 +97,7 @@ class CRUDModel:
                     if product_qty != '':
                         product.qty = int(product_qty)
 
-                SGBD.update_stock(self.__stock)
+                db.update_stock(self.__stock)
 
                 return 0
             
@@ -111,13 +111,13 @@ class CRUDModel:
             1 - Produto não encontrado.
     '''
     def delete_product(self, product_name):
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
 
         for product in self.__stock:
             if product.name == product_name:
                 self.__stock.remove(product)
 
-                SGBD.update_stock(self.__stock)
+                db.update_stock(self.__stock)
 
                 return 0
 
@@ -128,7 +128,7 @@ class EntryModel:
         self.__stock = []
 
     def fetch_product_names(self):
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
 
         if not self.__stock:
             return []
@@ -143,7 +143,7 @@ class EntryModel:
             1 - Produto não encontrado.
     '''
     def entry_product(self, product_name, entry_qty):
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
 
         for product in self.__stock:
             if product.name == product_name:
@@ -151,7 +151,7 @@ class EntryModel:
                 curr_qty += int(entry_qty)
                 product.qty = curr_qty
 
-                SGBD.update_stock(self.__stock)
+                db.update_stock(self.__stock)
 
                 return 0
 

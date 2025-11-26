@@ -40,15 +40,6 @@ db_host     = os.getenv('DB_HOST')
     Inventário
 '''
 def fetch_stock():
-    #if os.path.isfile('data/stock.pkl'):
-    #    with open('data/stock.pkl', 'rb') as file:
-    #        try:
-    #            return pkl.load(file)
-    #        except EOFError:
-    #            return []
-    #else:
-    #    return []
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             cursor.execute('SELECT id, category_id, name, cost, price, qty FROM "Product"')
@@ -70,9 +61,6 @@ def fetch_stock():
 
 
 def update_stock(stock):
-    #with open('data/stock.pkl', 'wb') as file:
-    #    pkl.dump(stock, file)
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             # busca todos os IDs atuais do banco
@@ -111,15 +99,6 @@ def update_stock(stock):
     Comandas
 '''
 def commit_order(order):
-    #path = 'data/' + order.timestamp
-    #
-    #os.makedirs(path, exist_ok=True)
-    #
-    #path += '/order.pkl'
-    #
-    #with open(path, 'wb') as file:
-    #    pkl.dump(order, file)
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             cursor.execute('INSERT INTO "Order" (timestamp, value) VALUES (%s, %s) RETURNING id', (order.timestamp, order.value))
@@ -245,9 +224,6 @@ def fetch_order_report(selected_date):
     Autenticação
 '''
 def update_credentials(credentials):
-    #with open('data/credentials.pkl', 'wb') as file:
-    #    pkl.dump(credentials, file)
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             hashed_password = bcrypt.hashpw(credentials['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -255,9 +231,6 @@ def update_credentials(credentials):
             cursor.execute('INSERT INTO "User" (name, password) VALUES (%s, %s)', (credentials['username'], hashed_password))
 
 def fetch_credentials():
-    #with open('data/credentials.pkl', 'rb') as file:
-    #    return pkl.load(file)
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             cursor.execute('SELECT name, password FROM "User"')
