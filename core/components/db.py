@@ -40,15 +40,6 @@ db_host     = os.getenv('DB_HOST')
     Inventário
 '''
 def fetch_stock():
-    #if os.path.isfile('data/stock.pkl'):
-    #    with open('data/stock.pkl', 'rb') as file:
-    #        try:
-    #            return pkl.load(file)
-    #        except EOFError:
-    #            return []
-    #else:
-    #    return []
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             cursor.execute('SELECT id, category_id, name, cost, price, qty FROM "Product"')
@@ -68,11 +59,7 @@ def fetch_stock():
 
             return stock
 
-
 def update_stock(stock):
-    #with open('data/stock.pkl', 'wb') as file:
-    #    pkl.dump(stock, file)
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             # busca todos os IDs atuais do banco
@@ -107,19 +94,75 @@ def update_stock(stock):
                     (product.id, product.name, category_id, product.cost, product.price, product.qty)
                 )
 
+def fetch_categories():
+    try:
+        with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
+            with connection.cursor() as cursor:
+                cursor.execute('SELECT name FROM "Category"')
+                rows = cursor.fetchall()
+
+                # extrái apenas os nomes das tuplas retornadas
+                categories = [row[0] for row in rows]
+
+                return categories
+
+    except Exception as e:
+        print(f"Erro ao buscar as categorias: {e}")
+
+        return []
+    
+def fetch_product_map():
+    """
+        Retorna um dicionário com os produtos agrupados por categoria:
+        {
+            'Categoria 1': ['Produto A', 'Produto B', ...],
+            'Categoria 2': ['Produto C', 'Produto D', ...],
+            ...
+        }
+    """
+    query = """
+                SELECT c.name AS category_name, p.name AS product_name
+                FROM "Product" p
+                JOIN "Category" c ON p.category_id = c.id
+                ORDER BY c.name, p.name;
+            """
+
+    product_map = {}
+
+    with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as conn:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            rows = cur.fetchall()
+            for category_name, product_name in rows:
+                if category_name not in product_map:
+                    product_map[category_name] = []
+                product_map[category_name].append(product_name)
+
+    return product_map
+
+def update_category(name):
+    try:
+        with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO "Category" (name)
+                    VALUES (%s)
+                    ON CONFLICT (name) DO NOTHING
+                    """,
+                    (name,)
+                )
+                connection.commit()
+                return True
+    except Exception as e:
+        print(f"Erro ao garantir a categoria: {e}")
+
+        return False
+
 '''
     Comandas
 '''
 def commit_order(order):
-    #path = 'data/' + order.timestamp
-    #
-    #os.makedirs(path, exist_ok=True)
-    #
-    #path += '/order.pkl'
-    #
-    #with open(path, 'wb') as file:
-    #    pkl.dump(order, file)
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             cursor.execute('INSERT INTO "Order" (timestamp, value) VALUES (%s, %s) RETURNING id', (order.timestamp, order.value))
@@ -193,23 +236,134 @@ def fetch_order_list(selected_date):
 
     return comm_orders
 
+def fetch_order_report(selected_date):
+    date_pattern = f"{selected_date.strftime('%Y-%m-%d')}%"
+
+    report = {
+        'revenue': 0.0,
+        'profit': 0.0
+    }
+
+    with psycopg.connect(
+        f'dbname={db_name} user={db_user} password={db_password} host={db_host}'
+    ) as connection:
+        with connection.cursor() as cursor:
+
+            # Receita
+            cursor.execute(
+                '''
+                SELECT COALESCE(SUM(value), 0)
+                FROM "Order"
+                WHERE timestamp LIKE %s
+                ''',
+                (date_pattern,)
+            )
+            row = cursor.fetchone()
+            revenue = row[0] if row else 0.0
+            report['revenue'] = float(revenue)
+
+            # Lucro
+            cursor.execute(
+                '''
+                SELECT 
+                    s.qty,
+                    p.cost,
+                    p.price
+                FROM "Sale" s
+                JOIN "Product" p ON p.id = s.product_id
+                JOIN "Order" o ON o.id = s.order_id
+                WHERE o.timestamp LIKE %s
+                ''',
+                (date_pattern,)
+            )
+
+            rows = cursor.fetchall() or []
+
+            for qty, cost, price in rows:
+                report['profit'] += (float(price) - float(cost)) * int(qty)
+
+    return report
+
+def undo_specific_order(selected_timestamp):
+    try:
+        with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
+            with connection.cursor() as cursor:
+                # 0. Descobrir o ID da comanda a partir do timestamp
+                cursor.execute(
+                    '''
+                    SELECT id 
+                    FROM "Order"
+                    WHERE timestamp = %s
+                    ''',
+                    (selected_timestamp,)
+                )
+                row = cursor.fetchone()
+
+                if not row:
+                    return False  # comanda inexistente
+
+                order_id = row[0]
+
+                # 1. Buscar vendas associadas
+                cursor.execute(
+                    '''
+                    SELECT product_id, qty
+                    FROM "Sale"
+                    WHERE order_id = %s
+                    ''',
+                    (order_id,)
+                )
+                sales = cursor.fetchall() or []
+
+                if not sales:
+                    return False  # sem vendas não tem o que desfazer
+
+                # 2. Repor o estoque de acordo
+                for product_id, qty in sales:
+                    cursor.execute(
+                        '''
+                        UPDATE "Product"
+                        SET qty = qty + %s
+                        WHERE id = %s
+                        ''',
+                        (qty, product_id)
+                    )
+
+                # 3. Remover vendas associadas
+                cursor.execute(
+                    '''
+                    DELETE FROM "Sale"
+                    WHERE order_id = %s
+                    ''',
+                    (order_id,)
+                )
+
+                # 4. Remover comanda
+                cursor.execute(
+                    '''
+                    DELETE FROM "Order"
+                    WHERE id = %s
+                    ''',
+                    (order_id,)
+                )
+
+        return True
+
+    except Exception:
+        return False
+
+
 '''
     Autenticação
 '''
 def update_credentials(credentials):
-    #with open('data/credentials.pkl', 'wb') as file:
-    #    pkl.dump(credentials, file)
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             hashed_password = bcrypt.hashpw(credentials['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-            cursor.execute('INSERT INTO "User" (name, password) VALUES (%s, %s)', (credentials['username'], hashed_password))
+            cursor.execute('INSERT INTO "User" (name, email, password) VALUES (%s, %s, %s)', (credentials['username'], credentials['email'], hashed_password))
 
 def fetch_credentials():
-    #with open('data/credentials.pkl', 'rb') as file:
-    #    return pkl.load(file)
-
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
             cursor.execute('SELECT name, password FROM "User"')

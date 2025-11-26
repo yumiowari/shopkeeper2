@@ -1,11 +1,11 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
+from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tp
 
-import core.components.SGBD as SGBD
+import core.components.db as db
 '''
-    SGBD implementa funções para manipulação do banco de dados.
+    db implementa funções para manipulação do banco de dados.
 '''
 
 import bcrypt
@@ -17,7 +17,7 @@ class AuthDialog(ttk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title('Autenticação')
-        self.geometry('400x300')
+        self.geometry('400x300') # 4:3
         self.resizable(False, False)
         self.place_window_center()
         self.transient(parent)
@@ -99,7 +99,7 @@ class AuthDialog(ttk.Toplevel):
 
 class AuthModel:
     def __init__(self):
-        self.__credentials = SGBD.fetch_credentials()
+        self.__credentials = db.fetch_credentials()
 
     def validate_credentials(self, username, password):
         for credential in self.__credentials:

@@ -14,12 +14,12 @@ class CreateOrderController:
         self.__model.on_close()
 
         self._view.destroy()
-
-    def fetch_product_names(self):
-        return self.__model.fetch_product_names()
     
     def commit_order(self, order):
         return self.__model.commit_order(order)
+    
+    def fetch_product_map(self):
+        return self.__model.fetch_product_map()
 
 class ConferOrderController:
     def __init__(self, master=None, parent=None):
@@ -45,3 +45,8 @@ class ConferOrderController:
     
     def fetch_stock(self):
         return self.__model.fetch_stock()
+    
+    def undo_specific_order(self):
+        selected_timestamp = self._view._timestamp_combo.get()
+
+        return self.__model.undo_specific_order(selected_timestamp)

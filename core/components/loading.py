@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
+from ttkbootstrap.constants import * # type: ignore
 
 import time
 '''
@@ -14,7 +14,7 @@ class LoadingDialog(ttk.Toplevel):
     def __init__(self, parent, message, mode, bootstyle, x, y):
         super().__init__(parent)
         self.title('Carregamento')
-        self.geometry('300x100')
+        self.geometry('300x100') # 3:1
         self.resizable(False, False)
         self.transient(parent)
         self.grab_set()

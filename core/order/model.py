@@ -1,6 +1,6 @@
-import core.components.SGBD as SGBD
+import core.components.db as db
 '''
-    SGBD implementa funções para manipulação do banco de dados.
+    db implementa funções para manipulação do banco de dados.
 '''
 
 from core.components.objects import *
@@ -32,24 +32,7 @@ class CreateOrderModel:
         self.__curr_order = [] # (list of sales)
 
     def on_close(self):
-        #SGBD.delete_curr_order() # deleta a comanda atual (ainda não deferida) do disco rígido
         pass
-
-    '''
-        Retorna a lista de produtos no estoque
-    '''
-    def fetch_product_names(self):
-        self.__stock = SGBD.fetch_stock()
-
-        # ordena o estoque de acordo com os identificadores dos produtos
-        self.__stock.sort(key=lambda p: p.id)
-
-        product_names = []
-
-        for product in self.__stock:
-            product_names.append(product.name)
-
-        return product_names
     
     '''
         Defere a comanda no banco de dados
@@ -60,7 +43,7 @@ class CreateOrderModel:
             <1 - Produto inválido.
     '''
     def commit_order(self, curr_order):
-        self.__stock = SGBD.fetch_stock()
+        self.__stock = db.fetch_stock()
 
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -92,11 +75,17 @@ class CreateOrderModel:
             if not flag:
                 return -1
 
-        SGBD.update_stock(self.__stock)
+        db.update_stock(self.__stock)
 
-        SGBD.commit_order(comm_order)
+        db.commit_order(comm_order)
 
         return comm_order.value
+    
+    '''
+        Retorna um dicionário com os produtos agrupados por categoria
+    '''
+    def fetch_product_map(self):
+        return db.fetch_product_map()
 
 class ConferOrderModel:
     def __init__(self):
@@ -110,25 +99,9 @@ class ConferOrderModel:
         Recupera a lista de comandas deferidas
     '''
     def fetch_order_list(self, selected_date):
-        #self.__comm_orders = []
-        #
-        #for folder_name in os.listdir('data'):
-        #    folder_path = os.path.join('data', folder_name)
-        #
-        #    if os.path.isdir(folder_path):
-        #        # verifica se o nome da pasta começa com a data selecionada
-        #        if folder_name.startswith(selected_date.strftime('%Y-%m-%d')):
-        #            file_path = os.path.join(folder_path, 'order.pkl')
-        #
-        #            if os.path.exists(file_path):
-        #                with open(file_path, 'rb') as file:
-        #                    comm_order = pkl.load(file)
-        #
-        #                    self.__comm_orders.append(comm_order)
+        self.__comm_orders = db.fetch_order_list(selected_date)
 
-        self.__comm_orders = SGBD.fetch_order_list(selected_date)
-
-        return SGBD.fetch_order_list(selected_date)
+        return db.fetch_order_list(selected_date)
     
     '''
         Retorna a comanda referente ao timestamp selecionado
@@ -145,4 +118,15 @@ class ConferOrderModel:
         Retorna o inventário
     '''
     def fetch_stock(self):
-        return SGBD.fetch_stock()
+        return db.fetch_stock()
+    
+    '''
+        Desfaz a comanda selecionada
+    '''
+    def undo_specific_order(self, selected_timestamp):
+        return db.undo_specific_order(selected_timestamp)
+        # desfaz a comanda selecionada...
+        #
+        # retorna:
+        # True - sucesso
+        # False - falha
