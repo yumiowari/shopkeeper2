@@ -26,11 +26,7 @@ Acesse o ambiente virtual:
 
 Instale as dependências:
 
-- `pip install reportlab`
-- `pip install ttkbootstrap`
-- `pip install python-dotenv`
-- `pip install psycopg`
-- `pip install bcrypt`
+`pip install -r requirements.txt`
 
 Inicialize as tabelas no banco PostgreSQL a partir do arquivo `db/schema.sql`. Em seguida, copie o arquivo `core/components/.env.example` para `core/components/.env` e preencha com as informações necessárias.
 
@@ -42,4 +38,4 @@ Por fim, inicie a aplicação:
 
 Disponível para sistemas Linux e Windows.
 
-Testado no Ubuntu 24.04.2.
+Testado no Ubuntu 25.10.
