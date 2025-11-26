@@ -33,22 +33,6 @@ class CreateOrderModel:
 
     def on_close(self):
         pass
-
-    '''
-        Retorna a lista de produtos no estoque
-    '''
-    def fetch_product_names(self):
-        self.__stock = db.fetch_stock()
-
-        # ordena o estoque de acordo com os identificadores dos produtos
-        self.__stock.sort(key=lambda p: p.id)
-
-        product_names = []
-
-        for product in self.__stock:
-            product_names.append(product.name)
-
-        return product_names
     
     '''
         Defere a comanda no banco de dados
@@ -96,6 +80,12 @@ class CreateOrderModel:
         db.commit_order(comm_order)
 
         return comm_order.value
+    
+    '''
+        Retorna um dicionário com os produtos agrupados por categoria
+    '''
+    def fetch_product_map(self):
+        return db.fetch_product_map()
 
 class ConferOrderModel:
     def __init__(self):

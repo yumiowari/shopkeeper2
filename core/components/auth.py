@@ -17,7 +17,7 @@ class AuthDialog(ttk.Toplevel):
     def __init__(self, parent):
         super().__init__(parent)
         self.title('Autenticação')
-        self.geometry('400x300')
+        self.geometry('400x300') # 4:3
         self.resizable(False, False)
         self.place_window_center()
         self.transient(parent)

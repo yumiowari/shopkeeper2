@@ -57,7 +57,7 @@ class View(ttk.Window):
         self.__controller = controller
 
         self.title('$hopkeeper')
-        self.geometry('800x600')
+        self.geometry('800x600') # 4:3
         self.resizable(False, False)
         self.place_window_center()
 

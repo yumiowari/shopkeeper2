@@ -110,6 +110,35 @@ def fetch_categories():
         print(f"Erro ao buscar as categorias: {e}")
 
         return []
+    
+def fetch_product_map():
+    """
+        Retorna um dicionário com os produtos agrupados por categoria:
+        {
+            'Categoria 1': ['Produto A', 'Produto B', ...],
+            'Categoria 2': ['Produto C', 'Produto D', ...],
+            ...
+        }
+    """
+    query = """
+                SELECT c.name AS category_name, p.name AS product_name
+                FROM "Product" p
+                JOIN "Category" c ON p.category_id = c.id
+                ORDER BY c.name, p.name;
+            """
+
+    product_map = {}
+
+    with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as conn:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            rows = cur.fetchall()
+            for category_name, product_name in rows:
+                if category_name not in product_map:
+                    product_map[category_name] = []
+                product_map[category_name].append(product_name)
+
+    return product_map
 
 def update_category(name):
     try:

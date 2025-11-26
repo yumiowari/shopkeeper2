@@ -73,36 +73,53 @@ class CreateOrderView(ttk.Toplevel):
         self._button_frame = ttk.Frame(self._main_frame)
         self._button_frame.pack(side=BOTTOM, padx=10, pady=10)
 
-        stock = self.__controller.fetch_product_names()
+        product_map = self.__controller.fetch_product_map() # {'Categoria': ['Produto 1', 'Produto 2', ...], ...}
         self.__options = {}
-
-        columns_per_row = 4
         row = 0
-        column = 0
+        columns_per_row = 5
 
-        for c in range(columns_per_row):
-            self._scroll_frame.columnconfigure(c, weight=1)
+        for cat_name, products in product_map.items():
+            # labelframe da categoria
+            cat_frame = ttk.Labelframe(self._scroll_frame, text=cat_name)
+            cat_frame.grid(row=row, column=0, columnspan=columns_per_row, sticky="ew", padx=10, pady=10)
 
-        for product in stock:
-            short_name = product[:15] # utiliza somente os primeiros 15 caracteres
+            # configura colunas internas para largura uniforme
+            for c in range(columns_per_row):
+                cat_frame.columnconfigure(c, weight=1, uniform='prod_col')
 
-            option = ttk.Labelframe(self._scroll_frame, text=short_name)
+            # configura linhas internas para altura uniforme
+            total_rows = (len(products) + columns_per_row - 1) // columns_per_row
+            for r_idx in range(total_rows):
+                cat_frame.rowconfigure(r_idx, weight=1, uniform='prod_row')
 
-            option.grid(row=row, column=column, padx=10, pady=10)
+            r, c = 0, 0
+            for product_name in products:
+                # frame individual do produto
+                option_frame = ttk.Frame(cat_frame)
+                option_frame.grid(row=r, column=c, padx=5, pady=5, sticky="nsew")
+                option_frame.grid_propagate(False) # impede que o frame redimensione conforme o conteúdo
 
-            spinbox = ttk.Spinbox(option, width=5, from_=0, to=999, validate='focus', validatecommand=(number_validator, '%P'))
+                # label do produto
+                label = ttk.Label(option_frame, text=product_name[:15])
+                label.pack(padx=2, pady=2) # centralizado horizontalmente por padrão
 
-            spinbox.pack(padx=10, pady=10)
+                # spinbox para quantidade
+                spinbox = ttk.Spinbox(option_frame, width=5, from_=0, to=999, validate='focus', validatecommand=(number_validator, '%P'))
+                spinbox.pack(padx=2, pady=2)
 
-            self.__options[product] = {
-                "frame": option,
-                "qty": spinbox
-            }
+                # registra no dicionário de opções
+                self.__options[product_name] = {
+                    "frame": option_frame,
+                    "qty": spinbox
+                }
 
-            column += 1
-            if column >= columns_per_row:
-                column = 0
-                row += 1
+                # próxima coluna
+                c += 1
+                if c >= columns_per_row:
+                    c = 0
+                    r += 1
+
+            row += 1
 
         self.__confirm_btn = ttk.Button(self._button_frame, text='Confirmar', command=self.commit_order, bootstyle='success', width=10)
         self.bind('<Return>', lambda e: self.commit_order())

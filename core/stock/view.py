@@ -70,7 +70,7 @@ class CRUDView(ttk.Toplevel):
         self.__parent_ctrl = parent_ctrl
 
         self.title('Inventário')
-        self.geometry('800x600')
+        self.geometry('720x540') # 4:3
         self.resizable(False, False)
         self.place_window_center()
 
@@ -471,7 +471,7 @@ class EntryView(ttk.Toplevel):
         self.__parent_ctrl = parent_ctrl
 
         self.title('Entrada')
-        self.geometry('400x300')
+        self.geometry('400x300') # 4:3
         self.resizable(False, False)
         self.place_window_center()
 

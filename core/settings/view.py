@@ -19,7 +19,7 @@ class View(ttk.Toplevel):
         self.__parent_ctrl = parent_ctrl
 
         self.title('Preferências')
-        self.geometry('400x300')
+        self.geometry('400x300') # 4:3
         self.resizable(False, False)
         self.place_window_center()
 
