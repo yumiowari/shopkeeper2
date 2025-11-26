@@ -14,7 +14,25 @@ from datetime import date
     O módulo datetime oferece classes para manipulação de data e hora.
 '''
 
+import os
+'''
+    os provê uma forma portátil de usar operações dependentes do sistema operacional.
+'''
+
+import platform
+"""
+    O módulo platform permite obter informações sobre o sistema operacional e hardware.
+"""
+
+import subprocess
+"""
+    O módulo subprocess possibilita executar comandos externos do sistema operacional.
+"""
+
 from PIL import Image, ImageTk
+"""
+    A biblioteca Pillow (PIL) fornece funcionalidades para abrir, manipular e exibir imagens.
+"""
 
 from core.components.loading import LoadingDialog
 """
@@ -178,6 +196,14 @@ class View(ttk.Window):
         Função para imprimir o relatório de estoque em PDF.
     '''
     def make_stock_report(self):
+        def open_pdf(path):
+            if platform.system() == 'Windows':
+                os.startfile(path) # type: ignore
+            elif platform.system() == 'Darwin': # macOS
+                subprocess.run(['open', path])
+            else: # Linux
+                subprocess.run(['xdg-open', path])
+
         if not self.__on_stock_report:
             self.__on_stock_report = True
 
@@ -186,13 +212,15 @@ class View(ttk.Window):
 
                 loading.update()
 
-                feedback = self.__controller.make_stock_report()
+                path = self.__controller.make_stock_report()
 
                 self.after(500, loading.close)  
             
-                if feedback == 0:
+                if len(path) > 0:
                     msgbox.show_info('Relatório do estoque impresso no diretório raiz da aplicação.', 'Sucesso', parent=self, position=(self.__x, self.__y))
-                elif feedback == 1:
+
+                    open_pdf(path)
+                else:
                     msgbox.show_error('O inventário está vazio: Não existem itens disponíveis para impressão.', 'Erro', parent=self, position=(self.__x, self.__y))
             
                 self.__on_stock_report = False

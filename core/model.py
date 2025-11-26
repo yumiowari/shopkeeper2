@@ -42,8 +42,8 @@ class Model:
         Imprime o relatório do estoque no arquivo PDF
 
         Retorna...
-            0 - Sucesso;
-            1 - Estoque vazio.
+            caminho do PDF - Sucesso;
+            caminho vazio - Estoque vazio.
     '''
     def make_stock_report(self):
         table = [
@@ -55,7 +55,7 @@ class Model:
         self.__stock.sort(key=lambda s: s.id) # ordena a lista pelo identificador
 
         if self.__stock == []:
-            return 1
+            return ''
 
         for product in self.__stock:
             row = []
@@ -75,8 +75,10 @@ class Model:
             writer = csv.writer(file)
             writer.writerows(table)
 
+        path = f'data/stock {timestamp}.pdf'
+
         # cria o documento PDF
-        pdf = SimpleDocTemplate('stock ' + timestamp + '.pdf', pagesize=A4, title='Relatório do Estoque: ' + timestamp)
+        pdf = SimpleDocTemplate(path, pagesize=A4, title='Relatório do Estoque: ' + timestamp)
         elements = []
 
         # converte a lista para um Flowable Table do ReportLab
@@ -97,7 +99,7 @@ class Model:
         # gera o arquivo PDF
         pdf.build(elements)
 
-        return 0
+        return path
     
     '''
         Imprime o relatório de Fechamento de Caixa
