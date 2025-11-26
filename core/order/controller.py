@@ -45,3 +45,8 @@ class ConferOrderController:
     
     def fetch_stock(self):
         return self.__model.fetch_stock()
+    
+    def undo_specific_order(self):
+        selected_timestamp = self._view._timestamp_combo.get()
+
+        return self.__model.undo_specific_order(selected_timestamp)

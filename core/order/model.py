@@ -129,3 +129,14 @@ class ConferOrderModel:
     '''
     def fetch_stock(self):
         return db.fetch_stock()
+    
+    '''
+        Desfaz a comanda selecionada
+    '''
+    def undo_specific_order(self, selected_timestamp):
+        return db.undo_specific_order(selected_timestamp)
+        # desfaz a comanda selecionada...
+        #
+        # retorna:
+        # True - sucesso
+        # False - falha

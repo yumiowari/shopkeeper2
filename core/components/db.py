@@ -220,6 +220,75 @@ def fetch_order_report(selected_date):
 
     return report
 
+def undo_specific_order(selected_timestamp):
+    try:
+        with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
+            with connection.cursor() as cursor:
+                # 0. Descobrir o ID da comanda a partir do timestamp
+                cursor.execute(
+                    '''
+                    SELECT id 
+                    FROM "Order"
+                    WHERE timestamp = %s
+                    ''',
+                    (selected_timestamp,)
+                )
+                row = cursor.fetchone()
+
+                if not row:
+                    return False  # comanda inexistente
+
+                order_id = row[0]
+
+                # 1. Buscar vendas associadas
+                cursor.execute(
+                    '''
+                    SELECT product_id, qty
+                    FROM "Sale"
+                    WHERE order_id = %s
+                    ''',
+                    (order_id,)
+                )
+                sales = cursor.fetchall() or []
+
+                if not sales:
+                    return False  # sem vendas não tem o que desfazer
+
+                # 2. Repor o estoque de acordo
+                for product_id, qty in sales:
+                    cursor.execute(
+                        '''
+                        UPDATE "Product"
+                        SET qty = qty + %s
+                        WHERE id = %s
+                        ''',
+                        (qty, product_id)
+                    )
+
+                # 3. Remover vendas associadas
+                cursor.execute(
+                    '''
+                    DELETE FROM "Sale"
+                    WHERE order_id = %s
+                    ''',
+                    (order_id,)
+                )
+
+                # 4. Remover comanda
+                cursor.execute(
+                    '''
+                    DELETE FROM "Order"
+                    WHERE id = %s
+                    ''',
+                    (order_id,)
+                )
+
+        return True
+
+    except Exception:
+        return False
+
+
 '''
     Autenticação
 '''

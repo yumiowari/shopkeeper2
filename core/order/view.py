@@ -223,6 +223,7 @@ class ConferOrderView(ttk.Toplevel):
         '''
         self._confirm_btn = ttk.Button(self._main_frame, text='Confirmar', command=self.confirm_selected_date, bootstyle='primary', width=10)
         self._confer_btn = ttk.Button(self._main_frame, text='Consultar', command=self.confer_selected_order, bootstyle='success', width=10)
+        self._undo_btn = ttk.Button(self._main_frame, text='Desfazer', command=self.undo_selected_order, bootstyle='danger', width=10)
 
         self._date_entry_label.pack(pady=5)
         self._date_entry.pack(pady=5)
@@ -230,11 +231,13 @@ class ConferOrderView(ttk.Toplevel):
         self._timestamp_combo_label.pack(pady=5)
         self._timestamp_combo.pack(pady=5)
         self._confer_btn.pack(pady=10)
+        self._undo_btn.pack(pady=10)
 
         tp(self._date_entry, 'Em que dia a comanda foi deferida?', bootstyle=(PRIMARY, INVERSE))
         tp(self._confirm_btn, 'Confirmar a data selecionada.', bootstyle=(PRIMARY, INVERSE))
         tp(self._timestamp_combo, 'Em que horário a comanda foi deferida?', bootstyle=(PRIMARY, INVERSE))
         tp(self._confer_btn, 'Consultar a comanda selecionada.', bootstyle=(SUCCESS, INVERSE))
+        tp(self._undo_btn, 'Desfazer a comanda selecionada.', bootstyle=(DANGER, INVERSE))
 
     def on_close(self):
         self.__parent_ctrl._confer_order_ctrl = None
@@ -253,8 +256,6 @@ class ConferOrderView(ttk.Toplevel):
 
             for order in order_list:
                 timestamps.append(order.timestamp)
-
-            #timestamps = sorted(order.timestamp for order in order_list) # ordena de acordo com o timestamp
 
             self._timestamp_combo.config(values=timestamps)
 
@@ -282,3 +283,17 @@ class ConferOrderView(ttk.Toplevel):
                 output += f'\nTotal: R${order.value}'
 
                 msgbox.show_info(output, 'Sucesso', parent=self, position=(self.__x, self.__y))
+
+    def undo_selected_order(self):
+        if msgbox.yesno('Deseja realmente desfazer esta comanda?\nEssa ação não pode ser revertida.', 'Confirmação', parent=self, position=(self.__x, self.__y)):
+            selected_timestamp = self._timestamp_combo.get()
+
+            if not selected_timestamp:
+                msgbox.show_warning('Um timestamp válido precisa ser selecionado.', 'Aviso', parent=self, position=(self.__x, self.__y))
+            else:
+                if self.__controller.undo_specific_order():
+                    msgbox.show_info('A comanda foi desfeita com sucesso.\nO inventário foi atualizado.', 'Sucesso', parent=self, position=(self.__x, self.__y))
+                
+                    self.on_close()
+                else:
+                    msgbox.show_error('A comanda selecionada é inválida ou já foi excluída.', 'Erro', parent=self, position=(self.__x, self.__y))
