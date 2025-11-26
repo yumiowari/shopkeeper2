@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
+from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.dialogs import DatePickerDialog
 from ttkbootstrap.tooltip import ToolTip as tp
@@ -109,7 +109,7 @@ class View(ttk.Window):
         img = img.resize((200, 200))
         photo = ImageTk.PhotoImage(img)
         self.__logo = ttk.Label(self.__middle_frame, image=photo)
-        self.__logo.image = photo
+        self.__logo.image = photo # type: ignore
         self.__logo.pack(padx=10, pady=10)
 
         '''

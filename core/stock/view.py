@@ -1,5 +1,5 @@
 import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
+from ttkbootstrap.constants import * # type: ignore
 from ttkbootstrap.dialogs import Messagebox as msgbox
 from ttkbootstrap.tooltip import ToolTip as tp
 '''
@@ -70,7 +70,7 @@ class CRUDView(ttk.Toplevel):
         self.__parent_ctrl = parent_ctrl
 
         self.title('Inventário')
-        self.geometry('600x450')
+        self.geometry('800x600')
         self.resizable(False, False)
         self.place_window_center()
 
@@ -118,6 +118,9 @@ class CRUDView(ttk.Toplevel):
         self._create_product_name_entry = ttk.Entry(self._create_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
         self._create_product_name_label = ttk.Label(self._create_frame, text='Nome do produto:', font=('Arial', 10, 'bold'))
         self._create_product_name_entry.focus_set() # trás foco ao widget
+        self._create_product_category_combo = ttk.Combobox(self._create_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._create_product_category_combo.config(values=self.__controller.fetch_product_categories())
+        self._create_product_category_combo_label = ttk.Label(self._create_frame, text='Selecione a categoria do produto:', font=('Arial', 10, 'bold'))
         self._create_product_cost_entry = ttk.Entry(self._create_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
         self._create_product_cost_label = ttk.Label(self._create_frame, text='Custo do produto:', font=('Arial', 10, 'bold'))
         self._create_product_price_entry = ttk.Entry(self._create_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
@@ -130,6 +133,8 @@ class CRUDView(ttk.Toplevel):
         self._create_label.pack(pady=10)
         self._create_product_name_label.pack(pady=5)
         self._create_product_name_entry.pack(pady=5)
+        self._create_product_category_combo_label.pack(pady=5)
+        self._create_product_category_combo.pack(pady=5)
         self._create_product_cost_label.pack(pady=5)
         self._create_product_cost_entry.pack(pady=5)
         self._create_product_price_label.pack(pady=5)
@@ -140,6 +145,7 @@ class CRUDView(ttk.Toplevel):
         self._create_confirm_btn.pack(side=BOTTOM, pady=10)
 
         tp(self._create_product_name_entry, 'Qual o nome do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._create_product_category_combo, 'Qual a categoria do produto?', bootstyle=(PRIMARY, INVERSE))
         tp(self._create_product_cost_entry, 'Qual o custo de produção do produto?', bootstyle=(PRIMARY, INVERSE))
         tp(self._create_product_price_entry, 'Qual o preço de venda do produto?', bootstyle=(PRIMARY, INVERSE))
         tp(self._create_product_qty_spin, 'Qual a quantidade inicial do produto?', bootstyle=(PRIMARY, INVERSE))
@@ -181,6 +187,9 @@ class CRUDView(ttk.Toplevel):
         self._update_product_name_combo.config(values=self.__controller.fetch_product_names())
         self._update_product_name_combo_label = ttk.Label(self._update_frame, text='Selecione o produto:', font=('Arial', 10, 'bold'))
         self._update_product_name_combo.focus_set() # trás foco ao widget
+        self._update_product_category_combo = ttk.Combobox(self._update_frame, width=20, validate='focus', validatecommand=(alpha_validator, '%P'))
+        self._update_product_category_combo.config(values=self.__controller.fetch_product_categories())
+        self._update_product_category_combo_label = ttk.Label(self._update_frame, text='Selecione a nova categoria do produto:', font=('Arial', 10, 'bold'))
         self._update_product_cost_entry = ttk.Entry(self._update_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
         self._update_product_cost_label = ttk.Label(self._update_frame, text='Novo custo do produto:', font=('Arial', 10))
         self._update_product_price_entry = ttk.Entry(self._update_frame, width=10, validate='focus', validatecommand=(money_validator, '%P'))
@@ -193,6 +202,8 @@ class CRUDView(ttk.Toplevel):
         self._update_label.pack(pady=10)
         self._update_product_name_combo_label.pack(pady=5)
         self._update_product_name_combo.pack(pady=5)
+        self._update_product_category_combo_label.pack(pady=5)
+        self._update_product_category_combo.pack(pady=5)
         self._update_product_cost_label.pack(pady=5)
         self._update_product_cost_entry.pack(pady=5)
         self._update_product_price_label.pack(pady=5)
@@ -203,6 +214,7 @@ class CRUDView(ttk.Toplevel):
         self._update_confirm_btn.pack(side=BOTTOM, pady=10)
 
         tp(self._update_product_name_combo, 'Qual o nome do produto?', bootstyle=(PRIMARY, INVERSE))
+        tp(self._update_product_category_combo, 'Qual a nova categoria do produto?', bootstyle=(PRIMARY, INVERSE))
         tp(self._update_product_cost_entry, 'Qual o novo custo de produção do produto?', bootstyle=(PRIMARY, INVERSE))
         tp(self._update_product_price_entry, 'Qual o novo preço de venda do produto?', bootstyle=(PRIMARY, INVERSE))
         tp(self._update_product_qty_spin, 'Qual a nova quantidade do produto?', bootstyle=(PRIMARY, INVERSE))
@@ -251,12 +263,15 @@ class CRUDView(ttk.Toplevel):
         self.on_close()
 
     def update_comboboxes(self):
+        self._create_product_category_combo.config(values=self.__controller.fetch_product_categories())
         self._confer_product_name_combo.config(values=self.__controller.fetch_product_names())
         self._update_product_name_combo.config(values=self.__controller.fetch_product_names())
+        self._update_product_category_combo.config(values=self.__controller.fetch_product_categories())
         self._delete_product_name_combo.config(values=self.__controller.fetch_product_names())
 
     def create_product(self):
         product_name = self._create_product_name_entry.get()
+        product_category = self._create_product_category_combo.get()
         product_cost = self._create_product_cost_entry.get()
         product_price = self._create_product_price_entry.get()
         product_qty = self._create_product_qty_spin.get()
@@ -264,7 +279,7 @@ class CRUDView(ttk.Toplevel):
         flag = True
 
         # valida os campos de entrada
-        if not product_name or not product_cost or not product_price:
+        if not product_name or not product_category or not product_cost or not product_price:
             msgbox.show_error('Todos os campos obrigatórios (em negrito) devem ser preenchidos.', 'Erro', parent=self, position=(self.__x, self.__y))
             
             flag = False
@@ -272,6 +287,10 @@ class CRUDView(ttk.Toplevel):
         if flag and not validate_alpha(product_name):
             msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
             
+            flag = False
+        if flag and not validate_alpha(product_category):
+            msgbox.show_error('A categoria do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
+
             flag = False
         if flag and not validate_money(product_cost):
             msgbox.show_error('O custo do produto deve ser um valor monetário válido maior que R$ 0,00 e menor que R$ 100,00.', 'Erro', parent=self, position=(self.__x, self.__y))
@@ -299,6 +318,7 @@ class CRUDView(ttk.Toplevel):
             msgbox.show_error('O cadastro do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
 
         self._create_product_name_entry.delete(0, 'end')
+        self._create_product_category_combo.set('')
         self._create_product_cost_entry.delete(0, 'end')
         self._create_product_price_entry.delete(0, 'end')
         self._create_product_qty_spin.set('')
@@ -328,6 +348,7 @@ class CRUDView(ttk.Toplevel):
                 output = 'É o produto:\n\n'
                 output += f'ID: {product.id}\n'
                 output += f'Nome: {product.name}\n'
+                output += f'Categoria: {product.category}\n'
                 output += f'Custo: R$ {product.cost}\n'
                 output += f'Preço: R$ {product.price}\n'
                 output += f'Quantidade: {product.qty}\n'
@@ -342,6 +363,7 @@ class CRUDView(ttk.Toplevel):
 
     def update_product(self):
         product_name = self._update_product_name_combo.get()
+        product_category = self._update_product_category_combo.get()
         product_cost = self._update_product_cost_entry.get()
         product_price = self._update_product_price_entry.get()
         product_qty = self._update_product_qty_spin.get()
@@ -356,6 +378,10 @@ class CRUDView(ttk.Toplevel):
 
         if flag and not validate_alpha(product_name):
             msgbox.show_error('O nome do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
+            
+            flag = False
+        if flag and not validate_alpha(product_category):
+            msgbox.show_error('A categoria do produto deve contabilizar no máximo 30 caracteres.', 'Erro', parent=self, position=(self.__x, self.__y))
             
             flag = False
         if flag and product_cost and not validate_money(product_cost):
@@ -384,6 +410,7 @@ class CRUDView(ttk.Toplevel):
             msgbox.show_error('A atualização do produto falhou.', 'Erro', parent=self, position=(self.__x, self.__y))
 
         self._update_product_name_combo.set('')
+        self._update_product_category_combo.set('')
         self._update_product_cost_entry.delete(0, 'end')
         self._update_product_price_entry.delete(0, 'end')
         self._update_product_qty_spin.set('')

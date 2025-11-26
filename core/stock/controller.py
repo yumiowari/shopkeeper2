@@ -12,14 +12,18 @@ class CRUDController:
 
     def fetch_product_names(self):
         return self.__model.fetch_product_names()
+    
+    def fetch_product_categories(self):
+        return self.__model.fetch_product_categories()
 
     def create_product(self):
         product_name = self._view._create_product_name_entry.get()
+        product_category = self._view._create_product_category_combo.get()
         product_cost = self._view._create_product_cost_entry.get().replace(',', '.')
         product_price = self._view._create_product_price_entry.get().replace(',', '.')
         product_qty = self._view._create_product_qty_spin.get()
 
-        return self.__model.create_product(product_name, product_cost, product_price, product_qty)
+        return self.__model.create_product(product_name, product_category, product_cost, product_price, product_qty)
 
     def confer_product(self):
         product_name = self._view._confer_product_name_combo.get()
@@ -28,11 +32,12 @@ class CRUDController:
 
     def update_product(self):
         product_name = self._view._update_product_name_combo.get()
+        product_category = self._view._update_product_category_combo.get()
         product_cost = self._view._update_product_cost_entry.get().replace(',', '.')
         product_price = self._view._update_product_price_entry.get().replace(',', '.')
         product_qty = self._view._update_product_qty_spin.get()
 
-        return self.__model.update_product(product_name, product_cost, product_price, product_qty)
+        return self.__model.update_product(product_name, product_category, product_cost, product_price, product_qty)
 
     def delete_product(self):
         product_name = self._view._delete_product_name_combo.get()

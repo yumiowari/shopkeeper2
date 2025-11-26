@@ -47,7 +47,7 @@ class Model:
     '''
     def make_stock_report(self):
         table = [
-            ['ID', 'Produto', 'Custo', 'Preço', 'Quantidade']
+            ['ID', 'Produto', 'Categoria', 'Custo', 'Preço', 'Quantidade']
         ]
 
         self.__stock = db.fetch_stock()
@@ -62,6 +62,7 @@ class Model:
 
             row.append(product.id)
             row.append(product.name)
+            row.append(product.category)
             row.append(f"R$ {product.cost:.2f}".replace('.', ','))
             row.append(f"R$ {product.price:.2f}".replace('.', ','))
             row.append(product.qty)

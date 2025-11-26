@@ -59,7 +59,6 @@ def fetch_stock():
 
             return stock
 
-
 def update_stock(stock):
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
         with connection.cursor() as cursor:
@@ -94,6 +93,42 @@ def update_stock(stock):
                     ''',
                     (product.id, product.name, category_id, product.cost, product.price, product.qty)
                 )
+
+def fetch_categories():
+    try:
+        with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
+            with connection.cursor() as cursor:
+                cursor.execute('SELECT name FROM "Category"')
+                rows = cursor.fetchall()
+
+                # extrái apenas os nomes das tuplas retornadas
+                categories = [row[0] for row in rows]
+
+                return categories
+
+    except Exception as e:
+        print(f"Erro ao buscar as categorias: {e}")
+
+        return []
+
+def update_category(name):
+    try:
+        with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    """
+                    INSERT INTO "Category" (name)
+                    VALUES (%s)
+                    ON CONFLICT (name) DO NOTHING
+                    """,
+                    (name,)
+                )
+                connection.commit()
+                return True
+    except Exception as e:
+        print(f"Erro ao garantir a categoria: {e}")
+
+        return False
 
 '''
     Comandas
@@ -297,7 +332,7 @@ def update_credentials(credentials):
         with connection.cursor() as cursor:
             hashed_password = bcrypt.hashpw(credentials['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-            cursor.execute('INSERT INTO "User" (name, password) VALUES (%s, %s)', (credentials['username'], hashed_password))
+            cursor.execute('INSERT INTO "User" (name, email, password) VALUES (%s, %s, %s)', (credentials['username'], credentials['email'], hashed_password))
 
 def fetch_credentials():
     with psycopg.connect(f'dbname={db_name} user={db_user} password={db_password} host={db_host}') as connection:

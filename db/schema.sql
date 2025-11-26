@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS "Category"
 (
     id SERIAL PRIMARY KEY,
 
-    name TEXT NOT NULL
+    name TEXT UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS "Product"

@@ -16,9 +16,10 @@ if __name__ == '__main__':
     if credentials == []:
         print('\n===== CADASTRO DE USUÁRIO ADMINISTRADOR =====\n')
         username = input('Insira o nome de usuário: ')
+        email = input('Insira o e-mail do usuário: ')
         password = input('Insira a senha: ')
 
-        db.update_credentials({'username': username, 'password': password})
+        db.update_credentials({'username': username, 'email': email, 'password': password})
 
     app = Controller()
     app.bootstrap()

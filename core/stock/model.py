@@ -8,7 +8,6 @@ from core.components.objects import *
     Importa as definições dos objetos de dados.
 '''
 
-
 class CRUDModel:
     def __init__(self):
         self.__stock = []
@@ -20,7 +19,7 @@ class CRUDModel:
             0 - Sucesso;
             1 - Produto repetido.
     '''
-    def create_product(self, name, cost, price, qty):
+    def create_product(self, name, category, cost, price, qty):
         self.__stock = db.fetch_stock()
         
         size = len(self.__stock) + 1
@@ -30,11 +29,15 @@ class CRUDModel:
         else:
             product = Product(int(size), name, float(cost), float(price), int(qty))
 
+        product.category = category
+
         # verifica se algum produto já existe com o mesmo nome
         if any(product.name == name for product in self.__stock):
             return 1 # produto repetido
 
         self.__stock.append(product)
+
+        db.update_category(category) # /!\ deve atualizar a categoria sempre antes de inserir o produto
 
         db.update_stock(self.__stock)
 
@@ -50,6 +53,13 @@ class CRUDModel:
             return []
         else:
             return [product.name for product in self.__stock]
+        
+    '''
+        Retorna a lista de categorias disponíveis
+    '''
+    def fetch_product_categories(self):
+        return db.fetch_categories()
+        # retorna a lista de categorias disponíveis ([] se vazia ou em caso de erro)
 
     '''
         Consulta o produto no Inventário
@@ -74,7 +84,7 @@ class CRUDModel:
             1 - Sem alterações;
             2 - Produto não encontrado.
     '''
-    def update_product(self, product_name, product_cost, product_price, product_qty):
+    def update_product(self, product_name, product_category, product_cost, product_price, product_qty):
         # correção de campos vazios
         if not product_cost:
             product_cost = 0.0
@@ -87,9 +97,11 @@ class CRUDModel:
 
         for product in self.__stock:
             if product.name == product_name:
-                if float(product_cost) == product.cost and float(product_price) == product.price and int(product_qty) == product.qty:
+                if product_category == '' and float(product_cost) == product.cost and float(product_price) == product.price and int(product_qty) == product.qty:
                     return 1 # sem alterações
                 else:
+                    if product_category != '':
+                        product.category = product_category
                     if product_cost != 0.0:
                         product.cost = float(product_cost)
                     if product_price != 0.0:
